@@ -246,7 +246,7 @@ OpFuncs are specified within sdsc.json as field `OpFuncs opFuncName` in `sdsc.ds
 |  Reduction  | ABSMAX_NONSTICK  |   "absmaxnonstick" | DF16 or FP32 
 |         | ABSMAX  |   "absmax" | DF16 or FP32 
 |         | EXX2_ZEROMEAN  |   "exx2_zeromean" | DF16 or FP32 
-|         | EXX2  |   "exx2"  | `exx2scale` | DF16 or FP32 
+|         | EXX2  |   "exx2"  | DF16 or FP32  | `exx2scale` 
 |         | MAX_NONSTICK  |   "maxnonstick" | DF16 or FP32 
 |         | MAX  |   "max" | DF16 or FP32 
 |         | MEAN_NONSTICK  |   "meannonstick" | DF16 or FP32 | `scaling_factor`: reciprocal of the number of elements that are reduced, combined across all the reduction dimensions
