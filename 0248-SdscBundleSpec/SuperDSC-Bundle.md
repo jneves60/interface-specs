@@ -195,86 +195,87 @@ The individual fields of the SuperDSC to express an operation and its core mappi
 
 OpFuncs are specified within sdsc.json as field `OpFuncs opFuncName` in `sdsc.dscs_[0].computeOp_[0]`.
 
-| Category | OpFunc enum | OpFunc string | Constants | Notes
-| --- | --- | --- | -- | -- |
-|  Matmul | BATCHMATMUL_FP8_FWD  |   "batchmatmulfp8"
-|         | BATCHMATMUL_FWD  |   "batchmatmul"
-|         | BATCHMATMUL_INT4_FWD  |   "batchmatmulint4"
-|         | BATCHMATMUL_INT8_FWD  |   "batchmatmulint8"
-| Convolution | CONV2D_FP8_FWD  |   "conv2dfp8"
-|         | CONV2D_FWD  |   "conv2d"
-|         | CONV2D_INT4_FWD  |   "conv2dint4"
-|         | CONV2D_INT8_FWD  |   "conv2dint8"
-|  Broadcast    |  ADD  |   "add"  |   | Broadcast supported on any number of dimensions and on one or both inputs
-|         | BATCHNORM_FWD  |   "batchnormfwd"
-|         | BIASADD  |   "biasadd"
-|         | EQUAL  |   "equal"
-|         | FNMS  |   "fnms"
-|         | GREATEREQUAL  |   "greaterequal"
-|         | LAYERNORM_NORM  |   "layernormnorm"
-|         | LESSEREQUAL  |   "lesserequal"
-|         | MAXIMUM  |   "maximum"
-|         | MINIMUM  |   "minimum"
-|         | MUL  |   "mul"
-|         | NOTEQUAL  |   "notequal"
-|         | REALDIV  |   "realdiv"
-|         | REVSUB  |   "revsub"
-|         | SUB  |   "sub"
-|         | WHERE3  |   "where3"
-|  Unary  | ABS  |   "abs"
-|         | CLIP_FWD  |   "clip"  |     `clipMin`, `clipMax`: minimum and maximum values to clip at
-|         | EXP_FWD  |   "exp"  |  
-|         | FAST_EXP_FWD  |   "fastexp"
-|         | FAST_SIGMOID_FWD  |   "fastsigmoid"
-|         | GELU_FWD  |   "gelufwd"
-|         | IDENTITY  |   "identity"
-|         | LAYERNORM_SCALE  |   "layernormscale"  | `eps`: a small value added to the denominator in the calculation of layernorm for numerical stability
-|         | LEAKYRELU_FWD  |   "leakyrelufwd"
-|         | LOG_FWD  |   "log"
-|         | MISH_FWD  |   "mish"
-|         | NEG  |   "neg"
-|         | RECIPROCAL  |   "reciprocal"
-|         | RELU_FWD  |   "relufwd"
-|         | RELU6_FWD  |   "relu6fwd"
-|         | RSQRT  |   "rsqrt"
-|         | SIGMOID_FWD  |   "sigmoid"
-|         | SOFTPLUS  |   "softplus"  | `softplusBeta`: value for the Softplus formulation <br>`softplusThresh`: values above this revert to a linear function
-|         | SILU_FWD  |   "silu"
-|         | SQRT_FWD  |   "sqrt"
-|         | TANH_FWD  |   "tanh"
-|  Reduction  | ABSMAX_NONSTICK  |   "absmaxnonstick"
-|         | ABSMAX  |   "absmax"
-|         | EXX2_ZEROMEAN  |   "exx2_zeromean"
-|         | EXX2  |   "exx2"  | `exx2scale`
-|         | MAX_NONSTICK  |   "maxnonstick"
-|         | MAX  |   "max"
-|         | MEAN_NONSTICK  |   "meannonstick" | `scaling_factor`: reciprocal of the number of elements that are reduced, combined across all the reduction dimensions
-|         | MEAN  |   "mean"  | `scaling_factor`: reciprocal of the number of elements that are reduced, combined across all the reduction dimensions
-|         | MIN_NONSTICK  |   "minnonstick"
-|         | MIN  |   "min"
-|         | QUANT_SCALE_PER_TOKEN_FP8  |   "quantscalepertokenfp8"  | `clipMin`, `clipMax`: minimum and maximum values to clip abs(input) distribution, typically smallest and largest positive values in the unquantized (input tensor) datatype <br>`mulConst`: reciprocal of the maximum value in the quantized datatype (for FP8<1,4,3> this is `1/448`)
-|         | QUANT_SCALE_PER_TOKEN  |   "quantscalepertoken"
-|         | SUM_NONSTICK  |   "sumnonstick"
-|         | SUM  |   "sum"
-|  Pooling  | AVGPOOL_FWD  |   "avgpoolfwd" | `nmap`: reciprocal of the product of kernel size (`1/(kh*kw)`)
-|         | AVGPOOL_NMAP_FWD  |   "avgpoolnmapfwd"
-|         | DEPTHWISE_CONV_FWD  |   "depthwiseconv2dnative"
-|         | MAXPOOL_FWD  |   "maxpoolfwd"
-| Scan    | MASK_BY_INDEX  |   "maskbyindex"
-|         | TOPK_INDEX  |   "topkindex"
-|         | TOPK_VALUE  |   "topkvalue"
-| Quantization | CSQ_INT4_WT  |   "csqint4wt"    |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT4. Pack elements from four input sticks in a dimension different from the input stick dimension, alternating after every element
-|         | CSQ_INT4  |   "csqint4"   |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT4. Alternating every 8 elements, pack elements from four input sticks: first two sticks in the same dimension as the input stick dimension, then two such groups taken across a dimension different from the input stick dimension
-|         | CSQ_INT8_CH  |   "csqint8ch"   |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT8. Pack elements from two input sticks in the same dimension as the input stick dimension, alternating every 8 elements
-|         | CSQ_INT8_MB  |   "csqint8mb"   |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT8. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating  every 8 elements
-|         | CSQ_INT8_WT  |   "csqint8wt"   |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT8. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating after every element
-|         | DL16TOFP32  |   "dl16tofp32"   |  |  Convert DL16 to FP32. For every stick of input, two sticks will be produced
-|         | DL16TOFP32  |   "fp32todl16"   |  |  Quantize FP32 to DL16. Pack elements from two input sticks in the same dimension as the input stick dimension, alternating every 8 elements
-|         | FP8TODL16  |   "fp8todl16"   |  |  Convert FP8<1,4,3> to DL16. For every stick of input, two sticks will be produced
-|         | Q_FP8_CH  |   "qfp8ch"   |  |  Quantize DL16 to FP8<1,4,3>. Pack elements from two input sticks in the same dimension as the input stick dimension, alternating every 8 elements
-|         | Q_FP8_MB  |   "qfp8mb"   |  |  Quantize DL16 to FP8<1,4,3>. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating every 8 elements
-|         | Q_FP8_WT  |   "qfp8wt"   |  |  Quantize DL16 to FP8<1,4,3>. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating after every element
-| Stick Altering Data shuffle | ReStickifyOpHBM | "ReStickifyOpHBM" | | Change the stick composition from one dimension to another dimension. Only one dimension is allowed in input and output stick layouts.
+| Category | OpFunc enum | OpFunc string | Op Precision | Constants | Notes
+| --- | --- | --- | -- | -- | -- |
+|  Matmul | BATCHMATMUL_FP8_FWD |  "batchmatmulfp8" | Inputs: FP8<1,4,3>, Output: DF16
+|         | BATCHMATMUL_FWD |   "batchmatmul" | DF16
+|         | BATCHMATMUL_INT4_FWD  |   "batchmatmulint4" | Inputs: INT4, Output: DF16
+|         | BATCHMATMUL_INT8_FWD  |   "batchmatmulint8" | Inputs: INT8, Output: DF16 (scaled)
+| Convolution | CONV2D_FP8_FWD  |   "conv2dfp8" | Inputs: FP8<1,4,3>, Output: DF16
+|         | CONV2D_FWD  |   "conv2d" | DF16
+|         | CONV2D_INT4_FWD  |   "conv2dint4" | Inputs: INT4, Output: DF16
+|         | CONV2D_INT8_FWD  |   "conv2dint8" | Inputs: INT8, Output: DF16 (scaled)
+|  Broadcast    |  ADD  |   "add"  | DF16 or FP32 |   | Broadcast supported on any number of dimensions and on one or both inputs
+|         | BATCHNORM_FWD  |   "batchnormfwd" | DF16 or FP32 
+|         | BIASADD  |   "biasadd" | DF16 or FP32 
+|         | EQUAL  |   "equal" | DF16 or FP32 
+|         | FNMS  |   "fnms" | DF16 or FP32 
+|         | GREATEREQUAL  |   "greaterequal" | DF16 or FP32 
+|         | LAYERNORM_NORM  |   "layernormnorm" | DF16 or FP32 
+|         | LESSEREQUAL  |   "lesserequal" | DF16 or FP32 
+|         | MAXIMUM  |   "maximum" | DF16 or FP32 
+|         | MINIMUM  |   "minimum" | DF16 or FP32 
+|         | MUL  |   "mul" | DF16 or FP32 
+|         | NOTEQUAL  |   "notequal" | DF16 or FP32 
+|         | REALDIV  |   "realdiv" | DF16 or FP32 
+|         | REVSUB  |   "revsub" | DF16 or FP32 
+|         | SUB  |   "sub" | DF16 or FP32 
+|         | WHERE3  |   "where3" | DF16 or FP32 
+|  Unary  | ABS  |   "abs" | DF16 or FP32 
+|         | CLIP_FWD  |   "clip"  |  DF16 or FP32 |  `clipMin`, `clipMax`: minimum and maximum values to clip at
+|         | EXP_FWD  |   "exp"  | DF16 or FP32 
+|         | FAST_EXP_FWD  |   "fastexp" | DF16
+|         | FAST_SIGMOID_FWD  |   "fastsigmoid" | DF16
+|         | FLOOR  |   "floor" | DF16 or FP32
+|         | GELU_FWD  |   "gelufwd" | DF16
+|         | IDENTITY  |   "identity" | DF16 or FP32 
+|         | LAYERNORM_SCALE  |  "layernormscale"  | DF16 or FP32 | `eps`: a small value added to the denominator in the calculation of layernorm for numerical stability
+|         | LEAKYRELU_FWD  |  "leakyrelufwd" | DF16
+|         | LOG_FWD  |   "log" | DF16
+|         | MISH_FWD  |   "mish" | DF16
+|         | NEG  |   "neg" | DF16 or FP32 
+|         | RECIPROCAL  |   "reciprocal" | DF16 or FP32 
+|         | RELU_FWD  |   "relufwd" | DF16 or FP32 
+|         | RELU6_FWD  |   "relu6fwd" | DF16
+|         | RSQRT  |   "rsqrt" | DF16
+|         | SIGMOID_FWD  |   "sigmoid" | DF16 or FP32 
+|         | SOFTPLUS  |   "softplus"  | DF16 | `softplusBeta`: value for the Softplus formulation <br>`softplusThresh`: values above this revert to a linear function
+|         | SILU_FWD  |   "silu" | DF16 or FP32 
+|         | SQRT_FWD  |   "sqrt" | DF16
+|         | TANH_FWD  |   "tanh" | DF16
+|  Reduction  | ABSMAX_NONSTICK  |   "absmaxnonstick" | DF16 or FP32 
+|         | ABSMAX  |   "absmax" | DF16 or FP32 
+|         | EXX2_ZEROMEAN  |   "exx2_zeromean" | DF16 or FP32 
+|         | EXX2  |   "exx2"  | `exx2scale` | DF16 or FP32 
+|         | MAX_NONSTICK  |   "maxnonstick" | DF16 or FP32 
+|         | MAX  |   "max" | DF16 or FP32 
+|         | MEAN_NONSTICK  |   "meannonstick" | DF16 or FP32 | `scaling_factor`: reciprocal of the number of elements that are reduced, combined across all the reduction dimensions
+|         | MEAN  |   "mean"  | DF16 or FP32 | `scaling_factor`: reciprocal of the number of elements that are reduced, combined across all the reduction dimensions
+|         | MIN_NONSTICK  |   "minnonstick" | DF16 or FP32 
+|         | MIN  |   "min" | DF16 or FP32 
+|         | QUANT_SCALE_PER_TOKEN_FP8  |   "quantscalepertokenfp8"  | DF16 | `clipMin`, `clipMax`: minimum and maximum values to clip abs(input) distribution, typically smallest and largest positive values in the unquantized (input tensor) datatype <br>`mulConst`: reciprocal of the maximum value in the quantized datatype (for FP8<1,4,3> this is `1/448`)
+|         | QUANT_SCALE_PER_TOKEN  |   "quantscalepertoken" | DF16
+|         | SUM_NONSTICK  |   "sumnonstick" | DF16 or FP32 
+|         | SUM  |   "sum" | DF16 or FP32 
+|  Pooling  | AVGPOOL_FWD  |   "avgpoolfwd" | DF16 | `nmap`: reciprocal of the product of kernel size (`1/(kh*kw)`)
+|         | AVGPOOL_NMAP_FWD |   "avgpoolnmapfwd" | DF16 
+|         | DEPTHWISE_CONV_FWD  |   "depthwiseconv2dnative" | DF16 
+|         | MAXPOOL_FWD  |   "maxpoolfwd" | DF16
+| Scan    | MASK_BY_INDEX  |   "maskbyindex" | DF16 or FP32 
+|         | TOPK_INDEX  |   "topkindex" | DF16 or FP32 
+|         | TOPK_VALUE  |   "topkvalue" | DF16 or FP32 
+| Quantization | CSQ_INT4_WT  |   "csqint4wt"   | Inputs: DF16 Output: INT4 |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT4. Pack elements from four input sticks in a dimension different from the input stick dimension, alternating after every element
+|         | CSQ_INT4  |   "csqint4"  | Inputs: DF16 Output: INT4  |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT4. Alternating every 8 elements, pack elements from four input sticks: first two sticks in the same dimension as the input stick dimension, then two such groups taken across a dimension different from the input stick dimension
+|         | CSQ_INT8_CH  |   "csqint8ch"  | Inputs: DF16 Output: INT8  |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT8. Pack elements from two input sticks in the same dimension as the input stick dimension, alternating every 8 elements
+|         | CSQ_INT8_MB  |   "csqint8mb"  | Inputs: DF16 Output: INT8 |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT8. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating  every 8 elements
+|         | CSQ_INT8_WT  |   "csqint8wt"  | Inputs: DF16 Output: INT8 |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT8. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating after every element
+|         | DL16TOFP32  |   "dl16tofp32"   | Input: DF16 Output: FP32 |  |  Convert DL16 to FP32. For every stick of input, two sticks will be produced
+|         | DL16TOFP32  |   "fp32todl16"   | Input: FP32 Output: DF16 |  |  Quantize FP32 to DL16. Pack elements from two input sticks in the same dimension as the input stick dimension, alternating every 8 elements
+|         | FP8TODL16  |   "fp8todl16"   | Input: HFP8 Output: DF16 |  |  Convert FP8<1,4,3> to DL16. For every stick of input, two sticks will be produced
+|         | Q_FP8_CH  |   "qfp8ch"   | Input: DF16 Output: FP8<1,4,3> |  |  Quantize DL16 to FP8<1,4,3>. Pack elements from two input sticks in the same dimension as the input stick dimension, alternating every 8 elements
+|         | Q_FP8_MB  |   "qfp8mb"   | Input: DF16 Output: FP8<1,4,3> |  |  Quantize DL16 to FP8<1,4,3>. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating every 8 elements
+|         | Q_FP8_WT  |   "qfp8wt"   | Input: DF16 Output: FP8<1,4,3> |  |  Quantize DL16 to FP8<1,4,3>. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating after every element
+| Stick Altering Data shuffle | ReStickifyOpHBM | "ReStickifyOpHBM" | DF16 | | Change the stick composition from one dimension to another dimension. Only one dimension is allowed in input and output stick layouts.
 
 
 ### Stick constraints for the operations
