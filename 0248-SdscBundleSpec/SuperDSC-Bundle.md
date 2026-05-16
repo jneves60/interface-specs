@@ -65,6 +65,9 @@ The operation **attributes** are:
 
 The operation **operands** are the SSA variables corresponding to the values to be assigned to the symbols listed in `symbol_ids`, passed in the same order as the symbol ids. These values can be constants (`arith.constant`), or the result of affine expressions, like [`affine.apply`](https://mlir.llvm.org/docs/Dialects/Affine/#affineapply-affineaffineapplyop). The affine expressions can be comprised of constants and loop iterators. Having actual symbols in mlir will be supported through the next revision of the spec.
 
+The `symbols_ids` must be unique in the bundle i.e., symbols ids cannot be recycled across sdscs that are part of the same bundle (unless they take the same value).
+
+
 #### Loops
 Loops are represented using [`scf.for`](https://mlir.llvm.org/docs/Dialects/SCFDialect/#scffor-scfforop) operation borrowed from MLIR's SCF dialect. This allows SuperDSC-Bundle to describe complex kernels with multiple levels of loops and multiple SDSCs.
 
@@ -122,6 +125,7 @@ The individual fields of the SuperDSC to express an operation and its core mappi
     * `FoldManager<int64_t> startAddressCoreCorelet_` in AllocateNode
     * first fold is for cores, set as Map fold type
     * second fold is for corelets, set as Const fold type
+    * When the start address is symbolic, set `isStartAddrSymbolic_` boolean to True: 
   * layout
     * stick layout/sizes
       * add entry in `std::map<DsTypes, PrimaryDsInfo> primaryDsInfo_` in `sdsc.dscs_[0]`
@@ -144,10 +148,10 @@ The individual fields of the SuperDSC to express an operation and its core mappi
       * `std::vector<double> scale_` in `sdsc.dscs_[0].labeledDs_[x]`
       * order matches layoutDimOrder_ in primaryDsInfo
     * For indirectly accessed tensors (e.g. Paged tensors)
-    * fill maxDimSizes_ in AllocateNode of value tensor to set page size
-    * mark value/index allocations as such and link them to each other
-      * enum class `IndirectAllocType indirectAllocType_` in AllocateNode
-      * `AllocateNode- relatedIndirectAccessAlloc_` in AllocateNode
+      * Fill maxDimSizes_ in AllocateNode of value tensor to set page size
+      * Mark value/index allocations as such and link them to each other
+        * enum class `IndirectAllocType indirectAllocType_` in AllocateNode
+        * `AllocateNode- relatedIndirectAccessAlloc_` in AllocateNode
   * Tensor coordinates per dimension
     * `CoordinateType<CoordinateBaseType> allocateCoordinates_` in AllocateNode
     * coordinates arrangement is expressed through a sequence of nested simple affine expressions (alpha*index + beta)
