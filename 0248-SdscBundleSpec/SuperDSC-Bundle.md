@@ -351,6 +351,8 @@ For all operations, any constituent dimension is allowed to be split across core
 * The span of addresses accessed from DDR for any given tensor must not exceed 256MB.
 * For all index tensors used for indirect access, for each dimension present in the stick, the work assigned to a core should span an intergral number of sticks or <1 stick.
 
+When operation involves reduction across multiple dimensions, only one of its reduction dimensions is allowed to be split across cores. There is no constraint on operations with a single reduction dimension.
+
 ## Examples
 
 Multiple examples in increasing order of complexity are available [here](examples/).
