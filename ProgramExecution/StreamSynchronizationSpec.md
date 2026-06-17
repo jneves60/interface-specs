@@ -13,7 +13,7 @@ Today, `launchJobPlan` submits all operations (host compute, DMA, device compute
 
 **Insight:** Host compute for iteration N+1 does not depend on device compute from iteration N — it only needs `LogicalAddresses` known at launch time. This enables overlapping host compute preparation with device execution.
 
-**Goal:** A general-purpose inter-stream synchronization mechanism that allows `launchJobPlan` to distribute operations across multiple streams based on compiler-provided hints, minimizing device idle time.
+**Goal:** A general-purpose inter-stream synchronization mechanism that allows `launchJobPlan` to distribute operations across multiple streams based on the SpyreCode command dependency chain, minimizing device idle time.
 
 ## Stream Topology
 
@@ -36,7 +36,7 @@ The mechanism is general-purpose — any stream can signal, any stream can wait.
 
 ---
 
-## Option 1: Host Callbacks (No New Primitives)
+## Alternative Considered: Host Callbacks (No New Primitives)
 
 ### Concept
 
@@ -60,7 +60,7 @@ void launchJobPlan(const JobPlan& job_plan, const std::vector<at::Tensor>& args)
   std::mutex inject_mu;
 
   for (const auto& step : job_plan.steps) {
-    if (step->streamHint() == StreamHint::HostCompute) {
+    if (step->isHostStream()) {
       // Enqueue host compute on Stream A
       auto op = step->construct(ctx);
 
@@ -148,17 +148,9 @@ private:
 };
 ```
 
-### Stream Assignment via JobPlan Hints
+### Stream Assignment via SpyreCode Dependencies
 
-Operations carry a `StreamHint` that tells `launchJobPlan` which stream to target:
-
-```cpp
-enum class StreamHint {
-  Default,       // no preference — goes to the "current" stream
-  HostCompute,   // should run on the host-compute stream
-  DMACompute,    // should run on the DMA+device-compute stream
-};
-```
+Stream assignment is the runtime's responsibility, driven by the dependency information available in SpyreCode. SpyreCode already encodes partial dependency information today — for example, the shared data buffer between `DataTransfer` and `ComputeOnHost` chains those two operations. This can be enhanced over time to capture further dependencies. Once the full dependency chain is available, the runtime can determine what can run when without any backend-emitted hints. If the runtime's stream implementation changes, no backend changes are required.
 
 Synchronization points are explicit steps in the JobPlan. They implement `construct()` like all other steps, producing their RuntimeOperation via the standard factory pattern:
 
@@ -178,9 +170,7 @@ private:
 
 class JobPlanStepEventSignal : public JobPlanStep {
 public:
-  JobPlanStepEventSignal(int event_id, StreamHint hint) : event_id_(event_id) {
-    setStreamHint(hint);
-  }
+  explicit JobPlanStepEventSignal(int event_id) : event_id_(event_id) {}
   std::unique_ptr<RuntimeOperation> construct(LaunchContext& ctx) const override {
     return std::make_unique<EventSignalOp>(ctx.getOrCreateEvent(event_id_));
   }
@@ -190,9 +180,7 @@ private:
 
 class JobPlanStepEventWait : public JobPlanStep {
 public:
-  JobPlanStepEventWait(int event_id, StreamHint hint) : event_id_(event_id) {
-    setStreamHint(hint);
-  }
+  explicit JobPlanStepEventWait(int event_id) : event_id_(event_id) {}
   std::unique_ptr<RuntimeOperation> construct(LaunchContext& ctx) const override {
     return std::make_unique<EventWaitOp>(ctx.getOrCreateEvent(event_id_));
   }
@@ -203,7 +191,7 @@ private:
 
 Event steps use the same `construct()` interface as all other `JobPlanStep` subclasses. The shared `Event` object is managed by `LaunchContext` — two steps with the same `event_id` get the same `Event` instance. Since `LaunchContext` is created fresh per launch, Events are automatically fresh each time. The `Event` class intentionally omits a `reset()` method — freshness is guaranteed by construction, not mutation.
 
-The `JobPlanBuilder` places signal/wait steps based on data dependencies derived from SpyreCode command types. `launchJobPlan` is a uniform dispatcher — no type-specific branching needed.
+The `JobPlanBuilder` places signal/wait steps at dependency boundaries derived from SpyreCode. `launchJobPlan` is a uniform dispatcher — no type-specific branching needed.
 
 ### Implementation Sketch: `launchJobPlan`
 
@@ -212,8 +200,7 @@ void launchJobPlan(const JobPlan& job_plan, const std::vector<at::Tensor>& args)
   auto device = c10::Device(c10::DeviceType::PrivateUse1, -1);
 
   // Check if multi-stream is needed
-  bool needs_multi_stream = std::any_of(job_plan.steps.begin(), job_plan.steps.end(),
-      [](const auto& s) { return s->streamHint() == StreamHint::HostCompute; });
+  bool needs_multi_stream = job_plan.hasMultipleStreams();
 
   if (!needs_multi_stream) {
     // Fast path: single-stream as today
@@ -229,11 +216,12 @@ void launchJobPlan(const JobPlan& job_plan, const std::vector<at::Tensor>& args)
   LaunchContext ctx{args};
   std::vector<std::unique_ptr<RuntimeOperation>> host_ops, compute_ops;
 
-  // Uniform construction loop — no type-specific branching
+  // Uniform construction loop — no type-specific branching.
+  // Stream assignment is encoded in the JobPlan by JobPlanBuilder.
   // Event steps produce EventSignalOp/EventWaitOp via construct().
   // Steps sharing the same event_id get the same Event from LaunchContext.
   for (const auto& step : job_plan.steps) {
-    auto& target = (step->streamHint() == StreamHint::HostCompute) ? host_ops : compute_ops;
+    auto& target = step->isHostStream() ? host_ops : compute_ops;
     target.push_back(step->construct(ctx));
   }
 
@@ -276,7 +264,7 @@ CUDA equivalent:
 
 **Note:** This extends the RuntimeStream.md contract, which currently states "the runtime does not check for stream-to-stream dependencies" and delegates cross-stream coordination to `registerHostCallback`. Events promote inter-stream synchronization from a user-managed callback pattern to a Scheduler-native primitive. `registerHostCallback` remains available for ad-hoc coordination.
 
-Streams using `EventSignalOp`/`EventWaitOp` must use `STRICT_ORDERING` mode. In `OP_ORDERING` mode, the Scheduler issues operations without waiting for prior completions — a signal could fire before preceding device work actually completes, violating synchronization semantics.
+`EventSignalOp` and `EventWaitOp` carry an implicit barrier. Before a signal fires, the Scheduler must ensure all prior operations on that stream have completed, regardless of whether the stream is in `STRICT_ORDERING` or `OP_ORDERING` mode. This means events can be used on streams of either ordering mode without the caller needing to be aware of the distinction.
 
 The Scheduler must be updated to handle `EventSignalOp` and `EventWaitOp` without deadlocking. The required behavioral changes:
 
@@ -312,7 +300,7 @@ Errors surface to torch-spyre via `synchronize()` on either stream.
 | Property | Assessment |
 |----------|-----------|
 | New runtime types | 3 classes (~80 lines: Event, EventSignalOp, EventWaitOp) |
-| Scheduler changes | Round-robin + skip-on-blocked + deadlock detection |
+| Scheduler changes | Round-robin + skip-on-blocked + implicit barrier on EventSignalOp + deadlock detection |
 | Pre-enqueue all ops | **Yes** — matches existing `SpyreStream::launch()` pattern |
 | Thread safety | Atomics only (in Scheduler); no mutexes at torch-spyre level |
 | Backpressure | Expressed declaratively in-stream via reverse events |
@@ -323,8 +311,8 @@ Errors surface to torch-spyre via `synchronize()` on either stream.
 
 ## CUDA Comparison
 
-| CUDA | Option 2 (Events) | Option 1 (Host Callbacks) |
-|------|-------------------|--------------------------|
+| CUDA | Option 2 (Events) | Alternative Considered (Host Callbacks) |
+|------|-------------------|----------------------------------------|
 | `cudaStream_t` | `RuntimeStream*` | `RuntimeStream*` |
 | `cudaEvent_t` | `Event` (shared_ptr) | N/A — no equivalent |
 | `cudaEventCreate()` | `std::make_shared<Event>()` | N/A |
@@ -352,6 +340,7 @@ Errors surface to torch-spyre via `synchronize()` on either stream.
 | Error propagation | Poisoned event fails the waiting stream |
 | Event per-launch freshness | Fresh LaunchContext per launch means events are always new (no reset needed) |
 | Single-stream fallback | EventSignalOp/EventWaitOp on the same stream work (signal already set when wait reached) |
+| Adversarial scheduling | Leverage adversarial scheduling to flush out concurrency bugs in event signal/wait and deadlock detection logic |
 
 ### Integration Tests (torch-spyre level)
 
@@ -359,7 +348,7 @@ Errors surface to torch-spyre via `synchronize()` on either stream.
 |------|-----------|
 | Multi-stream program correction | Tiled workload with host compute on Stream A, DMA+compute on Stream B produces correct results |
 | Single-iteration multi-stream | Non-tiled JobPlan with host compute still works correctly |
-| Fallback path | JobPlan without HostCompute hints uses single-stream (no regression) |
+| Fallback path | JobPlan without host compute steps uses single-stream (no regression) |
 | Correctness under overlap | Results identical whether multi-stream or single-stream (determinism) |
 | Backpressure correctness | With K=1, execution is effectively serial; results still correct |
 
@@ -371,11 +360,11 @@ Errors surface to torch-spyre via `synchronize()` on either stream.
 | Overhead of events | Micro-benchmark: throughput of Signal+Wait pairs vs. no synchronization |
 | Backpressure tuning | Sweep K values, measure throughput vs. memory usage |
 
-### Testability: Option 1 vs Option 2
-
-**Option 1 (Host Callbacks):** Tests must account for non-deterministic timing. Operations appear on Stream B only when callbacks fire, which depends on thread scheduling. Reproducing failures requires careful synchronization in test harnesses. Race conditions between callback execution and stream queries make assertions fragile.
+### Testability
 
 **Option 2 (Events):** Tests are fully deterministic. All operations are submitted upfront — the execution order is a function of the plan, not thread scheduling. A given JobPlan always produces the same stream contents, making tests reproducible, debuggable, and CI-stable.
+
+For reference, the Alternative Considered (Host Callbacks) approach would require tests to account for non-deterministic timing, since operations appear on Stream B only when callbacks fire. Race conditions between callback execution and stream queries make assertions fragile.
 
 ---
 
@@ -392,14 +381,13 @@ Errors surface to torch-spyre via `synchronize()` on either stream.
 | Testability | Events | Deterministic execution order; reproducible tests |
 | Profiling | Events | Full static trace visibility |
 | Consumer complexity | Events | Declarative signal/wait vs. manual callback wiring with mutexes |
-| Upfront cost | Callbacks | No new types — but pays ongoing complexity tax at every use site |
 | Hardware forward-compat | Events | API unchanged when hardware events arrive |
 
 ## Scope
 
 **Building:**
 1. flex-runtime: `Event`, `EventSignalOp`, `EventWaitOp` + Scheduler changes + error propagation
-2. torch-spyre (JobPlan): `JobPlanStepEventSignal`, `JobPlanStepEventWait` + `StreamHint` on all steps
+2. torch-spyre (JobPlan): `JobPlanStepEventSignal`, `JobPlanStepEventWait`
 3. torch-spyre (launchJobPlan): Multi-stream dispatch logic
 4. torch-spyre (JobPlanBuilder): Placement of signal/wait steps from SpyreCode commands
 
