@@ -106,7 +106,7 @@ compute_op->registerHostCallback([&slots](void*) { slots.release(); }, nullptr);
 
 ---
 
-## Option 2: Events (New Synchronization Primitives) — Recommended
+## Events (New Synchronization Primitives) — Recommended
 
 ### Concept
 
@@ -311,8 +311,8 @@ Errors surface to torch-spyre via `synchronize()` on either stream.
 
 ## CUDA Comparison
 
-| CUDA | Option 2 (Events) | Alternative Considered (Host Callbacks) |
-|------|-------------------|----------------------------------------|
+| CUDA | Events | Alternative Considered (Host Callbacks) |
+|------|--------|----------------------------------------|
 | `cudaStream_t` | `RuntimeStream*` | `RuntimeStream*` |
 | `cudaEvent_t` | `Event` (shared_ptr) | N/A — no equivalent |
 | `cudaEventCreate()` | `std::make_shared<Event>()` | N/A |
@@ -362,7 +362,7 @@ Errors surface to torch-spyre via `synchronize()` on either stream.
 
 ### Testability
 
-**Option 2 (Events):** Tests are fully deterministic. All operations are submitted upfront — the execution order is a function of the plan, not thread scheduling. A given JobPlan always produces the same stream contents, making tests reproducible, debuggable, and CI-stable.
+**Events:** Tests are fully deterministic. All operations are submitted upfront — the execution order is a function of the plan, not thread scheduling. A given JobPlan always produces the same stream contents, making tests reproducible, debuggable, and CI-stable.
 
 For reference, the Alternative Considered (Host Callbacks) approach would require tests to account for non-deterministic timing, since operations appear on Stream B only when callbacks fire. Race conditions between callback execution and stream queries make assertions fragile.
 
@@ -370,7 +370,7 @@ For reference, the Alternative Considered (Host Callbacks) approach would requir
 
 ## Recommendation
 
-**Option 2 (Events)** is recommended for the following reasons:
+**Events** is recommended for the following reasons:
 
 | Criterion | Winner | Rationale |
 |-----------|--------|-----------|
