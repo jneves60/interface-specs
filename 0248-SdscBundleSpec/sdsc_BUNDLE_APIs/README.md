@@ -6,8 +6,8 @@
 
 | Section | File |
 |---------|------|
-| Overview | [1.1-mlir-overview.md](1.1-mlir-overview.md) |
-| MLIR Bundle API | [1.2-mlir-bundle-api.md](1.2-mlir-bundle-api.md) |
+| Overview | [Overview.md](Overview.md) |
+| MLIR Bundle API | [MLIR-bundle-API.md](MLIR-bundle-API.md) |
 | Bundle Usage Examples | [1.3-mlir-bundle-usage-examples.md](1.3-mlir-bundle-usage-examples.md) |
 | SDSC JSON API | [1.4-mlir-sdsc-json-api.md](1.4-mlir-sdsc-json-api.md) |
 | Schema Validation | [1.5-mlir-schema-validation.md](1.5-mlir-schema-validation.md) |
