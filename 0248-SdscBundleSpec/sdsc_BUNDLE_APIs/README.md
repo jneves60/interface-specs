@@ -37,6 +37,5 @@
 | OperationAttributes | [2.18-json-operationattributes.md](2.18-json-operationattributes.md) |
 | ConstantInfo | [2.19-json-constantinfo.md](2.19-json-constantinfo.md) |
 | Complete Example (JSON) | [2.20-json-complete-example.md](2.20-json-complete-example.md) |
-| Key Differences from Backend Schema | [2.21-json-key-differences.md](2.21-json-key-differences.md) |
 
 ---
