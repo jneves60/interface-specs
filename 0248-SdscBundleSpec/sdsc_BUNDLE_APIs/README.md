@@ -8,8 +8,8 @@
 |---------|------|
 | Overview | [Overview.md](Overview.md) |
 | MLIR Bundle API | [MLIR-bundle-API.md](MLIR-bundle-API.md) |
-| Bundle Usage Examples | [1.3-mlir-bundle-usage-examples.md](1.3-mlir-bundle-usage-examples.md) |
-| SDSC JSON API | [1.4-mlir-sdsc-json-api.md](1.4-mlir-sdsc-json-api.md) |
+| Bundle Usage Examples | [MLIR-bundle-usage-examples.md](MLIR-bundle-usage-examples.md) |
+| SDSC JSON API | [SDSC-json-api.md](SDSC-json-api.md) |
 | Schema Validation | [1.5-mlir-schema-validation.md](1.5-mlir-schema-validation.md) |
 | Padding | [1.6-mlir-padding.md](1.6-mlir-padding.md) |
 | Folding | [1.7-mlir-folding.md](1.7-mlir-folding.md) |
