@@ -67,6 +67,53 @@ The operation **operands** are the SSA variables corresponding to the values to 
 
 The `symbols_ids` must be unique in the bundle i.e., symbols ids cannot be recycled across sdscs that are part of the same bundle (unless they take the same value).
 
+#### `sdscbundle.device_mem_allocate` op
+
+A bundle often needs device memory that is not one of the kernel's inputs or outputs: buffers holding intermediate tensors handed from one SDSC to the next, and scratch space used within an SDSC. `sdscbundle.device_mem_allocate` lets the frontend request such memory from the backend, instead of keeping its address symbolic and having it supplied to the bundle from outside. The requested memory is held for the full `SuperDSC-Bundle`: it is reserved before the first SDSC in the bundle executes and is not deallocated at any intermediate point within the bundle.
+
+```mlir
+%pool = sdscbundle.device_mem_allocate 65536 bytes : index
+```
+
+The operation **returns** the byte address of the first byte of the allocated buffer, as an `index`. This is a device address in the same address space as the start addresses used inside `sdsc.json`, so it can be passed to `sdscbundle.sdsc_execute` as the value of a symbolic start address.
+
+The operation **attributes** are:
+* `size` the size of the requested buffer in bytes. It must be a positive constant; symbolic sizes are not supported. A request can be for up to ~15GB: the memory is carved out of a single memory segment whose maximum size is 16GB, of which 1GB is reserved for backend-generated programs and correction-related tensors.
+
+The operation takes no **operands**.
+
+The requested memory is a single contiguous range, and its contents are undefined at allocation.
+
+##### Lifetime
+
+The allocation lives for the entirety of the kernel. The backend reserves the requested bytes for the whole job, so the buffer is valid from the start of the bundle through the end of its last SDSC, and is released only once the kernel completes. There is no matching deallocate operation, and the backend does not reuse the range for anything else within the kernel. Consequently:
+* the operation should appear in the entry block of the bundle function, outside of any `scf.for`. An allocation written inside a loop still reserves one single buffer, not one buffer per iteration.
+* each `device_mem_allocate` in the bundle gets its own non-overlapping range, so the device memory a bundle requires is the sum of all of its requests, and it is that sum which must stay within the ~15GB budget above. A frontend that wants to reuse space across tensors with non-overlapping live ranges should request a single pool and sub-allocate it itself, as described below.
+
+##### Sub-allocation
+
+Individual buffer addresses are derived from the returned base address by adding a constant offset (`arith.addi`), and the result is passed to `sdscbundle.sdsc_execute` in place of an absolute start address. When a pool is carved up this way the frontend owns its layout: it must ensure that buffers whose live ranges overlap are given disjoint offset ranges, and that each offset satisfies the alignment required by the tensor placed there.
+
+This example allocates a 64KB pool and splits it into four 16KB buffers, reusing the first two as inputs of a later SDSC:
+
+```mlir
+%pool = sdscbundle.device_mem_allocate 65536 bytes : index
+
+%off_0     = arith.constant 0 : index
+%off_16384 = arith.constant 16384 : index
+%off_32768 = arith.constant 32768 : index
+%off_49152 = arith.constant 49152 : index
+
+%addr_0     = arith.addi %pool, %off_0     : index   // sdsc_0 output, sdsc_2 input
+%addr_16384 = arith.addi %pool, %off_16384 : index   // sdsc_1 output, sdsc_2 input
+%addr_32768 = arith.addi %pool, %off_32768 : index   // sdsc_2 output, sdsc_3 input
+%addr_49152 = arith.addi %pool, %off_49152 : index   // sdsc_3 scratch
+
+sdscbundle.sdsc_execute (%arg_0, %addr_0) {sdsc_filename="sdsc_0.json", symbol_ids=[-1, -2]}
+sdscbundle.sdsc_execute (%arg_1, %addr_16384) {sdsc_filename="sdsc_1.json", symbol_ids=[-3, -4]}
+sdscbundle.sdsc_execute (%addr_0, %addr_16384, %addr_32768) {sdsc_filename="sdsc_2.json", symbol_ids=[-5, -6, -7]}
+sdscbundle.sdsc_execute (%addr_32768, %addr_49152, %arg_2) {sdsc_filename="sdsc_3.json", symbol_ids=[-8, -9, -10]}
+```
 
 #### Loops
 Loops are represented using [`scf.for`](https://mlir.llvm.org/docs/Dialects/SCFDialect/#scffor-scfforop) operation borrowed from MLIR's SCF dialect. This allows SuperDSC-Bundle to describe complex kernels with multiple levels of loops and multiple SDSCs.
