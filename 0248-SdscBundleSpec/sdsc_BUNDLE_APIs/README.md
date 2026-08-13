@@ -12,7 +12,6 @@
 | Complete Example (MLIR) | [MLIR-complete-example.md](MLIR-complete-example.md) |
 | SDSC JSON API | [SDSC-json-api.md](SDSC-json-api.md) |
 | Object Hierarchy | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) |
-| Schema Validation | [schema-validation.md](schema-validation.md) |
 | Padding | [padding.md](padding.md) |
 | Folding | [folding.md](folding.md) |
 | Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |
@@ -34,6 +33,7 @@
 | OperationAttributes | [operationattributes.md](operationattributes.md) |
 | ConstantInfo | [constantinfo.md](constantinfo.md) |
 | Complete Example (JSON) | [complete-example.md](complete-example.md) |
+| Schema Validation | [schema-validation.md](schema-validation.md) |
 | Error Handling | [error-handling.md](error-handling.md) |
 | Best Practices | [best-practices.md](best-practices.md) |
 | Reference Documents & Glossary | [reference.md](reference.md) |
