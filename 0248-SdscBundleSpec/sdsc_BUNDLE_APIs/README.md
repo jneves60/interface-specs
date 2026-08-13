@@ -12,30 +12,30 @@
 | Complete Example (MLIR) | [MLIR-complete-example.md](MLIR-complete-example.md) |
 | SDSC JSON API | [SDSC-json-api.md](SDSC-json-api.md) |
 | Object Hierarchy | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) |
-| Schema Validation | [1.5-mlir-schema-validation.md](1.5-mlir-schema-validation.md) |
-| Padding | [1.6-mlir-padding.md](1.6-mlir-padding.md) |
-| Folding | [1.7-mlir-folding.md](1.7-mlir-folding.md) |
-| Stick Layout Constraints | [1.8-mlir-stick-layout-constraints.md](1.8-mlir-stick-layout-constraints.md) |
-| Error Handling | [1.9-mlir-error-handling.md](1.9-mlir-error-handling.md) |
-| Best Practices | [1.10-mlir-best-practices.md](1.10-mlir-best-practices.md) |
-| Reference Documents & Glossary | [1.11-mlir-reference.md](1.11-mlir-reference.md) |
-| Root Structure | [2.3-json-root-structure.md](2.3-json-root-structure.md) |
-| SuperDsc Object | [2.4-json-superdsc-object.md](2.4-json-superdsc-object.md) |
-| FoldProperty | [2.5-json-foldproperty.md](2.5-json-foldproperty.md) |
-| FoldManager | [2.6-json-foldmanager.md](2.6-json-foldmanager.md) |
-| WrappedDesignSpaceConfig | [2.7-json-wrappeddesignspaceconfig.md](2.7-json-wrappeddesignspaceconfig.md) |
-| DesignSpaceConfig | [2.8-json-designspaceconfig.md](2.8-json-designspaceconfig.md) |
-| DataStructDims | [2.9-json-datastructdims.md](2.9-json-datastructdims.md) |
-| DataStageParam | [2.10-json-datastageparam.md](2.10-json-datastageparam.md) |
-| PrimaryDsInfo | [2.11-json-primarydsinfo.md](2.11-json-primarydsinfo.md) |
-| ScheduleTreeNode | [2.12-json-scheduletreenode.md](2.12-json-scheduletreenode.md) |
-| CoordinateContainer | [2.13-json-coordinatecontainer.md](2.13-json-coordinatecontainer.md) |
-| CoordinateInfo | [2.14-json-coordinateinfo.md](2.14-json-coordinateinfo.md) |
-| LabeledDataStructure | [2.15-json-labeleddatastructure.md](2.15-json-labeleddatastructure.md) |
-| MemoryOrganization | [2.16-json-memoryorganization.md](2.16-json-memoryorganization.md) |
-| ComputeOperation | [2.17-json-computeoperation.md](2.17-json-computeoperation.md) |
-| OperationAttributes | [2.18-json-operationattributes.md](2.18-json-operationattributes.md) |
-| ConstantInfo | [2.19-json-constantinfo.md](2.19-json-constantinfo.md) |
-| Complete Example (JSON) | [2.20-json-complete-example.md](2.20-json-complete-example.md) |
+| Schema Validation | [schema-validation.md](schema-validation.md) |
+| Padding | [padding.md](padding.md) |
+| Folding | [folding.md](folding.md) |
+| Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |
+| Error Handling | [error-handling.md](error-handling.md) |
+| Best Practices | [best-practices.md](best-practices.md) |
+| Reference Documents & Glossary | [reference.md](reference.md) |
+| Root Structure | [root-structure.md](root-structure.md) |
+| SuperDsc Object | [superdsc-object.md](superdsc-object.md) |
+| FoldProperty | [foldproperty.md](foldproperty.md) |
+| FoldManager | [foldmanager.md](foldmanager.md) |
+| WrappedDesignSpaceConfig | [wrappeddesignspaceconfig.md](wrappeddesignspaceconfig.md) |
+| DesignSpaceConfig | [designspaceconfig.md](designspaceconfig.md) |
+| DataStructDims | [datastructdims.md](datastructdims.md) |
+| DataStageParam | [datastageparam.md](datastageparam.md) |
+| PrimaryDsInfo | [primarydsinfo.md](primarydsinfo.md) |
+| ScheduleTreeNode | [scheduletreenode.md](scheduletreenode.md) |
+| CoordinateContainer | [coordinatecontainer.md](coordinatecontainer.md) |
+| CoordinateInfo | [coordinateinfo.md](coordinateinfo.md) |
+| LabeledDataStructure | [labeleddatastructure.md](labeleddatastructure.md) |
+| MemoryOrganization | [memoryorganization.md](memoryorganization.md) |
+| ComputeOperation | [computeoperation.md](computeoperation.md) |
+| OperationAttributes | [operationattributes.md](operationattributes.md) |
+| ConstantInfo | [constantinfo.md](constantinfo.md) |
+| Complete Example (JSON) | [complete-example.md](complete-example.md) |
 
 ---
