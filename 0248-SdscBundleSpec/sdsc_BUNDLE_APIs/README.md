@@ -16,9 +16,6 @@
 | Padding | [padding.md](padding.md) |
 | Folding | [folding.md](folding.md) |
 | Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |
-| Error Handling | [error-handling.md](error-handling.md) |
-| Best Practices | [best-practices.md](best-practices.md) |
-| Reference Documents & Glossary | [reference.md](reference.md) |
 | Root Structure | [root-structure.md](root-structure.md) |
 | SuperDsc Object | [superdsc-object.md](superdsc-object.md) |
 | FoldProperty | [foldproperty.md](foldproperty.md) |
@@ -37,5 +34,8 @@
 | OperationAttributes | [operationattributes.md](operationattributes.md) |
 | ConstantInfo | [constantinfo.md](constantinfo.md) |
 | Complete Example (JSON) | [complete-example.md](complete-example.md) |
+| Error Handling | [error-handling.md](error-handling.md) |
+| Best Practices | [best-practices.md](best-practices.md) |
+| Reference Documents & Glossary | [reference.md](reference.md) |
 
 ---
