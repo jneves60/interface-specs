@@ -18,7 +18,6 @@
 | 1.10 | SuperDSC-Bundle MLIR API | Best Practices | [1.10-mlir-best-practices.md](1.10-mlir-best-practices.md) |
 | 1.11 | SuperDSC-Bundle MLIR API | Reference Documents & Glossary | [1.11-mlir-reference.md](1.11-mlir-reference.md) |
 | 1.12 | SuperDSC-Bundle MLIR API | Complete Example (MLIR) | [1.12-mlir-complete-example.md](1.12-mlir-complete-example.md) |
-| 2.1 | SDSC Bundle JSON Schema API | Overview & Schema Validation | [2.1-json-overview.md](2.1-json-overview.md) |
 | 2.2 | SDSC Bundle JSON Schema API | Object Hierarchy | [2.2-json-object-hierarchy.md](2.2-json-object-hierarchy.md) |
 | 2.3 | SDSC Bundle JSON Schema API | Root Structure | [2.3-json-root-structure.md](2.3-json-root-structure.md) |
 | 2.4 | SDSC Bundle JSON Schema API | SuperDsc Object | [2.4-json-superdsc-object.md](2.4-json-superdsc-object.md) |
