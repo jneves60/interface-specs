@@ -10,6 +10,7 @@
 | MLIR Bundle API | [MLIR-bundle-API.md](MLIR-bundle-API.md) |
 | Bundle Usage Examples | [MLIR-bundle-usage-examples.md](MLIR-bundle-usage-examples.md) |
 | SDSC JSON API | [SDSC-json-api.md](SDSC-json-api.md) |
+| Object Hierarchy | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) |
 | Schema Validation | [1.5-mlir-schema-validation.md](1.5-mlir-schema-validation.md) |
 | Padding | [1.6-mlir-padding.md](1.6-mlir-padding.md) |
 | Folding | [1.7-mlir-folding.md](1.7-mlir-folding.md) |
@@ -18,7 +19,6 @@
 | Best Practices | [1.10-mlir-best-practices.md](1.10-mlir-best-practices.md) |
 | Reference Documents & Glossary | [1.11-mlir-reference.md](1.11-mlir-reference.md) |
 | Complete Example (MLIR) | [1.12-mlir-complete-example.md](1.12-mlir-complete-example.md) |
-| Object Hierarchy | [2.2-json-object-hierarchy.md](2.2-json-object-hierarchy.md) |
 | Root Structure | [2.3-json-root-structure.md](2.3-json-root-structure.md) |
 | SuperDsc Object | [2.4-json-superdsc-object.md](2.4-json-superdsc-object.md) |
 | FoldProperty | [2.5-json-foldproperty.md](2.5-json-foldproperty.md) |

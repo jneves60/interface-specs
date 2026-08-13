@@ -30,7 +30,7 @@ Each `dsc_` entry consists of some leaf (final) fields and a few composite (non-
 
 ## Object Hierarchy
 
-See [14-json-object-hierarchy.md](2.2-json-object-hierarchy.md) for the full hierarchy diagram.
+See [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) for the full hierarchy diagram.
 
 ## Root Structure
 
@@ -158,5 +158,5 @@ Specifies details of compute operation to be performed on the tensors at the dev
 
 ---
 
-| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: Schema Validation →](1.5-mlir-schema-validation.md) |
+| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: Object Hierarchy →](JSON-object-Hierarchy.md) |
 |:--|:--:|--:|
