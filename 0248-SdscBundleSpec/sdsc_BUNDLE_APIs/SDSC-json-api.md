@@ -32,10 +32,6 @@ Each `dsc_` entry consists of some leaf (final) fields and a few composite (non-
 
 See [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) for the full hierarchy diagram.
 
-## Root Structure
-
-See [root-structure.md](root-structure.md) for details.
-
 ## SuperDsc Object
 
 See [superdsc-object.md](superdsc-object.md) for the complete field reference.

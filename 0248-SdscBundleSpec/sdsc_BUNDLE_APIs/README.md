@@ -16,7 +16,6 @@
 | Padding | [padding.md](padding.md) |
 | Folding | [folding.md](folding.md) |
 | Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |
-| Root Structure | [root-structure.md](root-structure.md) |
 | FoldProperty | [foldproperty.md](foldproperty.md) |
 | FoldManager | [foldmanager.md](foldmanager.md) |
 | WrappedDesignSpaceConfig | [wrappeddesignspaceconfig.md](wrappeddesignspaceconfig.md) |

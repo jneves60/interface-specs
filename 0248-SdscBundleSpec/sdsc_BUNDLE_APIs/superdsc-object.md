@@ -9,9 +9,10 @@ per-operation compute configurations.
 
 ## Context
 
-A `SuperDsc` object is the value of the single top-level operation-name key
-in an SDSC JSON file. See [Root Structure](root-structure.md) for the
-wrapping pattern.
+A `SuperDsc` object is the value of the single top-level key in an SDSC JSON
+file. That key is the operation name and must match the pattern
+`^[a-zA-Z0-9_/\-][a-zA-Z0-9_/\-]*$`. Each JSON file contains exactly one
+such key (`minProperties: 1`, `additionalProperties: false`).
 
 ```json
 {
