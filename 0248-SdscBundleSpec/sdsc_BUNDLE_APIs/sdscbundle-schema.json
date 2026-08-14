@@ -534,7 +534,7 @@
     },
     "LabeledDataStructure": {
       "type": "object",
-      "description": "Labeled data structure definition",
+      "description": "Labeled data structure definition. Describes a single physical tensor (input, output, kernel, or index tensor) used by a DesignSpaceConfig. Both input and output tensors must appear in labeledDs_. Referenced from ScheduleTreeNode.ldsIdx_ and from computeOp_ as '<dsName_>-idx<ldsIdx_>'.",
       "required": ["ldsIdx_", "dsName_", "dsType_", "dataFormat_", "memOrg_"],
       "properties": {
         "ldsIdx_": {
@@ -544,7 +544,7 @@
         },
         "dsName_": {
           "type": "string",
-          "description": "Data structure name"
+          "description": "Unique tensor name within the DSC. Compute ops reference this tensor as '<dsName_>-idx<ldsIdx_>' (e.g. 'convolution-Tensor0-idx0')."
         },
         "dsType_": {
           "type": "string",
@@ -568,21 +568,28 @@
         },
         "memOrg_": {
           "type": "object",
-          "description": "Memory organization",
+          "description": "Memory organization — specifies which memories (HBM, LX scratchpad) hold this tensor.",
           "properties": {
             "hbm": {
               "type": "object",
+              "description": "High Bandwidth Memory presence",
+              "required": ["isPresent"],
               "properties": {
-                "isPresent": {"type": "integer", "enum": [0, 1]}
-              }
+                "isPresent": {"type": "integer", "enum": [0, 1], "description": "1 = tensor resides in HBM, 0 = absent"}
+              },
+              "additionalProperties": false
             },
             "lx": {
               "type": "object",
+              "description": "LX scratchpad presence",
+              "required": ["isPresent"],
               "properties": {
-                "isPresent": {"type": "integer", "enum": [0, 1]}
-              }
+                "isPresent": {"type": "integer", "enum": [0, 1], "description": "1 = tensor resides in LX scratchpad, 0 = absent"}
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
