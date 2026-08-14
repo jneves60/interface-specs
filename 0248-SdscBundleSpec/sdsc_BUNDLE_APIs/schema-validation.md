@@ -4,7 +4,7 @@
 
 This document describes the JSON structure for SDSC Bundle format as defined in `sdscbundle-schema.json`. This schema covers only fields described in [sdscbundle-schema.json](sdscbundle-schema.json). Furthermore, the aforementioned schema follows the JSON standard as described in [JSON Schema](https://json-schema.org/learn/getting-started-step-by-step). The structure is based on [draft 2020-12](https://json-schema.org/draft/2020-12).
 
-**Important**: This schema represents what the **frontend (torch-spyre)** is allowed to produce to drive the **backend compiler**.
+**Important**: This schema represents what the **frontend ([torch-spyre](https://torch-spyre.readthedocs.io/))** is allowed to produce to drive the **backend compiler**.
 
 SuperDSC or SuperDSC Bundle is the interface between torch-spyre and the backend compiler. To ensure the SuperDSC contract is well maintained and easily verifiable we propose a framework to perform SDSC validation outside the bounds of the backend compiler. Such validation engines can be plugged into torch-spyre, maintained separately or added as modules in other verification frameworks like [Torch-Spyre Mock Device RFC](https://ibm.ent.box.com/notes/2163908442337?s=ykg1smqadxrcp9julyyj3pse0sg7rrq7).
 
