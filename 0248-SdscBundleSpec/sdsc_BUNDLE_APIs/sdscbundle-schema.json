@@ -121,17 +121,17 @@
     },
     "FoldProperty": {
       "type": "object",
-      "description": "Fold property with factor and label",
+      "description": "Pairs a fold factor with a memory hierarchy level label. Used in SuperDsc (coreFoldProp_, coreletFoldProp_, sdscFoldProps_) and FoldManager (dim_prop_attr) to describe how data is partitioned across cores, corelets, and time steps.",
       "required": ["factor_", "label_"],
       "properties": {
         "factor_": {
           "type": "integer",
-          "description": "Fold factor",
+          "description": "Number of equal slices the dimension is divided into at this fold level. 1 = no splitting.",
           "minimum": 1
         },
         "label_": {
           "type": "string",
-          "description": "Fold label (e.g., 'core', 'corelet', 'time')"
+          "description": "Memory hierarchy level name (e.g. 'core', 'corelet', 'time', 'core_fold', 'elem_arr_0')."
         }
       },
       "additionalProperties": false
