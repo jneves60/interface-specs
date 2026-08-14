@@ -82,4 +82,5 @@ Labeled data structure definition.
 
 ---
 
-[← Back to Table of Contents](README.md)
+| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: MemoryOrganization →](memoryorganization.md) |
+|:--|:--:|--:|

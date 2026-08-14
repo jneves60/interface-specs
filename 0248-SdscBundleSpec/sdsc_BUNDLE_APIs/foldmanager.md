@@ -80,4 +80,5 @@ Fold manager for multi-dimensional data access.
 
 ---
 
-[← Back to Table of Contents](README.md)
+| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: WrappedDesignSpaceConfig →](wrappeddesignspaceconfig.md) |
+|:--|:--:|--:|

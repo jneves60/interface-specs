@@ -61,4 +61,5 @@ Constant information.
 
 ---
 
-[← Back to Table of Contents](README.md)
+| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: Complete Example (JSON) →](complete-example.md) |
+|:--|:--:|--:|

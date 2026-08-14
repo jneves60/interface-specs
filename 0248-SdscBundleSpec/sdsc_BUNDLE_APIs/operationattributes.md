@@ -19,4 +19,5 @@ Operation attributes.
 
 ---
 
-[← Back to Table of Contents](README.md)
+| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: ConstantInfo →](constantinfo.md) |
+|:--|:--:|--:|

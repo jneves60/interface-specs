@@ -160,4 +160,5 @@ The following table lists operations that torch-spyre can generate in SDSC bundl
 
 ---
 
-[← Back to Table of Contents](README.md)
+| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: OperationAttributes →](operationattributes.md) |
+|:--|:--:|--:|

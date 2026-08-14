@@ -30,4 +30,5 @@ DSC wrapped in operation name key — used in `dscs_` array.
 
 ---
 
-[← Back to Table of Contents](README.md)
+| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: DesignSpaceConfig →](designspaceconfig.md) |
+|:--|:--:|--:|

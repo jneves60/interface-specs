@@ -35,4 +35,5 @@ The root of an SDSC Bundle JSON file uses a **pattern property** where the key i
 
 ---
 
-[← Back to Table of Contents](README.md)
+| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: SuperDsc Object →](superdsc-object.md) |
+|:--|:--:|--:|
