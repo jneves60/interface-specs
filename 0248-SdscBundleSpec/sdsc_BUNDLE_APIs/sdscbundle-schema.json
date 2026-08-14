@@ -265,24 +265,25 @@
         },
         "primaryDsInfo_": {
           "type": "object",
-          "description": "Per-tensor-type layout info. Each value has layoutDimOrder_, stickDimOrder_, and stickSize_.",
+          "description": "Physical memory layout per tensor role (INPUT, OUTPUT, KERNEL, KERNEL_IDX). Each key is an uppercase tensor-role label; the value is a PrimaryDsInfo object specifying layout order, stick dimensions, and stick sizes. Keys must match dsType_ values used in labeledDs_.",
           "patternProperties": {
             "^[A-Z_]+$": {
               "type": "object",
+              "description": "Layout information for one tensor role. layoutDimOrder_ lists dimensions outermost-first; stickDimOrder_ and stickSize_ are parallel arrays defining the innermost contiguous storage tile.",
               "properties": {
                 "layoutDimOrder_": {
                   "type": "array",
-                  "description": "Layout dimension order",
+                  "description": "Ordered list of dimension names describing how the tensor is laid out in memory, outermost first. Dimension names must match those declared in DataStructDims.",
                   "items": {"type": "string"}
                 },
                 "stickDimOrder_": {
                   "type": "array",
-                  "description": "Stick dimension order",
+                  "description": "The innermost contiguous dimensions that form a stick — the atomic unit of storage transfer. Must be a suffix subset of layoutDimOrder_. Parallel to stickSize_.",
                   "items": {"type": "string"}
                 },
                 "stickSize_": {
                   "type": "array",
-                  "description": "Stick sizes",
+                  "description": "Size of each stick dimension in elements. Parallel to stickDimOrder_: stickSize_[i] is the element count for stickDimOrder_[i].",
                   "items": {"type": "integer", "minimum": 1}
                 }
               }
@@ -419,44 +420,44 @@
     },
     "ScheduleTreeNode": {
       "type": "object",
-      "description": "Schedule tree node for memory allocation or data movement",
+      "description": "One step in the ordered execution plan for a DesignSpaceConfig. Each node allocates a tensor in a specific memory component. Nodes are linked by prev_ to form a dependency chain and reference tensors via ldsIdx_ into labeledDs_.",
       "required": ["nodeType_", "name_"],
       "properties": {
         "nodeType_": {
           "type": "string",
-          "description": "Node type",
+          "description": "Type of schedule node. Currently only 'allocate' is supported.",
           "enum": ["allocate"]
         },
         "name_": {
           "type": "string",
-          "description": "Node name"
+          "description": "Unique identifier for this node within the scheduleTree_ array. Referenced by other nodes via prev_."
         },
         "prev_": {
           "type": "string",
-          "description": "Previous node name"
+          "description": "Name of the predecessor node, establishing execution ordering. Omit for the first node in the tree."
         },
         "ldsIdx_": {
           "type": "integer",
-          "description": "Labeled data structure index",
+          "description": "Zero-based index into the parent labeledDs_ array identifying which tensor this node allocates. See LabeledDataStructure.",
           "minimum": 0
         },
         "component_": {
           "type": "string",
-          "description": "Memory component",
+          "description": "Target memory component for the allocation. 'hbm' = high-bandwidth memory; 'lx' = LX scratchpad.",
           "enum": ["hbm", "lx"]
         },
         "layoutDimOrder_": {
           "type": "array",
-          "description": "Layout dimension order",
+          "description": "Physical memory layout order for this allocation, outermost first. Overrides the global primaryDsInfo_ layout when present.",
           "items": {"type": "string"}
         },
         "maxDimSizes_": {
           "type": "array",
-          "description": "Maximum dimension sizes",
+          "description": "Maximum element count per dimension, parallel to layoutDimOrder_. Used to size the allocated buffer.",
           "items": {"type": "integer"}
         },
         "isStartAddrSymbolic_": {
-          "description": "Whether start addresses are symbolic (boolean true/false or integer 1/0)",
+          "description": "When true, start addresses are expressed as symbolic values rather than concrete byte offsets. Written by the backend compiler when symbolic addressing is required. Accepts boolean true/false or integer 1/0.",
           "oneOf": [
             {"type": "boolean"},
             {"type": "integer", "enum": [0, 1]}
@@ -464,11 +465,11 @@
         },
         "startAddressCoreCorelet_": {
           "$ref": "#/$defs/FoldManager",
-          "description": "Start address per core/corelet"
+          "description": "Per-core / per-corelet start address for this allocation, encoded as a FoldManager. See FoldManager for the full encoding."
         },
         "backGapCore_": {
           "type": "object",
-          "description": "Back gaps in number of elements per dimension per core - written conditionally if tensor.backGap is True",
+          "description": "Back-gap size in elements per dimension per core. Written by the backend compiler when tensor.backGap is true. Outer key is a dimension name; inner key is a core ID (as a decimal string); value is the gap size as a decimal string.",
           "patternProperties": {
             "^[A-Za-z_][A-Za-z0-9_]*$": {
               "type": "object",
@@ -478,13 +479,25 @@
             }
           }
         },
+        "padding_": {
+          "type": "object",
+          "description": "Padding parameters for this allocation. Written by the backend compiler when the tensor requires memory padding beyond its logical size."
+        },
+        "indirectAllocType_": {
+          "type": "string",
+          "description": "Indirect allocation type tag. Present when this node participates in an indirect-access allocation pattern."
+        },
+        "relatedIndirectAccessAlloc_": {
+          "type": "string",
+          "description": "Name of the related indirect-access allocation node. Must match another node's name_ field, linking this node to its paired indirect access entry."
+        },
         "coordinates_": {
           "type": "object",
-          "description": "Coordinate information",
+          "description": "Spatial tiling coordinates for this allocation. Groups per-dimension CoordinateInfo alongside the coreIdToWkSlice_ mapping. See CoordinateContainer.",
           "properties": {
             "coordInfo": {
               "type": "object",
-              "description": "Coordinate info per dimension",
+              "description": "Per-dimension coordinate information. Keys are dimension names (pattern ^[a-z_][a-z0-9_]*$). Each value is a CoordinateInfo object.",
               "patternProperties": {
                 "^[a-z_][a-z0-9_]*$": {
                   "$ref": "#/$defs/CoordinateInfo"
@@ -493,7 +506,7 @@
             },
             "coreIdToWkSlice_": {
               "type": "object",
-              "description": "Core ID to work slice mapping"
+              "description": "Maps each core ID (as a string integer key) to a map of dimension name → work-slice index assigned to that core for that dimension."
             }
           }
         }
