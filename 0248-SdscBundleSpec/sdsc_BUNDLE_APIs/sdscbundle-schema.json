@@ -96,13 +96,13 @@
         },
         "coreIdToDscSchedule": {
           "type": "object",
-          "description": "Per-core DSC scheduling information",
+          "description": "Per-core execution schedule. Each value is an array of step tuples [datadsc_idx, dldsc_idx, before_sync, after_sync]: data DSC index, data-load DSC index, barrier before step (0=none), barrier after step (0=none).",
           "patternProperties": {
             "^[0-9]+$": {
               "type": "array",
               "items": {
                 "type": "array",
-                "description": "[datadsc_idx, dldsc_idx, before_sync, after_sync]",
+                "description": "Step tuple: [datadsc_idx, dldsc_idx, before_sync, after_sync]",
                 "minItems": 4,
                 "maxItems": 4,
                 "items": {"type": "integer"}
