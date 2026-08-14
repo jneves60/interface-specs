@@ -683,21 +683,21 @@
     },
     "ConstantInfo": {
       "type": "object",
-      "description": "Constant information - written by generate_constant_info()",
+      "description": "Named typed constant used by a DesignSpaceConfig operation (e.g. scaling factor, clip bound). Value is encoded as a FoldManager so it can vary per-core or per-time-step. Appears as values of constantInfo_ in DesignSpaceConfig, keyed by string integer.",
       "required": ["name_", "dataFormat_", "data_"],
       "properties": {
         "name_": {
           "type": "string",
-          "description": "Constant name"
+          "description": "Unique constant name within the DSC (e.g. 'scaling_factor', 'eps'). Referenced by operations that consume it."
         },
         "dataFormat_": {
           "type": "string",
-          "description": "Data format",
+          "description": "Numeric format of the constant elements. Must match the data format of the tensors the constant is applied to.",
           "enum": ["SEN169_FP16", "SEN169_BFP16", "SEN169_FP32", "SEN169_INT8", "SEN169_INT16", "SEN169_INT32"]
         },
         "data_": {
           "$ref": "#/$defs/FoldManager",
-          "description": "Constant data using FoldManager"
+          "description": "Constant value(s) encoded as a fold structure. Allows different values per-core or per-time-step."
         }
       },
       "additionalProperties": false
