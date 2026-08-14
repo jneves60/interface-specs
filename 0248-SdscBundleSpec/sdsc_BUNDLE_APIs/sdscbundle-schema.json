@@ -532,6 +532,26 @@
       },
       "additionalProperties": false
     },
+    "MemorySlot": {
+      "type": "object",
+      "description": "Memory slot presence and padding flags for a single memory type (HBM or LX).",
+      "required": ["isPresent"],
+      "properties": {
+        "isPresent":    {"type": "integer", "enum": [0, 1], "description": "1 = tensor resides in this memory, 0 = absent"},
+        "isPadded":     {"type": "integer", "enum": [0, 1], "description": "1 = allocation includes padding. See DimPaddingSizes for padding details."},
+        "isZeroPadded": {"type": "integer", "enum": [0, 1], "description": "1 = padded region is zero-filled. Only meaningful when isPadded is 1."}
+      },
+      "additionalProperties": false
+    },
+    "MemoryOrganization": {
+      "type": "object",
+      "description": "Memory residency specification for a tensor. Controls whether the tensor is allocated in High Bandwidth Memory (HBM), the per-core LX scratchpad, or both. Appears as memOrg_ inside LabeledDataStructure.",
+      "properties": {
+        "hbm": {"$ref": "#/$defs/MemorySlot", "description": "High Bandwidth Memory slot."},
+        "lx":  {"$ref": "#/$defs/MemorySlot", "description": "LX per-core local scratchpad slot."}
+      },
+      "additionalProperties": false
+    },
     "LabeledDataStructure": {
       "type": "object",
       "description": "Labeled data structure definition. Describes a single physical tensor (input, output, kernel, or index tensor) used by a DesignSpaceConfig. Both input and output tensors must appear in labeledDs_. Referenced from ScheduleTreeNode.ldsIdx_ and from computeOp_ as '<dsName_>-idx<ldsIdx_>'.",
@@ -567,29 +587,8 @@
           "enum": ["SEN169_FP16", "SEN169_BFP16", "SEN169_FP32", "SEN169_INT8", "SEN169_INT16", "SEN169_INT32"]
         },
         "memOrg_": {
-          "type": "object",
-          "description": "Memory organization — specifies which memories (HBM, LX scratchpad) hold this tensor.",
-          "properties": {
-            "hbm": {
-              "type": "object",
-              "description": "High Bandwidth Memory presence",
-              "required": ["isPresent"],
-              "properties": {
-                "isPresent": {"type": "integer", "enum": [0, 1], "description": "1 = tensor resides in HBM, 0 = absent"}
-              },
-              "additionalProperties": false
-            },
-            "lx": {
-              "type": "object",
-              "description": "LX scratchpad presence",
-              "required": ["isPresent"],
-              "properties": {
-                "isPresent": {"type": "integer", "enum": [0, 1], "description": "1 = tensor resides in LX scratchpad, 0 = absent"}
-              },
-              "additionalProperties": false
-            }
-          },
-          "additionalProperties": false
+          "$ref": "#/$defs/MemoryOrganization",
+          "description": "Memory organization — specifies which memories (HBM, LX scratchpad) hold this tensor."
         }
       },
       "additionalProperties": false
