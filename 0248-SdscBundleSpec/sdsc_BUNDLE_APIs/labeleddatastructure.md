@@ -1,6 +1,26 @@
 # LabeledDataStructure
 
-Labeled data structure definition.
+A `LabeledDataStructure` describes a single physical tensor used by a
+[`DesignSpaceConfig`](designspaceconfig.md). It carries the tensor's role
+(`INPUT`, `OUTPUT`, `KERNEL`, or `KERNEL_IDX`), data format, per-dimension
+scale factors, word length, and memory residency. Both input and output tensors
+must be listed in `labeledDs_`.
+
+## Context
+
+`LabeledDataStructure` entries appear in the `labeledDs_` array inside each
+[`DesignSpaceConfig`](designspaceconfig.md). The `ldsIdx_` field is the
+zero-based index into that array; [`ScheduleTreeNode`](scheduletreenode.md)
+allocate nodes reference tensors by the same index. Compute operations
+reference individual tensors by the composite name
+`"<dsName_>-idx<ldsIdx_>"` (e.g. `"convolution-Tensor0-idx0"`).
+
+```json
+"labeledDs_": [
+  { <LabeledDataStructure> },
+  ...
+]
+```
 
 ## Required Fields
 
