@@ -138,12 +138,12 @@
     },
     "FoldManager": {
       "type": "object",
-      "description": "Fold manager for multi-dimensional data access",
+      "description": "Encodes a multi-dimensional fold expression mapping loop index tuples (core, corelet, time step) to concrete values (addresses, coordinates, constants). Used in SuperDsc.sdscFolds_, ScheduleTreeNode.startAddressCoreCorelet_, CoordinateInfo.folds, and ConstantInfo.data_.",
       "required": ["dim_prop_func", "dim_prop_attr"],
       "properties": {
         "dim_prop_func": {
           "type": "array",
-          "description": "Dimension property functions (Const, Map, Affine, WkSplit)",
+          "description": "One fold function per dimension (same length as dim_prop_attr). Each element is a single-key object: Const (same value for all indices), Map (lookup in data_), Affine (alpha*index+beta), or WkSplit (work-slice index from coreIdToWkSlice_).",
           "items": {
             "type": "object",
             "properties": {
@@ -152,8 +152,8 @@
               "Affine": {
                 "type": "object",
                 "properties": {
-                  "alpha_": {"type": "integer"},
-                  "beta_": {"type": "integer"}
+                  "alpha_": {"type": "integer", "description": "Affine scale factor"},
+                  "beta_": {"type": "integer", "description": "Affine offset"}
                 }
               },
               "WkSplit": {"type": "object"}
@@ -162,12 +162,12 @@
         },
         "dim_prop_attr": {
           "type": "array",
-          "description": "Dimension property attributes",
+          "description": "One FoldProperty per dimension (same length as dim_prop_func). Gives the fold level label and factor for each dimension.",
           "items": {"$ref": "#/$defs/FoldProperty"}
         },
         "data_": {
           "type": "object",
-          "description": "Data values indexed by fold coordinates",
+          "description": "Lookup table keyed by fold-coordinate tuples (e.g. '[0, 1]'). Values are strings (symbolic or numeric addresses), integers, or arrays of integers. Only needed when dim_prop_func contains Map or Const entries.",
           "patternProperties": {
             "^\\[[0-9, ]+\\]$": {
               "oneOf": [
