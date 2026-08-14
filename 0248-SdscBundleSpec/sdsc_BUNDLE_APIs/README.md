@@ -15,9 +15,9 @@
 | Object Hierarchy | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) |
 | Padding | [padding.md](padding.md) |
 | Folding | [folding.md](folding.md) |
-| Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |
 | FoldProperty | [foldproperty.md](foldproperty.md) |
 | FoldManager | [foldmanager.md](foldmanager.md) |
+| Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |
 | DesignSpaceConfig | [designspaceconfig.md](designspaceconfig.md) |
 | DataStructDims | [datastructdims.md](datastructdims.md) |
 | DataStageParam | [datastageparam.md](datastageparam.md) |
