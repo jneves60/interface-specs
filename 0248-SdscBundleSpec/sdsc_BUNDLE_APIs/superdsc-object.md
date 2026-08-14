@@ -27,8 +27,8 @@ such key (`minProperties: 1`, `additionalProperties: false`).
 }
 ```
 
-Each entry in `dscs_` is a [`WrappedDesignSpaceConfig`](wrappeddesignspaceconfig.md)
-— a single-key object that pairs an operation name with a full
+Each entry in `dscs_` is a single-key object — the key is the operation name
+(same pattern as the bundle root key) and the value is a full
 [`DesignSpaceConfig`](designspaceconfig.md).
 
 ## Structure
@@ -69,7 +69,7 @@ Six fields are required. No additional properties are allowed.
 | `numWkSlicesPerDim_` | map&lt;string, integer&gt; | No | Keys: dim names; values >= 1 | Total number of work slices per dimension across all cores. |
 | `coreIdToWkSlice_` | map&lt;string, map&lt;string, integer&gt;&gt; | No | Outer keys: core IDs; inner keys: dim names; values >= 0 | Maps each core ID to a map of dimension name → work slice index assigned to that core. |
 | `coreIdToDscSchedule` | map&lt;string, array&lt;array&lt;int&gt;&gt;&gt; | Yes | Keys: `^[0-9]+$`; inner arrays: exactly 4 integers | Per-core execution schedule. Each inner array is a step tuple `[datadsc_idx, dldsc_idx, before_sync, after_sync]`: data DSC index, data-load DSC index, barrier before step (0 = none), barrier after step (0 = none). |
-| `dscs_` | array of [WrappedDesignSpaceConfig](wrappeddesignspaceconfig.md) | Yes | >= 1 item | Array of Design Space Configurations. Each entry is a single-key object pairing an operation name with a `DesignSpaceConfig`. |
+| `dscs_` | array of object | Yes | >= 1 item | Array of Design Space Configurations. Each entry is a single-key object `{"<op_name>": <DesignSpaceConfig>}` — see [`DesignSpaceConfig`](designspaceconfig.md). |
 
 **Note on field naming:** `coreIdToDscSchedule` lacks the trailing underscore used by most other
 fields. The serialized key in the JSON bundle is `coreIdToDscSchedule` (no underscore) — this

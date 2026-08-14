@@ -18,7 +18,6 @@
 | Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |
 | FoldProperty | [foldproperty.md](foldproperty.md) |
 | FoldManager | [foldmanager.md](foldmanager.md) |
-| WrappedDesignSpaceConfig | [wrappeddesignspaceconfig.md](wrappeddesignspaceconfig.md) |
 | DesignSpaceConfig | [designspaceconfig.md](designspaceconfig.md) |
 | DataStructDims | [datastructdims.md](datastructdims.md) |
 | DataStageParam | [datastageparam.md](datastageparam.md) |
