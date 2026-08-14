@@ -30,7 +30,6 @@
 | LabeledDataStructure | [labeleddatastructure.md](labeleddatastructure.md) |
 | MemoryOrganization | [memoryorganization.md](memoryorganization.md) |
 | ComputeOperation | [computeoperation.md](computeoperation.md) |
-| OperationAttributes | [operationattributes.md](operationattributes.md) |
 | ConstantInfo | [constantinfo.md](constantinfo.md) |
 | Complete Example (JSON) | [complete-example.md](complete-example.md) |
 | Schema Validation | [schema-validation.md](schema-validation.md) |
