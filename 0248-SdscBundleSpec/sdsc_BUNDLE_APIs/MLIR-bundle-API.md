@@ -132,6 +132,73 @@ module {
 
 ---
 
+### sdscbundle.device_mem_allocate
+
+**Description:**
+
+Allocates a contiguous range of device memory for use within the bundle. This operation is intended for buffers that are neither kernel inputs nor outputs — intermediate tensors passed between consecutive SDSCs, and scratch space consumed internally by a single SDSC. The backend reserves the requested bytes before the first SDSC in the bundle executes and holds them for the entire kernel lifetime; there is no matching deallocate. Because the allocation is bundle-scoped, placing it inside a loop still produces only one buffer, not one per iteration.
+
+The returned base address is a device byte address in the same address space as the start addresses used inside `sdsc.json`. It can therefore be passed directly to `sdscbundle.sdsc_execute` as the value of a symbolic start address, or used as the base for sub-allocation arithmetic via `arith.addi`.
+
+**Syntax:**
+
+```mlir
+%result = sdscbundle.device_mem_allocate <size> bytes : index
+```
+
+**Parameters:**
+
+- **\<size\>**: Positive integer byte count (compile-time constant). Symbolic sizes are not supported.
+
+**Attributes:**
+
+- **size** (required): `integer` — size of the requested buffer in bytes. Must be a positive, constant value. The maximum single request is approximately 15 GB; the underlying segment is 16 GB, of which 1 GB is reserved for backend-generated programs and correction tensors.
+
+**Operands:** None.
+
+**Returns:** A single `index` SSA value — the device byte address of the first byte of the allocated buffer. Contents are undefined at allocation.
+
+**Constraints:**
+
+- Must appear in the entry block of the bundle function, outside any `scf.for` loop.
+- Each call allocates its own non-overlapping range. The total device memory required by a bundle is the sum of all its `device_mem_allocate` requests, and that sum must remain within the ~15 GB budget.
+- A frontend that needs to reuse space across tensors with non-overlapping live ranges should issue a single large `device_mem_allocate` and sub-allocate it manually using `arith.addi` offsets; the frontend is responsible for ensuring non-overlapping, correctly aligned sub-ranges.
+
+**Examples:**
+
+Minimal — allocate a single 64 KB buffer and pass it as a symbolic address:
+
+```mlir
+%buf = sdscbundle.device_mem_allocate 65536 bytes : index
+sdscbundle.sdsc_execute (%buf) {
+  sdsc_filename="op.json",
+  symbol_ids=[-1]
+}
+```
+
+Sub-allocation — carve a 64 KB pool into four 16 KB buffers:
+
+```mlir
+%pool = sdscbundle.device_mem_allocate 65536 bytes : index
+
+%off_0     = arith.constant 0     : index
+%off_16384 = arith.constant 16384 : index
+%off_32768 = arith.constant 32768 : index
+%off_49152 = arith.constant 49152 : index
+
+%addr_0     = arith.addi %pool, %off_0     : index
+%addr_16384 = arith.addi %pool, %off_16384 : index
+%addr_32768 = arith.addi %pool, %off_32768 : index
+%addr_49152 = arith.addi %pool, %off_49152 : index
+
+sdscbundle.sdsc_execute (%arg_0, %addr_0)             {sdsc_filename="sdsc_0.json", symbol_ids=[-1, -2]}
+sdscbundle.sdsc_execute (%arg_1, %addr_16384)         {sdsc_filename="sdsc_1.json", symbol_ids=[-3, -4]}
+sdscbundle.sdsc_execute (%addr_0, %addr_16384, %addr_32768) {sdsc_filename="sdsc_2.json", symbol_ids=[-5, -6, -7]}
+sdscbundle.sdsc_execute (%addr_32768, %addr_49152, %arg_2) {sdsc_filename="sdsc_3.json", symbol_ids=[-8, -9, -10]}
+```
+
+---
+
 ## Control Flow
 
 ### scf.for
