@@ -65,12 +65,6 @@ The SuperDSC object is the root container that encapsulates all information need
 | 15 | `coreIdToDscSchedule_` | Vector of DscScheduleStep schedule steps specified for each core. Defines the execution sequence of operations on each core by specifying which data and dl dsc operations execute on this core, the order they execute in, and data-flow dependencies. | |
 | 16 | `target_` | Specifies the target backend/hardware platform for executing the SDSC op. | Can be one of SENTIENT, SENULATOR, SENPCFG, SENTF, SYSTEMC, R5SS, HOST |
 
-### Nested Data Structures
-
-| S.No. | Field Name | Purpose / Functionality | How to Fill |
-|-------|-----------|------------------------|-------------|
-| 17 | `dscs_` | Array of DesignSpaceConfig (or DataStageConfig) structures. | Vector to express core work mapping for an operation. With balanced work division, only one entry in the vector is needed. |
-
 ---
 
 | [← Previous: MLIR Complete Example](MLIR-complete-example.md) | [↑ Table of Contents](README.md) | [Next: Object Hierarchy →](JSON-object-Hierarchy.md) |
