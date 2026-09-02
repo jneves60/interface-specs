@@ -30,34 +30,6 @@ An SDSC JSON file is structured as a single top-level key (the operation name) w
 | **ComputeOperation** | Compute specification — execution unit, op name, tensor references | [computeoperation.md](computeoperation.md) |
 | **MemoryOrganization** | HBM / LX scratchpad residency flags per tensor | [memoryorganization.md](memoryorganization.md) |
 
-## SuperDSC Object Fields
-
-The SuperDSC object is the root container that encapsulates all information needed to execute an operation on the Spyre backend.
-
-### Core Metadata and Folding information
-
-| S.No. | Field Name | Purpose / Functionality | How to Fill |
-|-------|-----------|------------------------|-------------|
-| 1 | `<_name>`, e.g., `"0_batchmatmul"` | Identifier for the sdsc | |
-| 2 | `numCoresUsed_` | Number of cores used for the operation | |
-| 3 | `sdscFoldProps_` | Denotes folds over time | Vector of length 1 containing fields **factor_** and **label_**, set to 1 and "time", resp., as in `[{"factor":1, "label_": "time"}]`. |
-| 4 | `sdscFolds_` | Contains sub-fields **dim_prop_func** and **dim_prop_attr**, describing folds over time. | Refer to default values in sample sdscs, which are sufficient in most of the cases. |
-| 5 | `coreFoldProp_` | Denotes folding over cores using sub-fields **factor** and **label_** | factor=number of cores used and label='core' |
-| 6 | `coreletFoldProp_` | Denotes folding over corelets using sub-fields **factor** and **label_** | factor=1 or 2 and label='corelet' |
-| 7 | `fold_coord_` | For a folded SDSC with multiple fold types, fold_coord_ stores the index at each fold dimension. Specifies which unfolded variant an SDSC represents by storing its coordinate indices in folded space. | |
-
-### Dimensions and Work Slicing
-
-| S.No. | Field Name | Purpose / Functionality | How to Fill |
-|-------|-----------|------------------------|-------------|
-| 8 | `N_` | List of all dimensions across tensors used by ops in all dsc_'s in the sdsc. Contains each dimension's size across all cores. For dimensions that are padded (such as convolution's image dimensions) padding details are also included. See [Padding](padding.md). | |
-| 9 | `numWkSlicesPerDim_` | A map keyed by the dimension name indicating the number of slices into which each dimension is split. | The product of the slices over all dimensions should equal the number of cores (across which the operation is executed). |
-| 10 | `coreIdToWkSlice_` | Map from core id to the slice of each dimension assigned to it. | Nested map. Outer key is core id. Inner key is dimension name. The slice number assigned to a core ranges from 0 to the total slice count for the dim indicated by `numWkSlicesPerDim_`. |
-| 11 | `coreIdToDsc_` | Mapping from core id to dsc number when the sdsc contains multiple dsc's. | |
-| 12 | `ldsShareInfo` | LabeledDS sharing information. Tracks tensor sharing across multiple DSC instances. | |
-| 13 | `opFuncsUsed_` | | |
-| 14 | `prodConsList_` | | |
-
 ---
 
 | [← Previous: MLIR Complete Example](MLIR-complete-example.md) | [↑ Table of Contents](README.md) | [Next: Object Hierarchy →](JSON-object-Hierarchy.md) |
