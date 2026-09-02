@@ -1,16 +1,12 @@
 # FoldManager
 
-Folding is the mechanism by which a single parameterised SDSC artifact describes
-the behaviour of all active cores without duplicating data for every core, corelet,
-or time step. Instead of storing separate values for each combination of indices,
-a `FoldManager` encodes a compact expression — constant, lookup table, or affine
-formula — that is evaluated at compile time or resolved just-in-time before the
-job is launched.
-
 A `FoldManager` maps a tuple of loop indices (core, corelet, time step, …) to a
-concrete value such as a memory address, coordinate offset, or constant. Each
-dimension in the fold has a **function** (`dim_prop_func`) that says *how* the
-index maps to a value, and an **attribute** (`dim_prop_attr`, a
+concrete value such as a memory address, coordinate offset, or constant. It is
+the composite expression built from [`FoldProperty`](foldproperty.md) entries —
+see that page for the conceptual overview of folding.
+
+Each dimension in the fold has a **function** (`dim_prop_func`) that says *how*
+the index maps to a value, and an **attribute** (`dim_prop_attr`, a
 [`FoldProperty`](foldproperty.md)) that says *which* fold level the dimension
 belongs to and how many slices it has. The optional `data_` map holds the actual
 values, keyed by fold-coordinate tuples like `"[0, 1]"`.
