@@ -33,14 +33,6 @@ An SDSC JSON file is structured as a single top-level key (the operation name) w
 
 See [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) for the full hierarchy diagram.
 
-## FoldProperty
-
-See [foldproperty.md](foldproperty.md) for details.
-
-## FoldManager
-
-See [foldmanager.md](foldmanager.md) for details.
-
 ## SuperDSC Object Fields
 
 The SuperDSC object is the root container that encapsulates all information needed to execute an operation on the Spyre backend.
