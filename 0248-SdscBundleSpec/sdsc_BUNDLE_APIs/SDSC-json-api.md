@@ -71,22 +71,6 @@ The SuperDSC object is the root container that encapsulates all information need
 |-------|-----------|------------------------|-------------|
 | 17 | `dscs_` | Array of DesignSpaceConfig (or DataStageConfig) structures. | Vector to express core work mapping for an operation. With balanced work division, only one entry in the vector is needed. |
 
-## DesignSpaceConfig Fields
-
-See [DesignSpaceConfig](designspaceconfig.md) for the complete field reference.
-
-## Tensor Description (LabeledDSInfo) Fields
-
-See [LabeledDataStructure](labeleddatastructure.md) for the complete field reference, including the full list of supported `dataFormat_` values.
-
-## ScheduleTree Node Fields
-
-See [ScheduleTreeNode](scheduletreenode.md) for the complete field reference.
-
-## Compute Operation Fields
-
-See [ComputeOperation](computeoperation.md) for the complete field reference.
-
 ---
 
 | [← Previous: MLIR Complete Example](MLIR-complete-example.md) | [↑ Table of Contents](README.md) | [Next: Object Hierarchy →](JSON-object-Hierarchy.md) |
