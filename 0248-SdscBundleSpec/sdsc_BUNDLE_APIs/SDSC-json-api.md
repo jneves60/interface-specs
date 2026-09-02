@@ -2,31 +2,32 @@
 
 ## Introduction
 
-SuperDSC or SDSC is a json representation of an operation to be performed by the Spyre backend, DeepTools.
-It also includes specifications of the input and output tensors needed by the operation, and how those
-tensors are to be mapped onto the various cores of the Spyre device (that is, core mappings).
+Each `sdsc_*.json` file in a SuperDSC-Bundle describes a single torch operation to be executed on the Spyre backend (DeepTools). It is a self-contained compiled artifact — one JSON file encodes everything the hardware needs to execute that operation deterministically across all 32 cores: how the iteration space is divided, how tensors are laid out in memory, where data lives (HBM vs. LX scratchpad), and what compute to perform.
+
+A PyTorch model may translate into several SuperDSC-Bundles. Each bundle is composed of a `bundle.mlir` file (which orchestrates execution flow and symbol management — see [MLIR Bundle API](MLIR-bundle-API.md)) and one or more `sdsc_*.json` files. Each JSON file corresponds to one torch operation.
 
 The different sections of an SDSC JSON file describe the following:
 
-- Operation type and attributes
-- Input and output tensor configurations
-- Tensor layouts and stick configurations
-- Memory organization and data staging
-- Work division across cores
+- **Core fold properties** — how the iteration space is divided across cores
+- **Tensor descriptors** — layout, memory residency, data format, and stick configuration for each tensor
+- **Schedule tree** — per-tensor memory allocation, start addresses, and coordinate mappings
+- **Data staging** — per-core tile sizes for steady-state and epilogue passes
+- **Compute operations** — execution unit, operation name, and input/output tensor references
 
 ## Key Components
 
-The SDSC JSON structure includes:
+An SDSC JSON file is structured as a single top-level key (the operation name) whose value is a **SuperDsc** object. The SuperDsc object holds a few top-level fields and a `dscs_[]` array of **DesignSpaceConfig** entries. Each `dscs_[]` entry is itself a single-key object wrapping a `DesignSpaceConfig` — some of its fields are leaf values while others are composite objects that drill down further into the object hierarchy.
 
-1. **SuperDSC Object** — Root container for the operation
-2. **DesignSpaceConfig** — Core configuration for computation
-3. **DataStageParam** — Tensor data staging information
-4. **ScheduleTreeNode** — Execution schedule
-5. **ComputeOperation** — Operation type and attributes
-6. **MemoryOrganization** — Tensor layout and memory placement
-
-The above components are specified in the SDSC JSON file using a few top-level fields and an array of structures termed `dscs_[]` (design space configs).
-Each `dsc_` entry consists of some leaf (final) fields and a few composite (non-leaf) ones that can be drilled down into.
+| Component | Role | Reference |
+|---|---|---|
+| **SuperDsc** | Root object — holds fold properties, work-slice maps, core schedule, and the `dscs_[]` array | [superdsc-object.md](superdsc-object.md) |
+| **DesignSpaceConfig** | Per-operation configuration — tensors, staging, schedule, and compute | [designspaceconfig.md](designspaceconfig.md) |
+| **LabeledDataStructure** | Tensor descriptor — role, format, scale, and memory residency | [labeleddatastructure.md](labeleddatastructure.md) |
+| **PrimaryDsInfo** | Tensor-type layout — memory dimension order and stick configuration | [primarydsinfo.md](primarydsinfo.md) |
+| **DataStageParam** | Per-core tile sizes for steady-state and epilogue passes | [datastageparam.md](datastageparam.md) |
+| **ScheduleTreeNode** | Memory allocation node — component, start addresses, coordinates | [scheduletreenode.md](scheduletreenode.md) |
+| **ComputeOperation** | Compute specification — execution unit, op name, tensor references | [computeoperation.md](computeoperation.md) |
+| **MemoryOrganization** | HBM / LX scratchpad residency flags per tensor | [memoryorganization.md](memoryorganization.md) |
 
 ## Object Hierarchy
 
