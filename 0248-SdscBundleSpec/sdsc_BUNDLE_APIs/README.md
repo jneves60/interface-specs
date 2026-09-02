@@ -14,7 +14,6 @@
 | SuperDsc Object | [superdsc-object.md](superdsc-object.md) |
 | Object Hierarchy | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) |
 | Padding | [padding.md](padding.md) |
-| Folding | [folding.md](folding.md) |
 | FoldProperty | [foldproperty.md](foldproperty.md) |
 | FoldManager | [foldmanager.md](foldmanager.md) |
 | Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |

@@ -20,7 +20,7 @@ knows which loop index to use.
 | `SuperDsc.sdscFoldProps_` | Optional array for additional bundle-level fold dimensions |
 | `FoldManager.dim_prop_attr` | Per-dimension fold attributes inside a [`FoldManager`](foldmanager.md) |
 
-For the conceptual explanation of how folding works, see [Folding](folding.md).
+For the conceptual explanation of how folding works, see [FoldManager](foldmanager.md).
 
 ## Structure
 
