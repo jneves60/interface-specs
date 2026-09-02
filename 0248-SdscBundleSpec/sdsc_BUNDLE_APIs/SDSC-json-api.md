@@ -18,6 +18,20 @@ The different sections of an SDSC JSON file describe the following:
 
 An SDSC JSON file is structured as a single top-level key (the operation name) whose value is a **SuperDsc** object. The SuperDsc object holds a few top-level fields and a `dscs_[]` array of **DesignSpaceConfig** entries. Each `dscs_[]` entry is itself a single-key object wrapping a `DesignSpaceConfig` — some of its fields are leaf values while others are composite objects that drill down further into the object hierarchy.
 
+![SDSC JSON File — Object Hierarchy](figures/sdsc_json_hierarchy.png)
+
+*Figure: Complete object hierarchy of an SDSC JSON file.*
+
+**Colour legend**
+
+| Colour | Group | Objects |
+|---|---|---|
+| Dark grey | Fold / coordinate reusables | `FoldProperty`, `FoldManager`, `DebugHandle`, `SourceLoc`, `ProvenanceTransform` |
+| Blue | Bundle / DSC structure | `SuperDsc`, `WrappedDesignSpaceConfig`, `DesignSpaceConfig` |
+| Violet | Tensor objects | `LabeledDataStructure`, `MemoryOrganization`, `PrimaryDsInfo`, `ConstantInfo` |
+| Green | Scheduling & coordinate objects | `ScheduleTreeNode`, `CoordinateContainer`, `CoordinateInfo`, `DataStageParam` |
+| Amber | Compute objects | `ComputeOperation`, `attributes_` |
+
 | Component | Role | Reference |
 |---|---|---|
 | **Object Hierarchy** | Full object tree of the entire JSON format | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) |
