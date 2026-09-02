@@ -99,5 +99,5 @@ The full list of operations that torch-spyre can generate is documented in the
 
 ---
 
-| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: ConstantInfo →](constantinfo.md) |
+| [← Previous: CoordinateInfo](coordinateinfo.md) | [↑ Table of Contents](README.md) | [Next: ConstantInfo →](constantinfo.md) |
 |:--|:--:|--:|

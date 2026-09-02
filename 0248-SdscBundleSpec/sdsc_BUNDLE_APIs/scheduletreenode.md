@@ -315,5 +315,5 @@ tensor in LX scratchpad with tiling coordinates.
 
 ---
 
-| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: CoordinateContainer →](coordinatecontainer.md) |
+| [← Previous: DataStageParam](datastageparam.md) | [↑ Table of Contents](README.md) | [Next: CoordinateContainer →](coordinatecontainer.md) |
 |:--|:--:|--:|

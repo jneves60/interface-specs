@@ -124,5 +124,5 @@ Core index `i` maps to coordinate `32 * i`. The corelet dimension has
 
 ---
 
-| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: Padding →](padding.md) |
+| [← Previous: FoldProperty](foldproperty.md) | [↑ Table of Contents](README.md) | [Next: Padding →](padding.md) |
 |:--|:--:|--:|

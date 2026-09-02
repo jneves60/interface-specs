@@ -109,5 +109,5 @@ same tensor is referenced by name in `computeOp_`.
 
 ---
 
-| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: MemoryOrganization →](memoryorganization.md) |
+| [← Previous: DesignSpaceConfig](designspaceconfig.md) | [↑ Table of Contents](README.md) | [Next: MemoryOrganization →](memoryorganization.md) |
 |:--|:--:|--:|

@@ -87,5 +87,5 @@ core index 0, time-step index 0.
 
 ---
 
-| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: Complete Example (JSON) →](complete-example.md) |
+| [← Previous: ComputeOperation](computeoperation.md) | [↑ Table of Contents](README.md) | [Next: Complete Example (JSON) →](complete-example.md) |
 |:--|:--:|--:|

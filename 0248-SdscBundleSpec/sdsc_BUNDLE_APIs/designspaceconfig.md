@@ -97,5 +97,5 @@ A minimal 2-core GELU DSC showing required fields only:
 
 ---
 
-| [← Back to Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: LabeledDataStructure →](labeleddatastructure.md) |
+| [← Previous: Stick Layout Constraints](stick-layout-constraints.md) | [↑ Table of Contents](README.md) | [Next: LabeledDataStructure →](labeleddatastructure.md) |
 |:--|:--:|--:|
