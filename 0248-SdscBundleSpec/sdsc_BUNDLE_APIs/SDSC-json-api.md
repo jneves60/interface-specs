@@ -87,70 +87,19 @@ The SuperDSC object is the root container that encapsulates all information need
 
 ## DesignSpaceConfig Fields
 
-Field `dscs_` in the top-level SuperDSC object specifies the design space configuration for the operation.
-
-| S.No. | Field Name | Purpose / Functionality | How to Fill |
-|-------|-----------|------------------------|-------------|
-| 1 | `N_` | Similar to SuperDSC.N_ above. Details of dimensions used by a specific dsc_. | In addition to the fields of SuperDSC.N_, padding details are provided in sub-field `paddingSizes_`. One entry per dimension that is padded. See [Padding](padding.md) for details. |
-| 2 | `coreIdsUsed_` | List of cores used by the ops in this dsc. | Specified as a list of core ids, e.g., [0, 6, 10]. |
-| 3 | `dataStageParam_` | Specifies sizes per dimension for each core, in **steady state** and **epilogue** stages. When work is not uniformly divided across time steps, the work done (in terms of number of elements per dimension) can be different in the final stage, which is referred to the epilogue stage. | The overall field has "0" as the key. Has two nested entries, keyed using "ss_" and "el_" denoting steady-state and epilogue, respectively. el_ will differ from ss_ only when work division across time steps is not uniform. Both ss_ and el_ fields include a "name_" sub-field with value set to "core_" and one sub-field for each dimension. Like N_, padding details for window/padded operations are added to padding sub-fields within dataStageParam_. See [Padding](padding.md) for more details. |
-| 4 | `labeledDs_` | Vector, each of whose elements represents a physical tensor used in the dsc_'s operation. Both input and output tensors need to be listed. | Nested fields of each element of labeledDs_ are explained in the labeledDs table below. |
-| 5 | `primaryDsInfo_` | Defines DsTypes used in the dsc_. A DsType denotes a tensor type, which corresponds to a list of dimensions and the stick dimension(s). Multiple physical tensors can share a DsType. Currently defined types are **INPUT**, **OUTPUT**, **KERNEL**, **KERNEL_IDX**, and **NOT_SET**. | One top-level field within primaryDsInfo_ for each DsType. Each type contains sub-fields **layoutDimOrder_**, **stickDimOrder_**, and **stickSize_**. layoutDimOrder_ and stickDimOrder_ are vectors of dimension names. stickSize_ is a vector of integers whose length matches that of stickDimOrder_, with a 1-to-1 correspondence from the dimension in the latter to the size in the former. |
-| 6 | `pdsRelation_` | | Has boolean `isPdsReuse` sub-field. |
-| 7 | `dimToSymbolMapping_` | | |
-| 8 | `constantInfo_` | | |
-| 9 | `scheduleTree_` | Schedule of computations | Sub-fields explained in ScheduleTree table below. |
-| 10 | `computeOp_` | Describes the compute operations performed by the dsc_ of the SDSC. More than one op will be specified in case of fused operations. | Explained in Compute Op table below. |
+See [DesignSpaceConfig](designspaceconfig.md) for the complete field reference.
 
 ## Tensor Description (LabeledDSInfo) Fields
 
-| S.No. | Field Name | Purpose / Functionality | How to Fill |
-|-------|-----------|------------------------|-------------|
-| 1 | `ldsIdx` | Index number | |
-| 2 | `dsName` | A distinct name for the tensor. Used to identify the input and output tensors associated with a computeOp_. | The name of the tensor used in computeOp_ appends idx\<ldsIdx\> to the dsName in labeledDs_. E.g., A labeledDS_ with `"dsName_": "convolution-Tensor0"` and `"ldsIdx_": 0` is denoted as `"convolution-Tensor0-idx0"` in the computeOp_ section. |
-| 3 | `dsType` | dsType of this tensor. Should be a type defined in primaryDsInfo_ of the parent _dsc. | |
-| 4 | `scale_` | A vector with one entry per dimension present in the dsType of this tensor. | A scale of 1 is normal, -1 is reduced / broadcast, -2 is reduced / broadcast stick dimension. Order matches layoutDimOrder_ in primaryDsInfo_. |
-| 5 | `wordLength_` | word length in number of bytes | |
-| 6 | `dataFormat_` | One of: SEN169_FP16, IEEE_FP32, INVALID, SEN143_FP8, SEN152_FP8, SEN153_FP9, SENINT2, SENINT4, SENINT8, SENINT16, SENINT24, IEEE_INT64, IEEE_INT32, SENUINT32, SENUINT2, IEEE_FP16, BOOL, BFLOAT16, SEN18F_FP24, SEN080_FP8, SEN053_FP8, SEN121_FP4 | For Spyre, SEN169_FP16 is the most common. |
-| 7 | `memOrg_` | Indicates memory residency (HBM vs. LX) via keys **hbm** and **lx**, which have nested sub-fields including **isPresent**, **isPadded**, **isZeroPadded**. | |
+See [LabeledDataStructure](labeleddatastructure.md) for the complete field reference, including the full list of supported `dataFormat_` values.
 
-## ScheduleTree Node (scheduleTree_) Fields
+## ScheduleTree Node Fields
 
-ScheduleTree is a tree (list) of ScheduleNodes which could be of types BLOCK, LOOP, TRANSFER, COMPUTE, SYNC, CONDITION, ALLOCATE, STICKMASK (among others).
+See [ScheduleTreeNode](scheduletreenode.md) for the complete field reference.
 
-One ScheduleNode of type ALLOCATE needs to be added per tensor in LabeledDs. Only ALLOCATE nodes need to be filled from the front end.
+## Compute Operation Fields
 
-### ALLOCATE node Fields
-
-| S.No. | Field Name | Purpose / Functionality | How to Fill |
-|-------|-----------|------------------------|-------------|
-| 1 | `nodeType_` | Type of Schedule node | Always **allocate** |
-| 2 | `name_` | An easy to identify name. | |
-| 3 | `ldsIdx_` | Index into the tensor DS information in labeledDs_. | Indicates which labeledDs_ is being allocated. |
-| 4 | `component_` | One of SenComponents such as HBM, LX to indicate memory residency | |
-| 5 | `padding_` | Padding type applicable for each dimension of the tensor that is padded. | One of NOPAD, LOWERED_PADDED, PADDED_NOZEROPAD, PADDED_WZEROPAD, PADDED_FULLSPAN, and PADDED_FULLSPAN_WUNNEEDED. See [Padding](padding.md) for more details. |
-| 6 | `layoutDimOrder_` | Order of dimensions on the device | Tensor layout specified from inner to outer. |
-| 7 | `maxDimSizes_` | Maximum size of each dimension of the tensor. | Generally set to -1. |
-| 8 | `isStartAddrSymbolic_` | 0 or 1 indicating whether the start addresses specified in `data_` field of `startAddressCoreCorelet_` are symbolic. | See [ScheduleTreeNode](scheduletreenode.md) |
-| 8 | `startAddressCoreCorelet_` | Start address of a tensor per core. | See [ScheduleTreeNode](scheduletreenode.md) |
-| 9 | `coordinates_` | Tensor coordinates per dimension. | See [ScheduleTreeNode](scheduletreenode.md) |
-| 10 | `backGapCore_` | Records extra empty space ("back gap") added at the end of a dimension in an allocated buffer, tracked independently for each core (or HBM). | The field is of the form: `"backGapCore" : { <dim string> : { <"core id"> \| "-1" : back gap size as a string} ....}`. A key of "-1" indicates that the specification is for HBM. If it is a core id, then the back gap is for the LX scratchpad of the core. |
-| 11 | `indirectAllocType_` | One of **no_indirection**, **index_tensor**, and **value_tensor** | **no_indirection** indicates an ordinary, directly-addressed allocation. **index_tensor** indicates the allocation holds indices used to look up into another tensor. **value_tensor** indicates the allocation holds the actual data that gets gathered/scattered via those indices. |
-| 12 | `relatedIndirectAccessAlloc_` | Provides the name of the tensor (allocate node in schedule tree) that provides actual data for the indirect reference when `indirectAllocType_` is **index_tensor**. | Non-empty only when `indirectAllocType_` is **index_tensor**. |
-
-## Compute Operation (computeOp_) Fields
-
-Specifies details of compute operation to be performed on the tensors at the device.
-
-| S.No. | Field Name | Purpose / Functionality | How to Fill |
-|-------|-----------|------------------------|-------------|
-| 1 | `exUnit_` | The exact compute unit on the device on which the operation is to be executed. | Typically one of PT (PT array), PE, and SFP (floating point unit). |
-| 2 | `opFuncName_` | The name of the operation to be executed on the device. | |
-| 3 | `attributes_` | Specifies attributes such as dataFormat_, fidelity_ | |
-| 4 | `inputLabeledDs_` | Identifies tensors from labeledDs_ that form inputs to the operation. | |
-| 5 | `outputLabeledDs` | Identifies tensor from labeledDs_ that forms the output of the operation. | |
-| 6 | `indirectAccessIndexLabeledDs_` | | |
-| 7 | `interimLabeledDs_` | | |
+See [ComputeOperation](computeoperation.md) for the complete field reference.
 
 ---
 
