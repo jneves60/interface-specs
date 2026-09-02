@@ -20,6 +20,7 @@ An SDSC JSON file is structured as a single top-level key (the operation name) w
 
 | Component | Role | Reference |
 |---|---|---|
+| **Object Hierarchy** | Full object tree of the entire JSON format | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) |
 | **SuperDsc** | Root object — holds fold properties, work-slice maps, core schedule, and the `dscs_[]` array | [superdsc-object.md](superdsc-object.md) |
 | **DesignSpaceConfig** | Per-operation configuration — tensors, staging, schedule, and compute | [designspaceconfig.md](designspaceconfig.md) |
 | **LabeledDataStructure** | Tensor descriptor — role, format, scale, and memory residency | [labeleddatastructure.md](labeleddatastructure.md) |
@@ -28,10 +29,6 @@ An SDSC JSON file is structured as a single top-level key (the operation name) w
 | **ScheduleTreeNode** | Memory allocation node — component, start addresses, coordinates | [scheduletreenode.md](scheduletreenode.md) |
 | **ComputeOperation** | Compute specification — execution unit, op name, tensor references | [computeoperation.md](computeoperation.md) |
 | **MemoryOrganization** | HBM / LX scratchpad residency flags per tensor | [memoryorganization.md](memoryorganization.md) |
-
-## Object Hierarchy
-
-See [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) for the full hierarchy diagram.
 
 ## SuperDSC Object Fields
 
