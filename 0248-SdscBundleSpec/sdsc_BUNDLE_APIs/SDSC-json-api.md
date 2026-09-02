@@ -33,10 +33,6 @@ An SDSC JSON file is structured as a single top-level key (the operation name) w
 
 See [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) for the full hierarchy diagram.
 
-## SuperDsc Object
-
-See [superdsc-object.md](superdsc-object.md) for the complete field reference.
-
 ## FoldProperty
 
 See [foldproperty.md](foldproperty.md) for details.
