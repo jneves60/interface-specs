@@ -100,6 +100,6 @@ Documents are organized in the recommended reading order, grouped by learning st
 
 | # | Section | File |
 |---|---------|------|
-| 8.1 | Reference Documents & Glossary | [reference.md](reference.md) |
+| 8.1 | Reference Documents | [reference.md](reference.md) |
 
 ---

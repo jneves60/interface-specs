@@ -1,4 +1,4 @@
-# Reference Documents & MLIR Dialects
+# Reference Documents
 
 ## Related Documents
 
@@ -10,32 +10,6 @@
 - [SCF Dialect](https://mlir.llvm.org/docs/Dialects/SCFDialect/)
 - [Affine Dialect](https://mlir.llvm.org/docs/Dialects/Affine/)
 - [Arith Dialect](https://mlir.llvm.org/docs/Dialects/ArithDialect/)
-
-## Glossary
-
-**SDSC**
-    SuperDSC — Single operation descriptor
-
-**DSC**
-    Design Space Configuration
-
-**LX**
-    Local scratchpad memory
-
-**HBM**
-    High Bandwidth Memory (DDR)
-
-**AIU**
-    AI Unit (compute engine)
-
-**RaPiD**
-    Reconfigurable Parallel Intelligent Device
-
-**Stick**
-    Innermost tensor layout dimension
-
-**DDL**
-    Deep Learning Library
 
 ---
 
