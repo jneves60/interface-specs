@@ -39,5 +39,5 @@
 
 ---
 
-| [← Previous: Best Practices](best-practices.md) | [↑ Table of Contents](README.md) | |
+| [← Previous: Complete Example (JSON)](complete-example.md) | [↑ Table of Contents](README.md) | |
 |:--|:--:|--:|
