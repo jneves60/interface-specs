@@ -2,8 +2,8 @@
 
 ## Related Documents
 
-- [SuperDSC-Bundle RFC Specification](https://github.ibm.com/jneves/sdsc-bundle-spec/blob/sdsc-bundle-spec/RFCs/0248-SdscBundleSpec/SuperDSC-Bundle.md)
-- [KTIR RFC Specification](https://github.ibm.com/jneves/sdsc-bundle-spec/blob/sdsc-bundle-spec/RFCs/0682-KtirSpec/0682-KtirSpecRFC.md)
+- [SuperDSC-Bundle RFC Specification](https://github.com/jneves60/interface-specs/blob/main/0248-SdscBundleSpec/SuperDSC-Bundle.md)
+- [torch-spyre](https://torch-spyre.readthedocs.io/)
 
 ## MLIR Dialect References
 
