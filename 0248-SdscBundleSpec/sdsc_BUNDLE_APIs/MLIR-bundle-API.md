@@ -7,23 +7,35 @@ A SuperDSC Bundle is expressed as a standard MLIR `module` containing a single
 capture values defined outside. The `func.func` declares the bundle entry point:
 it has no return values and its body ends with `return`.
 
+The function may declare zero or more parameters. Each parameter is a runtime-provided
+base address that the bundle body uses to compute tensor symbol values passed to
+`sdscbundle.sdsc_execute`.
+
 **Syntax:**
 
 ```mlir
 module {
-  func.func @bundle_name() {
+  func.func @sdsc_bundle(%param_0: index,
+                         %param_1: !sdscbundle.input_arg<index>) {
     // Bundle operations
     return
   }
 }
 ```
 
-**Operands:** None — all inputs to the bundle are expressed as symbolic operands
-inside individual `sdscbundle.sdsc_execute` calls.
+**Operands:**
+
+Each parameter is one of:
+
+| Type | Description |
+|---|---|
+| *(none)* | No parameters — all addresses are embedded as `arith.constant` values inside the function body. |
+| `index` | A resolved base address passed directly as a constant index value. |
+| `!sdscbundle.input_arg<index>` | A runtime-provided base address. Must be extracted with `sdscbundle.input_arg_extract` before use. |
 
 **Attributes:**
 
-- **@bundle_name**: Identifier for the callable function region.
+- **@sdsc_bundle**: Identifier for the callable function region.
 
 **Returns:** None — `func.func` in SDSC Bundles always has no return values.
 
@@ -32,13 +44,45 @@ inside individual `sdscbundle.sdsc_execute` calls.
 - Exactly one `func.func` per `module`.
 - All `sdscbundle.device_mem_allocate` calls must appear in the entry block of
   `func.func`, outside any `scf.for` loop.
+- Parameters of type `!sdscbundle.input_arg<index>` must be extracted with
+  `sdscbundle.input_arg_extract` before their value is used in any arithmetic or
+  passed to `sdscbundle.sdsc_execute`.
 
-**Example:**
+**Example — no parameters (all addresses are compile-time constants):**
 
 ```mlir
 module {
-  func.func @gelu_forward() {
-    sdscbundle.sdsc_execute () {sdsc_filename="sdscGelu.json"}
+  func.func @sdsc_bundle() {
+    %addr = arith.constant 17179869184 : index
+    sdscbundle.sdsc_execute (%addr) {sdsc_filename="sdsc_0.json", symbol_ids=[-1]}
+    return
+  }
+}
+```
+
+**Example — one runtime base address:**
+
+```mlir
+module {
+  func.func @sdsc_bundle(%base_arg: !sdscbundle.input_arg<index>) {
+    %base = sdscbundle.input_arg_extract value from %base_arg : !sdscbundle.input_arg<index> -> index
+    sdscbundle.sdsc_execute (%base) {sdsc_filename="sdsc_0.json", symbol_ids=[-1]}
+    return
+  }
+}
+```
+
+**Example — multiple runtime base addresses:**
+
+```mlir
+module {
+  func.func @sdsc_bundle(%arg_0: !sdscbundle.input_arg<index>,
+                         %arg_1: !sdscbundle.input_arg<index>,
+                         %arg_2: !sdscbundle.input_arg<index>) {
+    %base_0 = sdscbundle.input_arg_extract value from %arg_0 : !sdscbundle.input_arg<index> -> index
+    %base_1 = sdscbundle.input_arg_extract value from %arg_1 : !sdscbundle.input_arg<index> -> index
+    %base_2 = sdscbundle.input_arg_extract value from %arg_2 : !sdscbundle.input_arg<index> -> index
+    sdscbundle.sdsc_execute (%base_0, %base_1, %base_2) {sdsc_filename="sdsc_0.json", symbol_ids=[-1, -2, -3]}
     return
   }
 }
@@ -50,6 +94,23 @@ module {
 
 These operations are defined by the `sdscbundle` dialect and are the primary
 means by which a frontend compiler communicates with the Spyre backend.
+
+| Operation | Summary |
+|---|---|
+| [`sdscbundle.sdsc_execute`](#sdscbundlesdsc_execute) | Instantiates and executes one SDSC JSON operation. |
+| [`sdscbundle.device_mem_allocate`](#sdscbundledevice_mem_allocate) | Allocates a contiguous device memory buffer for intermediate or scratch tensors. |
+| [`sdscbundle.input_arg_extract`](#sdscbundleinput_arg_extract) | Extracts the runtime `index` value from a `!sdscbundle.input_arg<index>` bundle parameter. |
+
+**Supporting MLIR operations (permitted use within SDSC Bundles):**
+
+| Operation | Summary |
+|---|---|
+| [`scf.for`](#scffor) | Loop construct for iterating over a range of SDSC executions. |
+| [`arith.constant`](#arithconstant) | Defines a compile-time constant SSA value (e.g. a base address or size). |
+| [`arith.addi`](#arithaddi) | Integer addition — used to compute addresses from a base and an offset. |
+| [`affine.apply`](#affineapply) | Applies an affine map to compute per-iteration or per-core addresses. |
+
+---
 
 ### sdscbundle.sdsc_execute
 
@@ -232,6 +293,66 @@ sdscbundle.sdsc_execute (%arg_0, %addr_0)                  {sdsc_filename="sdsc_
 sdscbundle.sdsc_execute (%arg_1, %addr_16384)              {sdsc_filename="sdsc_1.json", symbol_ids=[-3, -4]}
 sdscbundle.sdsc_execute (%addr_0, %addr_16384, %addr_32768){sdsc_filename="sdsc_2.json", symbol_ids=[-5, -6, -7]}
 sdscbundle.sdsc_execute (%addr_32768, %addr_49152, %arg_2) {sdsc_filename="sdsc_3.json", symbol_ids=[-8, -9, -10]}
+```
+
+---
+
+### sdscbundle.input_arg_extract
+
+**Description:**
+
+Extracts the runtime `index` value from a `!sdscbundle.input_arg<index>` bundle
+parameter. Every `func.func` parameter of type `!sdscbundle.input_arg<index>` must be
+unwrapped with this operation before its value can be used in arithmetic or passed as
+an operand to `sdscbundle.sdsc_execute`.
+
+**Syntax:**
+
+```mlir
+%result = sdscbundle.input_arg_extract value from %arg : !sdscbundle.input_arg<index> -> index
+```
+
+**Operands:**
+
+- **%arg** (required): An SSA value of type `!sdscbundle.input_arg<index>` — must be a
+  `func.func` block argument.
+
+**Attributes:** None.
+
+**Returns:** A single `index` SSA value — the runtime base address provided by the
+caller for this argument.
+
+**Constraints:**
+
+- The source operand must be a `func.func` block argument of type
+  `!sdscbundle.input_arg<index>`; it cannot be the result of another operation.
+- Must appear in the entry block of the bundle function, before any use of the
+  extracted value.
+
+**Example:**
+
+```mlir
+module {
+  func.func @sdsc_bundle(%base_arg: !sdscbundle.input_arg<index>) {
+    %base = sdscbundle.input_arg_extract value from %base_arg : !sdscbundle.input_arg<index> -> index
+    sdscbundle.sdsc_execute (%base) {sdsc_filename="sdsc_0.json", symbol_ids=[-1]}
+    return
+  }
+}
+```
+
+Multiple parameters:
+
+```mlir
+module {
+  func.func @sdsc_bundle(%arg_0: !sdscbundle.input_arg<index>,
+                         %arg_1: !sdscbundle.input_arg<index>) {
+    %base_0 = sdscbundle.input_arg_extract value from %arg_0 : !sdscbundle.input_arg<index> -> index
+    %base_1 = sdscbundle.input_arg_extract value from %arg_1 : !sdscbundle.input_arg<index> -> index
+    sdscbundle.sdsc_execute (%base_0, %base_1) {sdsc_filename="sdsc_0.json", symbol_ids=[-1, -2]}
+    return
+  }
+}
 ```
 
 ---
