@@ -356,15 +356,13 @@ module {
 ```mlir
 module {
   func.func @loop_ops() {
-    %c0 = arith.constant 0 : index
-    %c1 = arith.constant 1 : index
-    %c8 = arith.constant 8 : index
+    %c0   = arith.constant 0    : index
+    %c1   = arith.constant 1    : index
+    %c8   = arith.constant 8    : index
     %base = arith.constant 1024 : index
-    
-    #addr_map = affine_map<(d0)[base] -> (base + 128*d0)>
-    
+
     scf.for %i = %c0 to %c8 step %c1 {
-      %addr = affine.apply #addr_map (%i)[%base]
+      %addr = affine.apply affine_map<(d0)[s0] -> (s0 + 128*d0)> (%i)[%base]
       sdscbundle.sdsc_execute (%addr) {
         sdsc_filename="op.json",
         symbol_ids=[-1]
@@ -384,15 +382,13 @@ module {
 ```mlir
 module {
   func.func @multi_core() {
-    %c0 = arith.constant 0 : index
-    %c1 = arith.constant 1 : index
+    %c0   = arith.constant 0    : index
+    %c1   = arith.constant 1    : index
     %base = arith.constant 1024 : index
-    
-    #addr_map = affine_map<(core)[base] -> (base + 256*core)>
-    
-    %addr_c0 = affine.apply #addr_map (%c0)[%base]
-    %addr_c1 = affine.apply #addr_map (%c1)[%base]
-    
+
+    %addr_c0 = affine.apply affine_map<(d0)[s0] -> (s0 + 256*d0)> (%c0)[%base]
+    %addr_c1 = affine.apply affine_map<(d0)[s0] -> (s0 + 256*d0)> (%c1)[%base]
+
     sdscbundle.sdsc_execute (%addr_c0, %addr_c1) {
       sdsc_filename="op.json",
       symbol_ids=[-1, -2]
@@ -414,18 +410,24 @@ A single intermediate buffer is allocated and its base address is passed as the 
 
 ```mlir
 module {
-  func.func @two_ops_with_intermediate() {
+  func.func @two_ops_with_intermediate(%in_arg:  !sdscbundle.input_arg<index>,
+                                       %out_arg: !sdscbundle.input_arg<index>) {
+    %in  = sdscbundle.input_arg_extract value from %in_arg
+             : !sdscbundle.input_arg<index> -> index
+    %out = sdscbundle.input_arg_extract value from %out_arg
+             : !sdscbundle.input_arg<index> -> index
+
     // Allocate 32 KB for the intermediate tensor
     %inter = sdscbundle.device_mem_allocate 32768 bytes : index
 
-    // First SDSC: reads from %arg_0, writes result to %inter
-    sdscbundle.sdsc_execute (%arg_0, %inter) {
+    // First SDSC: reads from %in, writes result to %inter
+    sdscbundle.sdsc_execute (%in, %inter) {
       sdsc_filename="sdsc_0_relu.json",
       symbol_ids=[-1, -2]
     }
 
-    // Second SDSC: reads from %inter, writes final output to %arg_1
-    sdscbundle.sdsc_execute (%inter, %arg_1) {
+    // Second SDSC: reads from %inter, writes final output to %out
+    sdscbundle.sdsc_execute (%inter, %out) {
       sdsc_filename="sdsc_1_layernorm.json",
       symbol_ids=[-3, -4]
     }
@@ -445,7 +447,13 @@ This example allocates a 64 KB pool and splits it into four 16 KB sub-buffers. T
 
 ```mlir
 module {
-  func.func @pool_suballoc(%arg_0: index, %arg_1: index, %arg_2: index) {
+  func.func @pool_suballoc(%arg_0: !sdscbundle.input_arg<index>,
+                           %arg_1: !sdscbundle.input_arg<index>,
+                           %arg_2: !sdscbundle.input_arg<index>) {
+    %a0 = sdscbundle.input_arg_extract value from %arg_0 : !sdscbundle.input_arg<index> -> index
+    %a1 = sdscbundle.input_arg_extract value from %arg_1 : !sdscbundle.input_arg<index> -> index
+    %a2 = sdscbundle.input_arg_extract value from %arg_2 : !sdscbundle.input_arg<index> -> index
+
     // Single pool covering all four intermediate regions
     %pool = sdscbundle.device_mem_allocate 65536 bytes : index
 
@@ -461,10 +469,10 @@ module {
     %addr_32768 = arith.addi %pool, %off_32768 : index   // sdsc_2 output → sdsc_3 input
     %addr_49152 = arith.addi %pool, %off_49152 : index   // sdsc_3 scratch (private)
 
-    sdscbundle.sdsc_execute (%arg_0, %addr_0)                       {sdsc_filename="sdsc_0.json", symbol_ids=[-1, -2]}
-    sdscbundle.sdsc_execute (%arg_1, %addr_16384)                   {sdsc_filename="sdsc_1.json", symbol_ids=[-3, -4]}
-    sdscbundle.sdsc_execute (%addr_0, %addr_16384, %addr_32768)     {sdsc_filename="sdsc_2.json", symbol_ids=[-5, -6, -7]}
-    sdscbundle.sdsc_execute (%addr_32768, %addr_49152, %arg_2)      {sdsc_filename="sdsc_3.json", symbol_ids=[-8, -9, -10]}
+    sdscbundle.sdsc_execute (%a0, %addr_0)                       {sdsc_filename="sdsc_0.json", symbol_ids=[-1, -2]}
+    sdscbundle.sdsc_execute (%a1, %addr_16384)                   {sdsc_filename="sdsc_1.json", symbol_ids=[-3, -4]}
+    sdscbundle.sdsc_execute (%addr_0, %addr_16384, %addr_32768)  {sdsc_filename="sdsc_2.json", symbol_ids=[-5, -6, -7]}
+    sdscbundle.sdsc_execute (%addr_32768, %addr_49152, %a2)      {sdsc_filename="sdsc_3.json", symbol_ids=[-8, -9, -10]}
 
     return
   }
