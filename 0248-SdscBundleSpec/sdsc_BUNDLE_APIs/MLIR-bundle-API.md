@@ -224,8 +224,7 @@ operation is intended for buffers that are neither kernel inputs nor outputs —
 intermediate tensors passed between consecutive SDSCs, and scratch space consumed
 internally by a single SDSC. The backend reserves the requested bytes before the
 first SDSC in the bundle executes and holds them for the entire kernel lifetime;
-there is no matching deallocate. Because the allocation is bundle-scoped, placing
-it inside a loop still produces only one buffer, not one per iteration.
+there is no matching deallocate.
 
 The returned base address is a device byte address in the same address space as
 the start addresses used inside `sdsc.json`. It can therefore be passed directly
@@ -252,8 +251,9 @@ byte of the allocated buffer. Contents are undefined at allocation.
 
 **Constraints:**
 
-- Must appear in the entry block of the bundle function, outside any `scf.for`
-  loop.
+- Should appear in the entry block of the bundle function, outside any `scf.for`
+  loop. An allocation written inside a loop still reserves one single buffer,
+  not one buffer per iteration.
 - Each call allocates its own non-overlapping range. The total device memory
   required by a bundle is the sum of all its `device_mem_allocate` requests, and
   that sum must remain within the ~15 GB budget.
