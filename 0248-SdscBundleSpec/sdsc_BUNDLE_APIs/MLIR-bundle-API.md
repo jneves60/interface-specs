@@ -90,6 +90,85 @@ module {
 
 ---
 
+## Symbolic Values and Addresses
+
+Within a SuperDSC Bundle there are two distinct ways that a value can be
+symbolic — that is, not fixed at compile time and resolved by the backend just
+before the job is launched. They differ in *what* is unknown and in *where* the
+binding information lives in the JSON.
+
+### Symbolic Addresses
+
+A symbolic address is a tensor's **start address in device memory** that is not
+a concrete byte offset at compile time. The frontend does not know where the
+tensor will be placed — for example, because its location depends on a runtime
+allocation or on a per-core layout that is computed by the backend.
+
+On the **JSON side**, a symbolic address is expressed by:
+- Setting `isStartAddrSymbolic_: true` on the `allocate` node in
+  `scheduleTree_` inside the relevant
+  [`ScheduleTreeNode`](scheduletreenode.md).
+- Placing symbolic identifier strings (rather than concrete integers) in the
+  `data_` entries of `startAddressCoreCorelet_` on that same node.
+
+On the **MLIR side**, the runtime value for each symbolic identifier is
+supplied as an operand to `sdscbundle.sdsc_execute`, bound positionally via
+`symbol_ids`. That operand can be:
+- An `arith.constant` (a fixed address known to the frontend).
+- The return value of `sdscbundle.device_mem_allocate` (a backend-allocated
+  intermediate buffer address).
+- An `index` value extracted from a `!sdscbundle.input_arg<index>` parameter
+  via `sdscbundle.input_arg_extract` (a runtime address provided by the caller).
+- An affine expression (`affine.apply`) derived from the above.
+
+### Symbolic Dimension Sizes
+
+A symbolic dimension size is a tensor **shape dimension** — such as sequence
+length or batch size — that varies at runtime and is therefore not a fixed
+integer in the JSON.
+
+On the **JSON side**, symbolic dimension sizes are expressed by:
+- [`DesignSpaceConfig.dimToSymbolMapping_`](designspaceconfig.md) — maps
+  dimension names (e.g. `"mb_"`, `"in_"`) to symbolic variable names, declaring
+  which dimensions are symbolic.
+- [`DataStructDims.symbolicDimInfo_`](datastructdims.md) — for each symbolic
+  dimension, records `maxSize_` (the upper bound the backend must plan for) and
+  `granularity_` (the step the runtime value must be a multiple of).
+- [`DataStructDims.maxSymbolicVolume_`](datastructdims.md) — caps the combined
+  volume across a set of symbolic dimensions.
+- [`SuperDsc.symbolDefinitions_`](superdsc-object.md),
+  [`inputSymbolsAndTags_`](superdsc-object.md), and
+  [`dimToSymbolMappingOpcodeCorrection_`](superdsc-object.md) — top-level
+  symbol registry and opcode correction maps at the `SuperDsc` level.
+
+On the **MLIR side**, the runtime value for each symbolic dimension size is
+also supplied as an operand to `sdscbundle.sdsc_execute` via `symbol_ids`,
+using the same mechanism as symbolic addresses.
+
+### Relationship Between the Two
+
+From the MLIR perspective both kinds of symbolic value are unified: they are
+passed as operands to `sdscbundle.sdsc_execute` and bound via `symbol_ids`.
+The `symbol_ids` attribute description in `SuperDSC-Bundle.md` explicitly
+states the list covers *"symbolic start addresses or sizes"*.
+
+The distinction is entirely on the JSON side — the backend routes each symbol
+ID to the appropriate field depending on whether it is bound to an
+`isStartAddrSymbolic_` allocate node (address) or to a `dimToSymbolMapping_`
+entry (size).
+
+One consequence: when a symbolic dimension is **split across cores**, the
+per-core start addresses become data-dependent on the runtime dimension value
+and must therefore also become symbolic. In that case both kinds of symbolic
+value appear together in the same JSON file — `symbolicDimInfo_` on the
+dimension side and `isStartAddrSymbolic_` on the address side.
+
+> **Note:** Symbolic loop bounds are not yet supported. The loop bound in
+> `scf.for` must be a compile-time constant. Support for symbolic loop bounds
+> is planned for a future revision of the spec.
+
+---
+
 ## sdscbundle Dialect Operations
 
 These operations are defined by the `sdscbundle` dialect and are the primary
