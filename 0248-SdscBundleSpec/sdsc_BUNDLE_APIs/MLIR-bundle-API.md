@@ -226,8 +226,9 @@ sdscbundle.sdsc_execute (%operand1, %operand2, ...) {
 - **symbol_ids** (optional): `array<int>` — list of symbol IDs used in the
   SDSC. Values are negative integers (e.g., `-1`, `-2`, `-3`). Each ID maps
   positionally to one operand and corresponds to a symbolic start address or
-  size inside the JSON. Symbol IDs are scoped per invocation — the same ID
-  (e.g., `-1`) in two different calls is independent.
+  size inside the JSON. Symbol IDs must be unique across the entire bundle —
+  the same ID cannot be reused in a different `sdsc_execute` call unless both
+  invocations assign the same value to that symbol.
 
 **Returns:** None.
 
