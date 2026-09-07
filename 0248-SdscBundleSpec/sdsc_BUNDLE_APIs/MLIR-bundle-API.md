@@ -163,11 +163,6 @@ and must therefore also become symbolic. In that case both kinds of symbolic
 value appear together in the same JSON file — `symbolicDimInfo_` on the
 dimension side and `isStartAddrSymbolic_` on the address side.
 
-> **Note:** Regular `scf.for` loops support symbolic upper bounds whose runtime
-> value is resolved by the backend correction pass. The only loops that do
-> **not** support symbolic bounds are parametric loops; those
-> require a compile-time constant bound.
-
 ---
 
 ## sdscbundle Dialect Operations
