@@ -163,12 +163,10 @@ and must therefore also become symbolic. In that case both kinds of symbolic
 value appear together in the same JSON file — `symbolicDimInfo_` on the
 dimension side and `isStartAddrSymbolic_` on the address side.
 
-> **Note:** Regular `scf.for` loops support symbolic upper bounds. The upper
-> bound can be a `symbol::CreateSymbolOp` result (carrying `SymbolId`,
-> `maxValue`, and `granularity` attributes) whose runtime value is resolved by
-> the backend correction pass. The only loops that do **not** support symbolic
-> bounds are parametric loops (pad-mode loops); those require a compile-time
-> constant bound.
+> **Note:** Regular `scf.for` loops support symbolic upper bounds whose runtime
+> value is resolved by the backend correction pass. The only loops that do
+> **not** support symbolic bounds are parametric loops; those
+> require a compile-time constant bound.
 
 ---
 
@@ -477,9 +475,8 @@ scf.for %iterator = %lower_bound to %upper_bound step %step {
 **Constraints:**
 
 - The lower bound and step must be compile-time constants. The upper bound may
-  be a compile-time constant or a symbolic value (`symbol::CreateSymbolOp`
-  result with `SymbolId`, `maxValue`, and `granularity` attributes). Parametric
-  (pad-mode) loops do not support a symbolic upper bound.
+  be a compile-time constant or a symbolic value. Parametric loops
+  do not support a symbolic upper bound.
 - Loop-carried variables are not supported.
 - Only the induction variable may be used directly inside the loop body.
 - `sdscbundle.device_mem_allocate` must not appear inside the loop body.
