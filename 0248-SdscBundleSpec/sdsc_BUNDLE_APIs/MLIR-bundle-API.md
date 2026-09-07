@@ -42,7 +42,7 @@ Each parameter is one of:
 **Constraints:**
 
 - Exactly one `func.func` per `module`.
-- All `sdscbundle.device_mem_allocate` calls must appear in the entry block of
+- All `sdscbundle.device_mem_allocate` calls should appear in the entry block of
   `func.func`, outside any `scf.for` loop.
 - Parameters of type `!sdscbundle.input_arg<index>` must be extracted with
   `sdscbundle.input_arg_extract` before their value is used in any arithmetic or
@@ -163,9 +163,12 @@ and must therefore also become symbolic. In that case both kinds of symbolic
 value appear together in the same JSON file — `symbolicDimInfo_` on the
 dimension side and `isStartAddrSymbolic_` on the address side.
 
-> **Note:** Symbolic loop bounds are not yet supported. The loop bound in
-> `scf.for` must be a compile-time constant. Support for symbolic loop bounds
-> is planned for a future revision of the spec.
+> **Note:** Regular `scf.for` loops support symbolic upper bounds. The upper
+> bound can be a `symbol::CreateSymbolOp` result (carrying `SymbolId`,
+> `maxValue`, and `granularity` attributes) whose runtime value is resolved by
+> the backend correction pass. The only loops that do **not** support symbolic
+> bounds are parametric loops (pad-mode loops); those require a compile-time
+> constant bound.
 
 ---
 
@@ -473,7 +476,10 @@ scf.for %iterator = %lower_bound to %upper_bound step %step {
 
 **Constraints:**
 
-- Loop bounds must be compile-time constants.
+- The lower bound and step must be compile-time constants. The upper bound may
+  be a compile-time constant or a symbolic value (`symbol::CreateSymbolOp`
+  result with `SymbolId`, `maxValue`, and `granularity` attributes). Parametric
+  (pad-mode) loops do not support a symbolic upper bound.
 - Loop-carried variables are not supported.
 - Only the induction variable may be used directly inside the loop body.
 - `sdscbundle.device_mem_allocate` must not appear inside the loop body.
@@ -501,8 +507,9 @@ scf.for %i = %c0 to %c8 step %c1 {
 **Description:**
 
 Defines a compile-time constant SSA value. In the SDSC Bundle context this is
-primarily used to define base addresses, loop bounds, loop step values, and
-sub-allocation offsets.
+primarily used to define base addresses, loop lower bounds, loop step values,
+and sub-allocation offsets. Loop upper bounds may also be symbolic (see
+`scf.for` constraints).
 
 **Syntax:**
 
