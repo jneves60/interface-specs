@@ -475,7 +475,7 @@ scf.for %iterator = %lower_bound to %upper_bound step %step {
   do not support a symbolic upper bound.
 - Loop-carried variables are not supported.
 - Only the induction variable may be used directly inside the loop body.
-- `sdscbundle.device_mem_allocate` must not appear inside the loop body.
+- `sdscbundle.device_mem_allocate` should not appear inside the loop body; if it does, the backend still reserves only one buffer for the entire kernel, not one per iteration.
 
 **Example:**
 
