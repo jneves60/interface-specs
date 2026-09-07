@@ -8,8 +8,8 @@ capture values defined outside. The `func.func` declares the bundle entry point:
 it has no return values and its body ends with `return`.
 
 The function may declare zero or more parameters. Each parameter is a runtime-provided
-base address that the bundle body uses to compute tensor symbol values passed to
-`sdscbundle.sdsc_execute`.
+value — either a tensor base address or a symbolic dimension size — that the bundle
+body uses to compute symbol values passed to `sdscbundle.sdsc_execute`.
 
 **Syntax:**
 
@@ -29,9 +29,9 @@ Each parameter is one of:
 
 | Type | Description |
 |---|---|
-| *(none)* | No parameters — all addresses are embedded as `arith.constant` values inside the function body. |
-| `index` | A resolved base address passed directly as a constant index value. |
-| `!sdscbundle.input_arg<index>` | A runtime-provided base address. Must be extracted with `sdscbundle.input_arg_extract` before use. |
+| *(none)* | No parameters — all symbol values (addresses and sizes) are embedded as `arith.constant` values inside the function body. |
+| `index` | A resolved symbol value (base address or dimension size) passed directly as a constant index value. |
+| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value (base address or dimension size). Must be extracted with `sdscbundle.input_arg_extract` before use. |
 
 **Attributes:**
 
