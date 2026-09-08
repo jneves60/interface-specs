@@ -76,29 +76,6 @@ DesignSpaceConfig can represent **BOTH** deep learning operators AND data-shuffl
 - The backend compiler will ensure proper data movement across cores
 - **Current Limitation:** This functionality is not yet available in the backend; it will be implemented in a future iteration
 
-### Padding for Chunked Dimensions
-
-When a padded dimension is chunked across cores:
-
-- Set front/back padding to `-1` in the "core" data stage
-- This signals special handling for distributed padding
-
-### Stick Constraint Ripple Effects
-
-Stick constraints can cause ripple effects across tensors:
-
-- A tensor may need padding in its non-stick dimension
-- This occurs when that dimension appears in the stick of another tensor feeding the same operation
-- Required to ensure dimension span consistency across all tensors
-
-### Input2 Padding in Matmul
-
-In BatchMatmul operations:
-
-- Input2 must be padded along `reduction_dim` (even though it's not in Input2's stick)
-- Required because `reduction_dim` is part of Input1's stick
-- Ensures dimension span consistency between inputs
-
 ---
 
 | [↑ Table of Contents](README.md) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | [Next: Bundle API →](MLIR-bundle-API.md) |
