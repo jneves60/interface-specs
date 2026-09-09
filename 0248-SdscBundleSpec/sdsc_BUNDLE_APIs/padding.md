@@ -26,21 +26,21 @@ operation, `totalSize_` will correspond to the input size after padding. E.g. fo
 with a padding of 1 and 128 without padding. The dimension's size (as specified in `N_`, `dataStageParam_` per se.) will correspond
 to the output image size and hence 128 with padding=1 and 126 without padding.
 
-## (ii) padding_ sub-field in scheduleTree_
+## (ii) padding field in CoordinateInfo
 
-The `padding_` sub-field in `scheduleTree_` can take on the following values:
+The `padding` field inside `coordinates_.coordInfo[<dim>]` (a `CoordinateInfo` object within a `scheduleTree_` node) can take on the following values:
 
 ```
-NOPAD
-LOWERED_PADDED
-PADDED_NOZEROPAD
-PADDED_WZEROPAD
-PADDED_FULLSPAN
-PADDED_FULLSPAN_WUNNEEDED
+nopad
+lowered_padded
+padded_nozeropad
+padded_wzeropad
+padded_fullspan
+padded_fullspan_wunneeded
 ```
 
-**`PADDED_NOZEROPAD`** — to be used with conv2d when padding is non-zero.  
-**`PADDED_FULLSPAN_WUNNEEDED`** — to be used with conv2d when padding is zero.
+**`padded_nozeropad`** — to be used with conv2d when padding is non-zero.
+**`padded_fullspan_wunneeded`** — to be used with conv2d when padding is zero.
 
 ---
 
