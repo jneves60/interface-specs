@@ -1,6 +1,8 @@
 # Padding
 
-`paddingSizes_` is only emitted for operations where `sdsc_spec.padding_sizes` is non-empty — currently **avgpool2d** and **depthwise conv2d**. All other operations (pointwise, matmul, reductions, transpose, etc.) leave it absent entirely.
+For window/padded operations, such as convolution, padding information should be added to both `N_` and `dataStageParam_` in `sdsc.dscs_[0]`, capturing information about front/back padding, stride, and related kernel dimension. If a padded dimension is chunked across cores, front/back padding should be set to `-1` in the core datastage entry.
+
+When a dimension is padded due to window/padded operations like convolution, details of padding need to be specified via the following fields. `paddingSizes_` is only emitted when `sdsc_spec.padding_sizes` is non-empty — currently **avgpool2d** and **depthwise conv2d**. All other operations (pointwise, matmul, reductions, transpose, etc.) leave it absent entirely.
 
 ## (i) paddingSizes_
 
