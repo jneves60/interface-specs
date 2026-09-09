@@ -76,13 +76,12 @@ All five required fields must be present. No additional properties are allowed.
 | `IEEE_INT32` | IEEE 32-bit signed integer |
 | `IEEE_INT64` | IEEE 64-bit signed integer |
 
-## F8 Note on `wordLength` Naming
+## Note on `wordLength` Naming
 
 All other fields in `LabeledDataStructure` use a trailing underscore
-(`ldsIdx_`, `dsName_`, etc.). The field `wordLength` does not.
-`SDSC-json-api.md` refers to it as `wordLength_`. The serialized key in the
-JSON bundle is `wordLength` (no underscore) — this inconsistency is a known
-anomaly. Do not add a trailing underscore when writing bundle JSON.
+(`ldsIdx_`, `dsName_`, etc.). The field `wordLength` does not. The serialized
+key in the JSON bundle is `wordLength` (no underscore) — do not add a trailing
+underscore when writing bundle JSON.
 
 ## Example
 
