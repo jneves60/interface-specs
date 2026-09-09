@@ -8,23 +8,21 @@ When a dimension is padded due to window/padded operations like convolution, det
 
 ## (i) paddingSizes_
 
-```
-"paddingSizes_": {
-   "<padded dim>": {
-          "padFront_": 0 or 1,
-          "padBack_":  0 or 1,
-          "totalSize_": total size inclusive of padding,
-          "stride_": <stride applied with the op>,
-          "dilation_": <dilation applied with the op>,
-          "windowDim_": <window dim> e.g. "ki_"
-       }
-```
+`paddingSizes_` is a sub-field of both `dcs[0].N_` and `dcs[0].dataStageParam_`. One entry per padded dimension; the key is the primary dimension name (e.g. `"r_"`, `"c_"`).
 
-One set of entries need to be added for each dimension that is padded within the `paddingSizes_` structure. `paddingSizes_` itself
-would be a sub-field of both `dcs[0].N_` and `dcs[0].dataStageParam_`. Regardless of whether padding is applied or not in a convolution
-operation, `totalSize_` will correspond to the input size after padding. E.g. for an image of size 128×128, `totalSize_` would be 130
-with a padding of 1 and 128 without padding. The dimension's size (as specified in `N_`, `dataStageParam_` per se.) will correspond
-to the output image size and hence 128 with padding=1 and 126 without padding.
+| Field | Type | Description |
+|---|---|---|
+| `padFront_` | integer | Front padding elements. Default `0`. Set to `-1` when the dimension is chunked across cores (see note above). |
+| `padBack_` | integer | Back padding elements. Default `0`. Set to `-1` when the dimension is chunked across cores. |
+| `unneededPad_` | integer | Total unneeded padding elements (sum of front and back unneeded). |
+| `unneededPadFront_` | integer | Unneeded padding elements originating from `padFront_`. |
+| `unneededPadBack_` | integer | Unneeded padding elements originating from `padBack_`. |
+| `totalSize_` | integer or `"N/A"` | Total input size inclusive of padding. `"N/A"` when `windowDim_` is unset and `padFront_` < 0. Regardless of whether padding is applied, this corresponds to the input size after padding — e.g. for a 128×128 image with padding=1 this is `130`; without padding it is `128`. |
+| `stride_` | integer ≥ 1 | Stride applied with the operation. Default `1`. |
+| `dilation_` | integer ≥ 1 | Dilation applied with the operation. Default `1`. |
+| `windowDim_` | string | Associated window primary dimension name (e.g. `"ki_"`). Uses `primaryDimToString` mapping. |
+
+The dimension's size as specified in `N_` and `dataStageParam_` corresponds to the **output** size — e.g. `128` with padding=1 and `126` without padding for a 128×128 input.
 
 ## (ii) padding field in CoordinateInfo
 
