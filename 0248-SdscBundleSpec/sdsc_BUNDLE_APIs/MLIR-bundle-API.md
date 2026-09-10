@@ -473,8 +473,9 @@ scf.for %iterator = %lower_bound to %upper_bound step %step {
 - The lower bound and step must be compile-time constants. The upper bound may
   be a compile-time constant or a symbolic value. Parametric loops
   do not support a symbolic upper bound.
-- Loop-carried variables are not supported.
-- Only the induction variable may be used directly inside the loop body.
+- Loop-carried variables are not supported. The induction variable may be used
+  freely inside the loop body (e.g. as an operand to `affine.apply` or
+  `arith.addi` to compute per-iteration addresses).
 - `sdscbundle.device_mem_allocate` should not appear inside the loop body; if it does, the backend still reserves only one buffer for the entire kernel, not one per iteration.
 
 **Example:**

@@ -17,7 +17,11 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
-_No unreleased changes since v1.0.0._
+### Task — Fix confusing scf.for loop-carried variable constraint wording (2026-09-09)
+
+| File | Change |
+|---|---|
+| `MLIR-bundle-API.md` | Merge two misleading bullets into one: "Loop-carried variables are not supported" and "Only the induction variable may be used directly inside the loop body" were confusing because the second implied other ops were banned. Replaced with a single bullet that states the constraint and clarifies the induction variable is freely usable in the loop body. |
 
 ---
 
