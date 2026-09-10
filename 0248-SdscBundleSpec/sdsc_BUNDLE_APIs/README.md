@@ -9,7 +9,7 @@
 > **MAJOR** — breaking change to a field, type, or required constraint;
 > **MINOR** — new field, new object, or new operation added;
 > **PATCH** — correction, clarification, or editorial fix.
-> Bump the version in this header when a PR is merged. Log in-progress changes in [CHANGELOG.md](.ignore/CHANGELOG.md).
+> Bump the version in this header when a PR is merged. Log in-progress changes in CHANGELOG.md (local only, not tracked in git).
 
 ---
 
