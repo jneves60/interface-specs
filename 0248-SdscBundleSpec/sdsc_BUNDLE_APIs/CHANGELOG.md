@@ -17,6 +17,23 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Specify SymbolicDimInfo object; cross-reference JSON ↔ MLIR names (2026-09-09)
+
+| File | Change |
+|---|---|
+| `datastructdims.md` | Replace one-liner `symbolicDimInfo_` row with a full `SymbolicDimInfo` sub-section: fields table for `maxSize_` and `granularity_`, JSON ↔ MLIR name mapping table, and paired JSON + MLIR example |
+| `MLIR-bundle-API.md` | Add explicit cross-references from `granularity` and `max_value` field descriptions in `sdscbundle.input_arg_extract` to `SymbolicDimInfo` in `datastructdims.md` |
+
+---
+
+### Task — Document granularity and max_value extraction in sdscbundle.input_arg_extract (2026-09-09)
+
+| File | Change |
+|---|---|
+| `MLIR-bundle-API.md` | Expand `sdscbundle.input_arg_extract` to document `granularity` and `max_value` as extractable fields alongside `value`; add extended type syntax `!sdscbundle.input_arg<index, granularity=N, max_value=N>`; add new example for symbolic dimension extraction; update operations summary table and Bundle Container parameter table for consistency |
+
+---
+
 ### Task — Fix confusing scf.for loop-carried variable constraint wording (2026-09-09)
 
 | File | Change |
