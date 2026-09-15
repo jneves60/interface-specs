@@ -504,9 +504,9 @@ scf.for %iterator = %lower_bound to %upper_bound step %step {
 
 **Constraints:**
 
-- The lower bound and step must be compile-time constants. The upper bound may
-  be a compile-time constant or a symbolic value. Parametric loops
-  do not support a symbolic upper bound.
+- The lower bound, upper bound, and step of every `scf.for` loop must all be
+  resolvable to compile-time constants (via constant folding). No symbolic or
+  runtime loop bounds are supported in any loop kind, including parametric loops.
 - Loop-carried variables are not supported. The induction variable may be used
   freely inside the loop body (e.g. as an operand to `affine.apply` or
   `arith.addi` to compute per-iteration addresses).
@@ -535,9 +535,8 @@ scf.for %i = %c0 to %c8 step %c1 {
 **Description:**
 
 Defines a compile-time constant SSA value. In the SDSC Bundle context this is
-primarily used to define base addresses, loop lower bounds, loop step values,
-and sub-allocation offsets. Loop upper bounds may also be symbolic (see
-`scf.for` constraints).
+primarily used to define base addresses, loop lower bounds, loop upper bounds,
+loop step values, and sub-allocation offsets.
 
 **Syntax:**
 
