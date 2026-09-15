@@ -212,7 +212,7 @@ In [`DesignSpaceConfig.constantInfo_`](constantinfo.md):
 In [`DesignSpaceConfig.computeOp_`](computeoperation.md):
 
 - Set `opFuncName` to the operation string (e.g. `"gelufwd"`, `"batchmatmul"`).
-  See the full table in [`SuperDSC-Bundle.md`](https://github.com/torch-spyre/interface-specs/blob/main/0248-SdscBundleSpec/SuperDSC-Bundle.md#supported-opfuncs-in-sdscjson).
+  See [Supported Operations](computeoperation.md#supported-operations) for the full table.
 - Set `attributes_.dataFormat_` to the execution format (`"SEN169_FP16"`,
   `"IEEE_FP32"`, …).
 - Set `exUnit` to `"sfp"` or `"pt"`.
