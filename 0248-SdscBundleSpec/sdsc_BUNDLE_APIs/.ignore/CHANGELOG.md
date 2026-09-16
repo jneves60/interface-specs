@@ -17,6 +17,14 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Add sdscbundle-schema.json to README Table of Contents (2026-09-16)
+
+| File | Change |
+|---|---|
+| `README.md` | Add section 3.3 "JSON Schema (normative)" linking to `sdscbundle-schema.json` in Stage 3 — JSON Layer Fundamentals |
+
+---
+
 ### Task — Overview.md typo fixes, remove Current Limitation note, trim README header (2026-09-16)
 
 | File | Change |
