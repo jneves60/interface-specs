@@ -279,11 +279,12 @@ exponents of all elements.*
 ```mlir
 module {
   func.func @sdsc_bundle() {
-    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_0_maxnonstick.json"}
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_0_max.json"}
     sdscbundle.sdsc_execute () {sdsc_filename="sdsc_1_sub.json"}
     sdscbundle.sdsc_execute () {sdsc_filename="sdsc_2_exp.json"}
-    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_3_sumnonstick.json"}
-    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_4_realdiv.json"}
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_3_sum.json"}
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_4_reciprocal.json"}
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_5_mul.json"}
     return
   }
 }

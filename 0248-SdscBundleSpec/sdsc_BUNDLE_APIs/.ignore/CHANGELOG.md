@@ -17,6 +17,14 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Align softmax decomposition to 6-step max/sub/exp/sum/reciprocal/mul (M-11) (2026-09-16)
+
+| File | Change |
+|---|---|
+| `MLIR-bundle-API.md` | Replace 5-step softmax example (`maxnonstick`, `sumnonstick`, `realdiv`) in the `sdscbundle.sdsc_execute` sequential operations example with the canonical 6-step decomposition (`max`, `sub`, `exp`, `sum`, `reciprocal`, `mul`) used in `MLIR-bundle-usage-examples.md` and `MLIR-complete-example.md` |
+
+---
+
 ### Task — Add dataStageParam_ and coordinates_ to complete-example.md (M-6) (2026-09-16)
 
 | File | Change |
