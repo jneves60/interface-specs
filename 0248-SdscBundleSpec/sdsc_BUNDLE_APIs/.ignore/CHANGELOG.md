@@ -17,6 +17,14 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Add dataStageParam_ and coordinates_ to complete-example.md (M-6) (2026-09-16)
+
+| File | Change |
+|---|---|
+| `complete-example.md` | Add `dataStageParam_` (key `"0"`, name `"core"`, `ss_`/`el_` = `{mb_: 16, out_: 128}` — even 2-way split). Add `coordinates_` to both allocate nodes: `mb` as 2-way core-split non-stick dimension (`core_fold factor=2, alpha=16, elem_arr_0 factor=16`); `out` as unsplit stick dimension (`core_fold factor=1, alpha=128, elem_arr_0 factor=64, elem_arr_1 factor=2`). Add missing `prev_: "input_alloc"` on `output_alloc` node. |
+
+---
+
 ### Task — Restore spec-accurate broadcast stick constraint wording (M-3) (2026-09-16)
 
 | File | Change |

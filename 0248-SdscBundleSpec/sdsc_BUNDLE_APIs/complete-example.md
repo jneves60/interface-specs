@@ -37,6 +37,13 @@
             "mb_": 32,
             "out_": 128
           },
+          "dataStageParam_": {
+            "0": {
+              "name_": "core",
+              "ss_": {"mb_": 16, "out_": 128},
+              "el_": {"mb_": 16, "out_": 128}
+            }
+          },
           "primaryDsInfo_": {
             "INPUT": {
               "layoutDimOrder_": ["mb", "out"],
@@ -67,11 +74,58 @@
                   "[0, 0]": "0",
                   "[1, 0]": "8192"
                 }
+              },
+              "coordinates_": {
+                "coordInfo": {
+                  "mb": {
+                    "spatial":  3,
+                    "temporal": 0,
+                    "elemArr":  1,
+                    "padding":  "nopad",
+                    "folds": {
+                      "dim_prop_func": [
+                        {"Affine": {"alpha_": 16, "beta_": 0}},
+                        {"Affine": {"alpha_": 0,  "beta_": 0}},
+                        {"Affine": {"alpha_": 0,  "beta_": 0}},
+                        {"Affine": {"alpha_": 1,  "beta_": 0}}
+                      ],
+                      "dim_prop_attr": [
+                        {"factor_": 2,  "label_": "core_fold"},
+                        {"factor_": 1,  "label_": "corelet_fold"},
+                        {"factor_": 1,  "label_": "row_fold"},
+                        {"factor_": 16, "label_": "elem_arr_0"}
+                      ]
+                    }
+                  },
+                  "out": {
+                    "spatial":  3,
+                    "temporal": 0,
+                    "elemArr":  2,
+                    "padding":  "nopad",
+                    "folds": {
+                      "dim_prop_func": [
+                        {"Affine": {"alpha_": 128, "beta_": 0}},
+                        {"Affine": {"alpha_": 0,   "beta_": 0}},
+                        {"Affine": {"alpha_": 0,   "beta_": 0}},
+                        {"Affine": {"alpha_": 1,   "beta_": 0}},
+                        {"Affine": {"alpha_": 1,   "beta_": 0}}
+                      ],
+                      "dim_prop_attr": [
+                        {"factor_": 1,  "label_": "core_fold"},
+                        {"factor_": 1,  "label_": "corelet_fold"},
+                        {"factor_": 1,  "label_": "row_fold"},
+                        {"factor_": 64, "label_": "elem_arr_0"},
+                        {"factor_": 2,  "label_": "elem_arr_1"}
+                      ]
+                    }
+                  }
+                }
               }
             },
             {
               "nodeType_": "allocate",
               "name_": "output_alloc",
+              "prev_": "input_alloc",
               "ldsIdx_": 1,
               "component_": "hbm",
               "layoutDimOrder_": ["mb", "out"],
@@ -85,6 +139,52 @@
                 "data_": {
                   "[0, 0]": "16384",
                   "[1, 0]": "24576"
+                }
+              },
+              "coordinates_": {
+                "coordInfo": {
+                  "mb": {
+                    "spatial":  3,
+                    "temporal": 0,
+                    "elemArr":  1,
+                    "padding":  "nopad",
+                    "folds": {
+                      "dim_prop_func": [
+                        {"Affine": {"alpha_": 16, "beta_": 0}},
+                        {"Affine": {"alpha_": 0,  "beta_": 0}},
+                        {"Affine": {"alpha_": 0,  "beta_": 0}},
+                        {"Affine": {"alpha_": 1,  "beta_": 0}}
+                      ],
+                      "dim_prop_attr": [
+                        {"factor_": 2,  "label_": "core_fold"},
+                        {"factor_": 1,  "label_": "corelet_fold"},
+                        {"factor_": 1,  "label_": "row_fold"},
+                        {"factor_": 16, "label_": "elem_arr_0"}
+                      ]
+                    }
+                  },
+                  "out": {
+                    "spatial":  3,
+                    "temporal": 0,
+                    "elemArr":  2,
+                    "padding":  "nopad",
+                    "folds": {
+                      "dim_prop_func": [
+                        {"Affine": {"alpha_": 128, "beta_": 0}},
+                        {"Affine": {"alpha_": 0,   "beta_": 0}},
+                        {"Affine": {"alpha_": 0,   "beta_": 0}},
+                        {"Affine": {"alpha_": 1,   "beta_": 0}},
+                        {"Affine": {"alpha_": 1,   "beta_": 0}}
+                      ],
+                      "dim_prop_attr": [
+                        {"factor_": 1,  "label_": "core_fold"},
+                        {"factor_": 1,  "label_": "corelet_fold"},
+                        {"factor_": 1,  "label_": "row_fold"},
+                        {"factor_": 64, "label_": "elem_arr_0"},
+                        {"factor_": 2,  "label_": "elem_arr_1"}
+                      ]
+                    }
+                  }
                 }
               }
             }
