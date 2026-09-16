@@ -17,6 +17,14 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Clarify symbol ID uniqueness rule for scf.for loop bodies (M-7) (2026-09-16)
+
+| File | Change |
+|---|---|
+| `MLIR-bundle-API.md` | Add loop-reuse exception to symbol ID uniqueness rule in three locations: `symbol_ids` attribute description, Constraints block, and Semantic constraints section. Clarifies that the same symbol IDs may be reused across `scf.for` iterations because the loop iterator provides per-iteration uniqueness. M-7 closed as false positive. |
+
+---
+
 ### Task — Fix tensor naming convention in complete-example.md (B-3) (2026-09-16)
 
 | File | Change |
