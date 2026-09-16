@@ -17,6 +17,14 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Remove ReStickifyOpLx reference from stick-layout-constraints.md (2026-09-16)
+
+| File | Change |
+|---|---|
+| `stick-layout-constraints.md` | Remove parenthetical sentence mentioning `ReStickifyOpLx` from the Stick Altering Data Shuffle section |
+
+---
+
 ### Task — Replace all DF16 references with SEN169_FP16 in API docs (2026-09-16)
 
 | File | Change |

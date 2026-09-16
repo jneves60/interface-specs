@@ -146,9 +146,7 @@ All other precision formats follow BatchMatmul constraints.
 Restickify converts a tensor from one stick layout to another — used when the
 graph contains a reshape or layout change that requires re-tiling the data
 (e.g. after a `VirtualReshape`). The `HBM` suffix indicates that data flows
-through HBM during the conversion; this path is taken when the scheduler
-cannot keep the conversion entirely on-chip. (An LX-only variant,
-`ReStickifyOpLx`, exists for the on-chip case but is not part of this API.)
+through HBM during the conversion.
 
 **Constraints:**
 
