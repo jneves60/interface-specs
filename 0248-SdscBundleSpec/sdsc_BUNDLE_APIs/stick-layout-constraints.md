@@ -155,7 +155,7 @@ cannot keep the conversion entirely on-chip. (An LX-only variant,
 - Input stick must contain elements from exactly **one** dimension (`d1`).
 - Output stick must contain elements from exactly **one** dimension (`d2`).
 - `d1` and `d2` may be any primary dimensions — there is no restriction on which dimensions are chosen.
-- Only DF16 precision is supported.
+- Only SEN169_FP16 precision is supported.
 
 ---
 

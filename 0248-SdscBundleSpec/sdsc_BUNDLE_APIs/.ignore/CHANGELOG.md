@@ -17,6 +17,15 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Replace all DF16 references with SEN169_FP16 in API docs (2026-09-16)
+
+| File | Change |
+|---|---|
+| `computeoperation.md` | Replace all 90 occurrences of `DF16` with `SEN169_FP16` in the Supported Operations table (Precision and Notes columns) |
+| `stick-layout-constraints.md` | Replace 1 occurrence of `DF16` with `SEN169_FP16` in the Stick Altering Data Shuffle constraints |
+
+---
+
 ### Task — Add json-schema.md wrapper page for sdscbundle-schema.json (2026-09-16)
 
 | File | Change |
