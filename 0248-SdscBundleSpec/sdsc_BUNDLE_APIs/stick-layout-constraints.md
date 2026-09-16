@@ -18,17 +18,17 @@ The BatchMatmul operation has 4 types of semantic dimensions:
 **Output Tensor:**
 
 - Stick: `[generated_dim=64]`
-- Format: Always DL16
+- Format: Always SEN169_FP16
 
 **Input1 Tensor:**
 
-- DL16: `[reduction_dim=64]`
+- SEN169_FP16: `[reduction_dim=64]`
 - FP8/INT8: `[reduction_dim=128]`
 - INT4: `[reduction_dim=16, preserved_dim=2, reduction_dim=8]` (256 elements total)
 
 **Input2 Tensor:**
 
-- DL16: `[generated_dim=64]`
+- SEN169_FP16: `[generated_dim=64]`
 - FP8/INT8: `[reduction_dim=2, generated_dim=64]`
 - INT4: `[reduction_dim=4, generated_dim=64]`
 
@@ -94,7 +94,7 @@ All other precision formats follow BatchMatmul constraints.
 **Input Constraints:**
 
 - Input must have only one dimension in stick:
-  - DL16: `[inpdim=64]`
+  - SEN169_FP16: `[inpdim=64]`
   - FP32: `[inpdim=32]`
 
 **Output Stick Layouts by Family:**
@@ -136,8 +136,8 @@ All other precision formats follow BatchMatmul constraints.
 
 - Both input and output must have the same single dimension in stick
 - For every stick of input, multiple sticks will be produced:
-  - DL16 to FP32: 2 output sticks per input stick
-  - FP8 to DL16: 2 output sticks per input stick
+  - SEN169_FP16 to FP32: 2 output sticks per input stick
+  - FP8 to SEN169_FP16: 2 output sticks per input stick
 
 ## Stick Altering Data Shuffle
 

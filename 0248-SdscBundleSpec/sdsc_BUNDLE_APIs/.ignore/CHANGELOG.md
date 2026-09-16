@@ -17,6 +17,14 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Replace remaining DL16 format references with SEN169_FP16 in stick-layout-constraints.md (2026-09-16)
+
+| File | Change |
+|---|---|
+| `stick-layout-constraints.md` | Replace 6 remaining `DL16` format references with `SEN169_FP16`: BatchMatmul output format, Input1/Input2 per-precision stick entries, quantization input stick constraint, and up-casting operation descriptions. OpFunc identifier strings (`DL16TOFP32`, `FP32TODL16`, `FP8TODL16`) in `computeoperation.md` are left unchanged as they are normative JSON string values. |
+
+---
+
 ### Task — Remove ReStickifyOpLx reference from stick-layout-constraints.md (2026-09-16)
 
 | File | Change |
