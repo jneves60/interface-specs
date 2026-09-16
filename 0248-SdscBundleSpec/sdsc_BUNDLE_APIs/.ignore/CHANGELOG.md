@@ -17,6 +17,16 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Overview.md typo fixes, remove Current Limitation note, trim README header (2026-09-16)
+
+| File | Change |
+|---|---|
+| `Overview.md` | Fix typos: "stand" → "stands", "JSON based" → "JSON-based", "a sets" → "a set", "user written" → "user-written", "bundle.mir" → "bundle.mlir", "json file" → "JSON file", sentence-case "Figure" → "figure" and "A full list" → "a full list", "tiling structure define" → "tiling structure defines" |
+| `Overview.md` | Remove "Current Limitation" bullet from the Tensor Allocation vs Work Division section — the backend now supports cross-core data movement |
+| `README.md` | Remove `Last Updated` and `Git Baseline` fields from the header; retain only `Spec Version` and `Status` |
+
+---
+
 ### Task — Add schema reference, indirect-access example, and navigation fixes (2026-09-16)
 
 | File | Change |

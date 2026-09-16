@@ -1,8 +1,6 @@
 # SDSC Bundle API Documentation
 
 **Spec Version:** 1.0.0
-**Last Updated:** 2026-09-09
-**Git Baseline:** `fcd337a`
 **Status:** Active
 
 > Version numbers follow [Semantic Versioning](https://semver.org/):
