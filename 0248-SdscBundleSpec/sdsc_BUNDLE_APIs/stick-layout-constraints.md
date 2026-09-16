@@ -61,9 +61,9 @@ All other precision formats follow BatchMatmul constraints.
 
 **Constraints:**
 
-- All inputs and outputs must have same stick layout
-- Any stick layout is acceptable
-- If input has broadcast along stick dimension, size of that dimension must equal number of elements in stick (with only one valid element)
+- Any stick layout is acceptable, but all inputs and outputs must have the same stick layout.
+- If a stick dimension has broadcast in a tensor, all stick dimensions of that tensor must have broadcast.
+- If a stick dimension has broadcast in all tensors (inputs and output), then its size in the SDSC must be set to the number of elements that one stick would have if that dimension actually existed.
 
 ## Scan Operations
 

@@ -17,6 +17,14 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Restore spec-accurate broadcast stick constraint wording (M-3) (2026-09-16)
+
+| File | Change |
+|---|---|
+| `stick-layout-constraints.md` | Restore Unary and Broadcast Operations constraints to match `SuperDSC-Bundle.md` verbatim: split the collapsed single bullet back into three sentences — (1) any layout acceptable but all tensors must share it, (2) if any stick dimension has broadcast in a tensor all stick dimensions of that tensor must have broadcast, (3) if a stick dimension has broadcast in all tensors its size must equal the number of elements one full stick would have. Remove the erroneous "with only one valid element" qualifier that was not in the spec. |
+
+---
+
 ### Task — Replace remaining DL16 format references with SEN169_FP16 in stick-layout-constraints.md (2026-09-16)
 
 | File | Change |
