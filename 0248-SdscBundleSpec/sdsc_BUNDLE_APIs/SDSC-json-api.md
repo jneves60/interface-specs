@@ -4,7 +4,7 @@
 
 Each `sdsc_*.json` file in a SuperDSC-Bundle describes a single torch operation to be executed on the Spyre backend (DeepTools). One JSON file encodes everything the hardware needs to execute that operation deterministically across 1 or multiple cores: how the iteration space is divided, how tensors are laid out in memory, where data lives (HBM vs. LX scratchpad), and what compute to perform.
 
-> **Schema:** All `sdsc_*.json` files must conform to the [SDSC Bundle JSON Schema](sdscbundle-schema.json).
+> **Schema:** All `sdsc_*.json` files must conform to the [SDSC Bundle JSON Schema](json-schema.md).
 > The schema is the normative reference for structural correctness — it enforces required fields,
 > enum values, and type constraints for every object in the hierarchy.
 > The step-by-step guide below, together with the individual object pages, covers the semantic

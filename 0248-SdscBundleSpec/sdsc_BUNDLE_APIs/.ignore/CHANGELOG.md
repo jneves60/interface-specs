@@ -17,6 +17,19 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Add json-schema.md wrapper page for sdscbundle-schema.json (2026-09-16)
+
+| File | Change |
+|---|---|
+| `json-schema.md` | **New file.** Markdown wrapper for `sdscbundle-schema.json`: describes the schema's role and enforcement scope, reproduces the version history from the schema's `$comment` field, links to the raw JSON file, and carries the standard navigation footer |
+| `README.md` | Update section 3.3 to link to `json-schema.md` instead of the raw `sdscbundle-schema.json` |
+| `JSON-object-Hierarchy.md` | Update "Next" footer to point to `json-schema.md` |
+| `superdsc-object.md` | Update "Previous" footer to point to `json-schema.md` |
+| `Overview.md` | Update schema link to point to `json-schema.md` |
+| `SDSC-json-api.md` | Update schema link to point to `json-schema.md` |
+
+---
+
 ### Task — Add sdscbundle-schema.json to README Table of Contents (2026-09-16)
 
 | File | Change |

@@ -59,7 +59,7 @@ The API consists of two primary components:
 1. **MLIR Bundle File** (`.mlir`) — Orchestrates execution flow and symbol management
 2. **SDSC JSON Files** (`.json`) — Defines individual operations and their core mappings
 
-All `sdsc_*.json` files must conform to the [SDSC Bundle JSON Schema](sdscbundle-schema.json).
+All `sdsc_*.json` files must conform to the [SDSC Bundle JSON Schema](json-schema.md).
 The schema provides machine-readable type constraints, required-field enforcement, and enum
 validation for every object in the hierarchy. It is the normative reference for structural
 correctness; semantic constraints (cross-field consistency) are described in the individual
