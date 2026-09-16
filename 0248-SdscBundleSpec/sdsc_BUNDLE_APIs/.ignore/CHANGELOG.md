@@ -17,6 +17,52 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Add schema reference, indirect-access example, and navigation fixes (2026-09-16)
+
+| File | Change |
+|---|---|
+| `Overview.md` | Add paragraph under "API Components" stating that all `sdsc_*.json` files must conform to `sdscbundle-schema.json`; link to the schema file; distinguish structural (schema) from semantic (doc) constraints |
+| `SDSC-json-api.md` | Add blockquote callout at the top of the Introduction linking to `sdscbundle-schema.json` as the normative structural reference |
+| `indirect-access-example.md` | **New file.** End-to-end JSON example for a single-core `topkvalue` (Top-K gather) operation demonstrating indirect-access tensors: four-tensor pattern (`INPUT`, `OUTPUT`, `KERNEL` value tensor, `KERNEL_IDX` index tensor); `indirectAllocType_` on both allocate nodes; `relatedIndirectAccessAlloc_` cross-links; `indexTensorType_: "index"`; `maxDimSizes_` page size on value tensor; `indirectAccessIndexLabeledDs` on `ComputeOperation`; fully filled `coordinates_` and `startAddressCoreCorelet_` on all nodes; annotation section and memory-layout table |
+| `README.md` | Add section 7.2 "Indirect Access Example (JSON)" pointing to `indirect-access-example.md` in Stage 7 — Worked Examples |
+| `complete-example.md` | Update navigation footer "Next" to point to `indirect-access-example.md` |
+| `reference.md` | Update navigation footer "Previous" to point to `indirect-access-example.md` |
+
+---
+
+### Task — Add Core Work Division Constraints section to stick-layout-constraints.md (2026-09-15)
+
+| File | Change |
+|---|---|
+| `stick-layout-constraints.md` | Add `## Core Work Division Constraints` section with three subsections: **Data Tensors** (stick-multiple alignment, 256 MB DDR span, dtype note), **Index Tensors** (integral-sticks or sub-stick rule), **Reduction Operations with Multiple Reduction Dimensions** (only one reduction dim may be split). Sourced from `SuperDSC-Bundle.md` lines 399–405 and `work_division.txt` / `work_division_analysis.md` in `.ignore/`. `spyre_hint` frontend API excluded as it is transparent to the SDSC artifacts. |
+
+Commit: `62b75c8`
+
+---
+
+### Task — Add Validation sections to MLIR-bundle-API.md and SDSC-json-api.md (2026-09-09)
+
+| File | Change |
+|---|---|
+| `MLIR-bundle-API.md` | Add `## Validation` section at end of reference content: structural constraints (permitted dialects, operand/symbol_ids count, device_mem_allocate size, input_arg_extract source type, func.func parameter types) checked by the MLIR verifier; semantic constraints (constant loop bounds, unique symbol IDs, resolvable sdsc_filename paths) checked during pipeline processing |
+| `SDSC-json-api.md` | Add `## Validation` section at end of reference content: schema validation via `sdscbundle-schema.json`; semantic validation (numCoresUsed_ / coreIdsUsed_ consistency, coreIdToDsc_ index validity, symbol ID / operand correspondence, stick-size work multiple, 256 MB DDR span limit) |
+
+---
+
+### Task — Add Constraints column to coordinatecontainer.md fields table (2026-09-09)
+
+| File | Change |
+|---|---|
+| `coordinatecontainer.md` | Add missing Constraints column to Fields table to match the standard used by all other object docs; move key-pattern constraint from Description into Constraints for `coordInfo`; add outer-key constraint for `coreIdToWkSlice_`. Resolves gap analysis item 12. |
+
+---
+
+### Decision — Item 11 closed as false positive (2026-09-09)
+
+Gap analysis item 11 (orphaned/misaligned heading structure in `MLIR-bundle-API.md`) investigated and closed as a false positive. The three `#` characters flagged as headings are MLIR affine map alias definitions (e.g. `#map_name = affine_map<...>`) inside fenced code blocks — not Markdown headings. The document's actual heading hierarchy (`#` → `##` → `###`) is correct and well-formed. No changes required.
+
+---
+
 ### Task — Fix opFuncName and labeled-DS tensor references in complete-example.md (gap analysis items 9 & 10)
 
 | File | Change |

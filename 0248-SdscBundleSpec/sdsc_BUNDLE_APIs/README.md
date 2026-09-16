@@ -102,6 +102,7 @@ Documents are organized in the recommended reading order, grouped by learning st
 | # | Section | File |
 |---|---------|------|
 | 7.1 | Complete Example (JSON) | [complete-example.md](complete-example.md) |
+| 7.2 | Indirect Access Example (JSON) | [indirect-access-example.md](indirect-access-example.md) |
 
 ---
 
