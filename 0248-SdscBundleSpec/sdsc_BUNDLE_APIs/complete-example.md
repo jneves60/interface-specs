@@ -192,7 +192,7 @@
           "labeledDs_": [
             {
               "ldsIdx_": 0,
-              "dsName_": "input",
+              "dsName_": "gelu-Tensor0",
               "dsType_": "INPUT",
               "scale_": [1.0, 1.0],
               "wordLength": 2,
@@ -204,7 +204,7 @@
             },
             {
               "ldsIdx_": 1,
-              "dsName_": "output",
+              "dsName_": "gelu-Tensor1",
               "dsType_": "OUTPUT",
               "scale_": [1.0, 1.0],
               "wordLength": 2,
@@ -225,8 +225,8 @@
                 "fidelity_": "regular"
               },
               "location": "Inner",
-              "inputLabeledDs": ["input-idx0"],
-              "outputLabeledDs": ["output-idx1"]
+              "inputLabeledDs": ["gelu-Tensor0-idx0"],
+              "outputLabeledDs": ["gelu-Tensor1-idx1"]
             }
           ]
         }

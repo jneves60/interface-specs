@@ -17,6 +17,14 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Fix tensor naming convention in complete-example.md (B-3) (2026-09-16)
+
+| File | Change |
+|---|---|
+| `complete-example.md` | Rename tensors from bare `"input"` / `"output"` to `"gelu-Tensor0"` / `"gelu-Tensor1"` to match the `"<op>-Tensor<N>"` convention used in all other examples. Update `inputLabeledDs` and `outputLabeledDs` references in `computeOp_` accordingly (`"gelu-Tensor0-idx0"`, `"gelu-Tensor1-idx1"`). |
+
+---
+
 ### Task — Align softmax decomposition to 6-step max/sub/exp/sum/reciprocal/mul (M-11) (2026-09-16)
 
 | File | Change |
