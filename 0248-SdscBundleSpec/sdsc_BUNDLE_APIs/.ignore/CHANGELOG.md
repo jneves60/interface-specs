@@ -17,6 +17,14 @@ in [README.md](README.md), and add a one-line summary entry to the
 
 ## Unreleased Changes
 
+### Task — Fix coreIdToDscSchedule tuple semantics (M-9) (2026-09-17)
+
+| File | Change |
+|---|---|
+| `superdsc-object.md` | Correct `datadsc_idx` — indexes into `dscs_` (not `datadscs_`), `-1` = no data DSC. Correct `dldsc_idx` — indexes into `dscs_`, `-1` = none; document `before_sync`/`after_sync` as `0`/`1`. Remove incorrect cross-reference from `datadscs_` description. Update example tuples from `[0, 0, 0, 0]` to `[-1, 0, 0, 0]` and expand example explanation with per-field names. |
+
+---
+
 ### Task — Clarify symbol ID uniqueness rule for scf.for loop bodies (M-7) (2026-09-16)
 
 | File | Change |
