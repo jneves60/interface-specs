@@ -90,6 +90,7 @@ Root Object (Dynamic operation name key, e.g., "exp", "matmul")
                     │         ├─── layoutDimOrder_: Array<string>
                     │         ├─── maxDimSizes_: Array<integer>
                     │         ├─── isStartAddrSymbolic_: boolean | 0 | 1
+                    │         ├─── nonUnifiedAllocInHBM_: boolean | 0 | 1
                     │         ├─── startAddressCoreCorelet_: FoldManager
                     │         ├─── backGapCore_: Object
                     │         ├─── padding_: Object
