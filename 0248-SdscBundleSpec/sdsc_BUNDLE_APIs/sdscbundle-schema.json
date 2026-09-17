@@ -583,10 +583,6 @@
             }
           }
         },
-        "padding_": {
-          "type": "object",
-          "description": "Padding parameters for this allocation. Set when the tensor requires memory padding beyond its logical size."
-        },
         "indirectAllocType_": {
           "type": "string",
           "description": "Indirect allocation type tag. Present when this node participates in an indirect-access allocation pattern.",
