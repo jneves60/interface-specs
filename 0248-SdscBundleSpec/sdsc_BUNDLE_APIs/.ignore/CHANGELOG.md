@@ -30,7 +30,7 @@ in [README.md](README.md), and add a one-line summary entry to the
 | `coordinateinfo.md` | Clarify semantic definitions of `spatial`, `temporal`, and `elemArr` levels without confusing "typically 3" assertions. Cross-reference `foldproperty.md#folds-hierarchy`. |
 | `foldproperty.md` | Add dedicated `## Folds Hierarchy` section documenting `core_fold`, `corelet_fold`, `row_fold`, `elem_arr_0`, and `elem_arr_1`. |
 | `complete-example.md`, `indirect-access-example.md` | Update example `coreIdToDscSchedule` tuples from `[[0, 0, 0, 0]]` to standard default `[[-1, 0, 0, 0]]`. |
-| `datastructdims.md` | Remove backend construct `skipDeprecatedFields` from deprecated dimension fields description. |
+| `datastructdims.md`, `sdscbundle-schema.json` | Remove deprecated dimension fields (`r_`, `c_`, `ij_`, `rc_`, `kij_`, `sij_`, `zij_`, `si_`, `sj_`, `zi_`, `zj_`). |
 | `figures/gen_hierarchy.py`, `figures/sdsc_json_hierarchy.png` | Add `nonUnifiedAllocInHBM_` to `ScheduleTreeNode` diagram node and re-render diagram. |
 
 ---

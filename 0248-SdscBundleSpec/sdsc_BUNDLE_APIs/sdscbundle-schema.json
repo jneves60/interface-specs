@@ -423,7 +423,7 @@
     },
     "DataStructDims": {
       "type": "object",
-      "description": "Data structure dimensions. All numeric dimension values are numbers, with -1 meaning unset. Primary dimensions are in_, out_, mb_, i_, j_, ki_, kj_, x_, x1_, y_. The remaining dimension fields (r_, c_, ij_, rc_, kij_, sij_, zij_, si_, sj_, zi_, zj_) are deprecated and accepted for compatibility.",
+      "description": "Data structure dimensions. All numeric dimension values are numbers, with -1 meaning unset. Primary dimensions are in_, out_, mb_, i_, j_, ki_, kj_, x_, x1_, y_.",
       "properties": {
         "name_": {
           "type": "string",
@@ -439,17 +439,6 @@
         "x_": {"type": "number", "description": "Repeat dim that does not add reuse (e.g. attention heads). -1 = unset."},
         "x1_": {"type": "number", "description": "Additional repeat dim (e.g. attention heads). -1 = unset."},
         "y_": {"type": "number", "description": "Kernel reuse dimension (e.g. timestep). -1 = unset."},
-        "r_": {"type": "number", "description": "[deprecated] Input image rows with zero padding. -1 = unset."},
-        "c_": {"type": "number", "description": "[deprecated] Input image cols with zero padding. -1 = unset."},
-        "ij_": {"type": "number", "description": "[deprecated] Output image dimensions rows/cols. -1 = unset."},
-        "rc_": {"type": "number", "description": "[deprecated] Input image rows/cols with zero padding. -1 = unset."},
-        "kij_": {"type": "number", "description": "[deprecated] Kernel dimensions rows/cols. -1 = unset."},
-        "sij_": {"type": "number", "description": "[deprecated] Stride dimensions rows/cols. -1 = unset."},
-        "zij_": {"type": "number", "description": "[deprecated] Zero pad dimensions rows/cols. -1 = unset."},
-        "si_": {"type": "number", "description": "[deprecated] Stride along rows. -1 = unset."},
-        "sj_": {"type": "number", "description": "[deprecated] Stride along cols. -1 = unset."},
-        "zi_": {"type": "number", "description": "[deprecated] Zero pad rows. -1 = unset."},
-        "zj_": {"type": "number", "description": "[deprecated] Zero pad cols. -1 = unset."},
         "symbolicDimInfo_": {
           "type": "object",
           "description": "Per-dimension symbolic size info. Keys are primary dim names (e.g. 'in_', 'mb_'); values are SymbolicDimInfo objects.",
@@ -506,7 +495,7 @@
         },
         "paddingSizes_": {
           "type": "object",
-          "description": "Per-dimension padding information. Keys are primary dim names (e.g. 'r_', 'c_'); values are DimPaddingSizes objects.",
+          "description": "Per-dimension padding information. Keys are primary dim names (e.g. 'i', 'j'); values are DimPaddingSizes objects.",
           "patternProperties": {
             "^[A-Za-z_][A-Za-z0-9_]*$": {
               "$ref": "#/$defs/DimPaddingSizes"
@@ -795,7 +784,7 @@
         },
         "stride_": {"type": "integer", "minimum": 1, "description": "Stride. Default 1."},
         "dilation_": {"type": "integer", "minimum": 1, "description": "Dilation. Default 1."},
-        "windowDim_": {"type": "string", "description": "Associated window primary dim name (e.g. 'kij_'). Uses primaryDimToString mapping."}
+        "windowDim_": {"type": "string", "description": "Associated window primary dim name (e.g. 'ki_', 'kj_'). Uses primaryDimToString mapping."}
       }
     },
     "SymbolicDimInfo": {
