@@ -140,7 +140,7 @@ func.func @op(%mb_arg: !sdscbundle.input_arg<index, granularity=1, max_value=32>
 
 ### Deprecated dimension fields
 
-Serialized unless `skipDeprecatedFields=true`. Prefer the primary dims above.
+Accepted for compatibility. Prefer the primary dimensions above.
 
 | Field | Description |
 |---|---|
