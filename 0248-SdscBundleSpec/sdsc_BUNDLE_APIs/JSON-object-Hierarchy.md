@@ -174,7 +174,7 @@ Root Object (Dynamic operation name key, e.g., "exp", "matmul")
 13. **CoordinateInfo.padding**: Six specific values replacing the former `"pad"` catch-all — use `"padded_nozeropad"`, `"padded_wzeropad"`, `"padded_fullspan"`, `"padded_fullspan_wunneeded"`, or `"lowered_padded"` as appropriate.
 14. **wordLength**: A `number` (not integer) to support sub-byte formats — 4-bit types carry `0.5`.
 15. **indirectAllocType_**: Constrained to `"no_indirection"`, `"value_tensor"`, or `"index_tensor"`; when `"index_tensor"`, `indexTensorType_` must also be present.
-16. **ComputeOperation.location**: Only `"Inner"` is emitted by the torch-spyre frontend (the loader accepts all 32 loop names).
+16. **ComputeOperation.location**: Only `"Inner"` is emitted by the torch-spyre frontend.
 17. **fidelity_**: Valid values are `"regular"` and `"fast"` (`"high"` and `"low"` are no longer valid).
 18. **coreIdToDscSchedule Step Tuple**: 4-integer array `[datadsc_idx, dldsc_idx, before_sync, after_sync]`, where `datadsc_idx` indexes `datadscs_` (`-1` by default), `dldsc_idx` indexes `dscs_` (`0` for single-DSC bundles), and `before_sync`/`after_sync` are `0`/`1` barrier flags. Common default: `[-1, 0, 0, 0]`.
 
