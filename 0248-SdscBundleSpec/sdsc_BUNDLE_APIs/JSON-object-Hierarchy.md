@@ -180,5 +180,5 @@ Root Object (Dynamic operation name key, e.g., "exp", "matmul")
 
 ---
 
-| [← Previous: SDSC JSON API](SDSC-json-api.md) | [↑ Table of Contents](README.md) | [Next: JSON Schema →](json-schema.md) |
+| [← Previous: SDSC JSON API](SDSC-json-api.md) | [↑ Table of Contents](README.md) | [Next: JSON Schema →](sdscbundle-schema.json) |
 |:--|:--:|--:|

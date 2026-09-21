@@ -4,11 +4,19 @@
 
 Each `sdsc_*.json` file in a SuperDSC-Bundle describes a single torch operation to be executed on the Spyre backend (DeepTools). One JSON file encodes everything the hardware needs to execute that operation deterministically across 1 or multiple cores: how the iteration space is divided, how tensors are laid out in memory, where data lives (HBM vs. LX scratchpad), and what compute to perform.
 
-> **Schema:** All `sdsc_*.json` files must conform to the [SDSC Bundle JSON Schema](json-schema.md).
-> The schema is the normative reference for structural correctness — it enforces required fields,
-> enum values, and type constraints for every object in the hierarchy.
-> The step-by-step guide below, together with the individual object pages, covers the semantic
-> constraints that go beyond what JSON Schema can express.
+## JSON Schema
+
+[`sdscbundle-schema.json`](sdscbundle-schema.json) is the machine-readable contract for every
+`sdsc_*.json` file in a SuperDSC-Bundle. It is written against
+[JSON Schema draft 2020-12](https://json-schema.org/draft/2020-12).
+
+The schema enforces:
+
+- Required fields and their types at every level of the object hierarchy
+- Enum values for `dsType_`, `component_`, `indirectAllocType_`, `indexTensorType_`,
+  `dataFormat_`, `fidelity_`, `nodeType_`, and all other constrained string fields
+- Pattern constraints on dynamic keys such as core IDs and operation-name root keys
+- Structural rules such as `additionalProperties: false` on all defined objects
 
 A PyTorch model may translate into several SuperDSC-Bundles. Each bundle is composed of a `bundle.mlir` file (which orchestrates execution flow and symbol management — see [MLIR Bundle API](MLIR-bundle-API.md)) and one or more `sdsc_*.json` files. Each JSON file corresponds to one torch operation.
 

@@ -47,7 +47,7 @@ Documents are organized in the recommended reading order, grouped by learning st
 |---|---------|------|
 | 3.1 | SDSC JSON API | [SDSC-json-api.md](SDSC-json-api.md) |
 | 3.2 | Object Hierarchy | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) |
-| 3.3 | JSON Schema (normative) | [json-schema.md](json-schema.md) |
+| 3.3 | JSON Schema (normative) | [sdscbundle-schema.json](sdscbundle-schema.json) |
 
 ---
 
