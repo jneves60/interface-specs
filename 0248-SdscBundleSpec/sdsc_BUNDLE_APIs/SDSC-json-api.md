@@ -4,7 +4,15 @@
 
 Each `sdsc_*.json` file in a SuperDSC-Bundle describes a single torch operation to be executed on the Spyre backend (DeepTools). One JSON file encodes everything the hardware needs to execute that operation deterministically across 1 or multiple cores: how the iteration space is divided, how tensors are laid out in memory, where data lives (HBM vs. LX scratchpad), and what compute to perform.
 
-## JSON Schema
+A PyTorch model may translate into several SuperDSC-Bundles. Each bundle is composed of a `bundle.mlir` file (which orchestrates execution flow and symbol management — see [MLIR Bundle API](MLIR-bundle-API.md)) and one or more `sdsc_*.json` files. Each JSON file corresponds to one torch operation.
+
+The different sections of an SDSC JSON file describe the following:
+
+- **Core fold properties** — how the iteration space is divided across cores
+- **Tensor descriptors** — layout, memory residency, data format, and stick configuration for each tensor
+- **Schedule tree** — per-tensor memory allocation, start addresses, and coordinate mappings
+- **Data staging** — per-core tile sizes for steady-state and epilogue passes
+- **Compute operations** — execution unit, operation name, and input/output tensor references
 
 [`sdscbundle-schema.json`](sdscbundle-schema.json) is the machine-readable contract for every
 `sdsc_*.json` file in a SuperDSC-Bundle. It is written against
@@ -17,16 +25,6 @@ The schema enforces:
   `dataFormat_`, `fidelity_`, `nodeType_`, and all other constrained string fields
 - Pattern constraints on dynamic keys such as core IDs and operation-name root keys
 - Structural rules such as `additionalProperties: false` on all defined objects
-
-A PyTorch model may translate into several SuperDSC-Bundles. Each bundle is composed of a `bundle.mlir` file (which orchestrates execution flow and symbol management — see [MLIR Bundle API](MLIR-bundle-API.md)) and one or more `sdsc_*.json` files. Each JSON file corresponds to one torch operation.
-
-The different sections of an SDSC JSON file describe the following:
-
-- **Core fold properties** — how the iteration space is divided across cores
-- **Tensor descriptors** — layout, memory residency, data format, and stick configuration for each tensor
-- **Schedule tree** — per-tensor memory allocation, start addresses, and coordinate mappings
-- **Data staging** — per-core tile sizes for steady-state and epilogue passes
-- **Compute operations** — execution unit, operation name, and input/output tensor references
 
 ## Key Components
 
