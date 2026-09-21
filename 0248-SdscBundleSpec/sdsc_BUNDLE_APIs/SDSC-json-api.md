@@ -14,9 +14,8 @@ The different sections of an SDSC JSON file describe the following:
 - **Data staging** — per-core tile sizes for steady-state and epilogue passes
 - **Compute operations** — execution unit, operation name, and input/output tensor references
 
-[`sdscbundle-schema.json`](sdscbundle-schema.json) is the machine-readable contract for every
-`sdsc_*.json` file in a SuperDSC-Bundle. It is written against
-[JSON Schema draft 2020-12](https://json-schema.org/draft/2020-12).
+All `sdsc_*.json` files in a SuperDSC-Bundle must conform to [`sdscbundle-schema.json`](sdscbundle-schema.json),
+the machine-readable contract written against [JSON Schema draft 2020-12](https://json-schema.org/draft/2020-12).
 
 The schema enforces:
 
