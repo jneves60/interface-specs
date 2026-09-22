@@ -94,61 +94,111 @@ Each `DesignSpaceConfig` entry contains the following elements:
 
 **Tensor allocation need NOT be compatible with compute work division.** Data in one core can be directly available for compute in another core — the backend compiler will ensure proper data movement across cores. This functionality is fully supported by the backend.
 
-### SuperDSC-Bundle intermediate representation in mlir
+### SuperDSC-Bundle MLIR Representation
 
-This intermediate representation (IR) in mlir conveys a complex kernel made of one or multiple operations. This IR can be used to chain together multiple operations in a sequence and/or to add loops around them. This is achieved through new and existing mlir operations.
+The `bundle.mlir` file conveys a complex kernel made of one or multiple operations. It chains together multiple SDSC operations in sequence and can add loops around them using new and existing MLIR operations. For the complete dialect reference with all syntax tables and examples see [MLIR Bundle API](sdsc_BUNDLE_APIs/MLIR-bundle-API.md).
 
-#### `sdscbundle.sdsc_execute` op
+#### Bundle Container
 
-The central operation in this IR is a new operation we introduce to instantiate a SuperDSC in the execution plan of the complex kernel. This is an example:
+A SuperDSC Bundle is expressed as a standard MLIR `module` containing a single `func.func`. The function declares the bundle entry point: it has no return values and its body ends with `return`. It may declare zero or more parameters — each is either a compile-time `index` value or a runtime-provided `!sdscbundle.input_arg<index>` value (which must be extracted with `sdscbundle.input_arg_extract` before use).
 
 ```mlir
-sdscbundle.sdsc_execute (%A_start_address, %B_start_address) {sdsc_filename="sdscA.json", symbol_ids=[-1, -2]}
+module {
+  func.func @sdsc_bundle(%param_0: index,
+                         %param_1: !sdscbundle.input_arg<index>) {
+    // Bundle operations
+    return
+  }
+}
 ```
 
-The operation does not **return** anything.
+Each parameter is one of:
 
-The operation **attributes** are:
-* `sdsc_filename` the relavite path and filename of the specific sdsc.json to instantiate, relative to the location of the mlir file. As one bundle can contain multiple sdsc, different names must be chosen for each json file and here we can refer to the exact one of interest.
-* `symbol_ids` list of the symbol ids used inside the sdsc, if any, to represent symbolic start addresses or sizes
+| Type | Description |
+|---|---|
+| *(none)* | No parameters — all symbol values are embedded as `arith.constant` values inside the function body. |
+| `index` | A resolved symbol value passed directly as a constant index. |
+| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value. May carry optional `granularity=N` and/or `max_value=N` annotations. Must be extracted with `sdscbundle.input_arg_extract` before use. |
 
-The operation **operands** are the SSA variables corresponding to the values to be assigned to the symbols listed in `symbol_ids`, passed in the same order as the symbol ids. These values can be constants (`arith.constant`), or the result of affine expressions, like [`affine.apply`](https://mlir.llvm.org/docs/Dialects/Affine/#affineapply-affineaffineapplyop). The affine expressions can be comprised of constants and loop iterators. Having actual symbols in mlir will be supported through the next revision of the spec.
+#### Symbolic Values and Addresses
 
-The `symbols_ids` must be unique in the bundle i.e., symbols ids cannot be recycled across sdscs that are part of the same bundle (unless they take the same value).
+Within a SuperDSC Bundle there are two distinct ways a value can be symbolic — not fixed at compile time and resolved by the backend just before the job is launched.
 
-#### `sdscbundle.device_mem_allocate` op
+**Symbolic Addresses** — a tensor's start address in device memory is not a concrete byte offset at compile time. On the JSON side: set `isStartAddrSymbolic_: true` on the `allocate` node in `scheduleTree_` and place symbolic identifier strings in `startAddressCoreCorelet_.data_`. On the MLIR side: supply the runtime value as an operand to `sdscbundle.sdsc_execute` via `symbol_ids`.
 
-A bundle often needs device memory that is not one of the kernel's inputs or outputs: buffers holding intermediate tensors handed from one SDSC to the next, and scratch space used within an SDSC. `sdscbundle.device_mem_allocate` lets the frontend request such memory from the backend, instead of keeping its address symbolic and having it supplied to the bundle from outside. The requested memory is held for the full `SuperDSC-Bundle`: it is reserved before the first SDSC in the bundle executes and is not deallocated at any intermediate point within the bundle.
+**Symbolic Dimension Sizes** — a tensor shape dimension (e.g. sequence length or batch size) varies at runtime. On the JSON side: `DesignSpaceConfig.dimToSymbolMapping_` maps dimension names to symbolic variable names; `DataStructDims.symbolicDimInfo_` records `maxSize_` and `granularity_` for each symbolic dimension; `SuperDsc.symbolDefinitions_`, `inputSymbolsAndTags_`, and `dimToSymbolMappingOpcodeCorrection_` hold the top-level symbol registry. On the MLIR side: the runtime value is also supplied as an operand to `sdscbundle.sdsc_execute` via `symbol_ids` — the same mechanism as symbolic addresses.
+
+From the MLIR perspective both kinds of symbolic value are unified: they are operands to `sdscbundle.sdsc_execute` bound via `symbol_ids`. The distinction is on the JSON side — the backend routes each symbol ID to the appropriate field depending on whether it is bound to an `isStartAddrSymbolic_` allocate node (address) or to a `dimToSymbolMapping_` entry (size). When a symbolic dimension is split across cores, both kinds appear together in the same JSON file.
+
+#### `sdscbundle` Dialect Operations
+
+The following operations are defined by the `sdscbundle` dialect and are the primary means by which a frontend compiler communicates with the Spyre backend.
+
+| Operation | Summary |
+|---|---|
+| `sdscbundle.sdsc_execute` | Instantiates and executes one SDSC JSON operation. |
+| `sdscbundle.device_mem_allocate` | Allocates a contiguous device memory buffer for intermediate or scratch tensors. |
+| `sdscbundle.input_arg_extract` | Extracts a named field (`value`, `granularity`, or `max_value`) from a `!sdscbundle.input_arg<index>` bundle parameter. |
+
+##### `sdscbundle.sdsc_execute`
+
+Instantiates and executes a SuperDSC operation. Each call references one SDSC JSON file. Multiple calls in sequence express kernel fusion — each invocation optionally substitutes symbolic addresses or sizes with the SSA values provided as operands.
+
+```mlir
+sdscbundle.sdsc_execute (%operand1, %operand2, ...) {
+  sdsc_filename = "path/to/sdsc.json",
+  symbol_ids = [id1, id2, ...]
+}
+```
+
+**Attributes:**
+- `sdsc_filename` (required): relative path to the SDSC JSON file; path is relative to the MLIR file location.
+- `symbol_ids` (optional): list of negative integer symbol IDs (e.g. `-1`, `-2`). Each maps positionally to one operand. IDs must be unique across the bundle unless both invocations assign the same value. Inside an `scf.for` loop body, the same IDs may be reused across iterations.
+
+**Operands:** SSA values of type `index` supplying runtime values for each symbol ID, in the same order. Can be `arith.constant`, the return of `sdscbundle.device_mem_allocate`, a value extracted via `sdscbundle.input_arg_extract`, or an `affine.apply` expression.
+
+**Returns:** None.
+
+Example — softmax kernel fusion (six sequential operations):
+
+```mlir
+module {
+  func.func @sdsc_bundle() {
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_0_max.json"}
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_1_sub.json"}
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_2_exp.json"}
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_3_sum.json"}
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_4_reciprocal.json"}
+    sdscbundle.sdsc_execute () {sdsc_filename="sdsc_5_mul.json"}
+    return
+  }
+}
+```
+
+##### `sdscbundle.device_mem_allocate`
+
+Allocates a contiguous range of device memory for buffers that are neither kernel inputs nor outputs — intermediate tensors passed between consecutive SDSCs and scratch space consumed internally by a single SDSC. The backend reserves the requested bytes before the first SDSC executes and holds them for the entire kernel lifetime; there is no matching deallocate.
+
+```mlir
+%result = sdscbundle.device_mem_allocate <size> bytes : index
+```
+
+**Attributes:**
+- `size` (required): size in bytes — must be a positive compile-time constant. Maximum single request is ~15 GB (underlying segment is 16 GB; 1 GB reserved for backend programs and correction tensors).
+
+**Returns:** A single `index` SSA value — the device byte address of the first byte of the allocated buffer. Contents are undefined at allocation.
+
+**Constraints:**
+- Must appear in the entry block of the bundle function, outside any `scf.for`. An allocation inside a loop still reserves only one buffer for the entire kernel.
+- Each call gets its own non-overlapping range. Total device memory required is the sum of all requests and must stay within ~15 GB.
+- To reuse space across tensors with non-overlapping live ranges, issue a single large allocation and sub-allocate using `arith.addi` offsets (the frontend owns layout and alignment).
+
+Example — 64 KB pool carved into four 16 KB sub-buffers:
 
 ```mlir
 %pool = sdscbundle.device_mem_allocate 65536 bytes : index
-```
 
-The operation **returns** the byte address of the first byte of the allocated buffer, as an `index`. This is a device address in the same address space as the start addresses used inside `sdsc.json`, so it can be passed to `sdscbundle.sdsc_execute` as the value of a symbolic start address.
-
-The operation **attributes** are:
-* `size` the size of the requested buffer in bytes. It must be a positive constant; symbolic sizes are not supported. A request can be for up to ~15GB: the memory is carved out of a single memory segment whose maximum size is 16GB, of which 1GB is reserved for backend-generated programs and correction-related tensors.
-
-The operation takes no **operands**.
-
-The requested memory is a single contiguous range, and its contents are undefined at allocation.
-
-##### Lifetime
-
-The allocation lives for the entirety of the kernel. The backend reserves the requested bytes for the whole job, so the buffer is valid from the start of the bundle through the end of its last SDSC, and is released only once the kernel completes. There is no matching deallocate operation, and the backend does not reuse the range for anything else within the kernel. Consequently:
-* the operation should appear in the entry block of the bundle function, outside of any `scf.for`. An allocation written inside a loop still reserves one single buffer, not one buffer per iteration.
-* each `device_mem_allocate` in the bundle gets its own non-overlapping range, so the device memory a bundle requires is the sum of all of its requests, and it is that sum which must stay within the ~15GB budget above. A frontend that wants to reuse space across tensors with non-overlapping live ranges should request a single pool and sub-allocate it itself, as described below.
-
-##### Sub-allocation
-
-Individual buffer addresses are derived from the returned base address by adding a constant offset (`arith.addi`), and the result is passed to `sdscbundle.sdsc_execute` in place of an absolute start address. When a pool is carved up this way the frontend owns its layout: it must ensure that buffers whose live ranges overlap are given disjoint offset ranges, and that each offset satisfies the alignment required by the tensor placed there.
-
-This example allocates a 64KB pool and splits it into four 16KB buffers, reusing the first two as inputs of a later SDSC:
-
-```mlir
-%pool = sdscbundle.device_mem_allocate 65536 bytes : index
-
-%off_0     = arith.constant 0 : index
+%off_0     = arith.constant 0     : index
 %off_16384 = arith.constant 16384 : index
 %off_32768 = arith.constant 32768 : index
 %off_49152 = arith.constant 49152 : index
@@ -158,18 +208,129 @@ This example allocates a 64KB pool and splits it into four 16KB buffers, reusing
 %addr_32768 = arith.addi %pool, %off_32768 : index   // sdsc_2 output, sdsc_3 input
 %addr_49152 = arith.addi %pool, %off_49152 : index   // sdsc_3 scratch
 
-sdscbundle.sdsc_execute (%arg_0, %addr_0) {sdsc_filename="sdsc_0.json", symbol_ids=[-1, -2]}
-sdscbundle.sdsc_execute (%arg_1, %addr_16384) {sdsc_filename="sdsc_1.json", symbol_ids=[-3, -4]}
+sdscbundle.sdsc_execute (%arg_0, %addr_0)                   {sdsc_filename="sdsc_0.json", symbol_ids=[-1, -2]}
+sdscbundle.sdsc_execute (%arg_1, %addr_16384)               {sdsc_filename="sdsc_1.json", symbol_ids=[-3, -4]}
 sdscbundle.sdsc_execute (%addr_0, %addr_16384, %addr_32768) {sdsc_filename="sdsc_2.json", symbol_ids=[-5, -6, -7]}
-sdscbundle.sdsc_execute (%addr_32768, %addr_49152, %arg_2) {sdsc_filename="sdsc_3.json", symbol_ids=[-8, -9, -10]}
+sdscbundle.sdsc_execute (%addr_32768, %addr_49152, %arg_2)  {sdsc_filename="sdsc_3.json", symbol_ids=[-8, -9, -10]}
 ```
 
-#### Loops
-Loops are represented using [`scf.for`](https://mlir.llvm.org/docs/Dialects/SCFDialect/#scffor-scfforop) operation borrowed from MLIR's SCF dialect. This allows SuperDSC-Bundle to describe complex kernels with multiple levels of loops and multiple SDSCs.
+##### `sdscbundle.input_arg_extract`
 
-We do not support loop carried variables, the only supported scenario is the direct use of the induction variable (loop iterator).
+Extracts a named field from a `!sdscbundle.input_arg<index>` bundle parameter. Every `func.func` parameter of this type must be unwrapped with this operation before its value can be used in arithmetic or passed to `sdscbundle.sdsc_execute`.
 
-The loop bound should be a constant. Symbolic loop bound will be enhanced in the next revision of the spec.
+Extractable fields:
+- `value` — the runtime base address or dimension size provided by the caller. Available on all `input_arg` parameters.
+- `granularity` — the step constraint for a symbolic dimension size; corresponds to `granularity_` in [`SymbolicDimInfo`](sdsc_BUNDLE_APIs/datastructdims.md).
+- `max_value` — the upper bound for a symbolic dimension size; corresponds to `maxSize_` in [`SymbolicDimInfo`](sdsc_BUNDLE_APIs/datastructdims.md).
+
+```mlir
+%result = sdscbundle.input_arg_extract value       from %arg : !sdscbundle.input_arg<index> -> index
+%result = sdscbundle.input_arg_extract granularity from %arg : !sdscbundle.input_arg<index, granularity=N> -> index
+%result = sdscbundle.input_arg_extract max_value   from %arg : !sdscbundle.input_arg<index, max_value=N> -> index
+```
+
+Example — symbolic dimension with granularity and max_value:
+
+```mlir
+module {
+  func.func @sdsc_bundle(%M_sym: !sdscbundle.input_arg<index, granularity=64, max_value=1024>) {
+    %val  = sdscbundle.input_arg_extract value       from %M_sym
+              : !sdscbundle.input_arg<index, granularity=64, max_value=1024> -> index
+    %gran = sdscbundle.input_arg_extract granularity from %M_sym
+              : !sdscbundle.input_arg<index, granularity=64> -> index
+    %max  = sdscbundle.input_arg_extract max_value   from %M_sym
+              : !sdscbundle.input_arg<index, max_value=1024> -> index
+    sdscbundle.sdsc_execute (%val) {sdsc_filename="sdsc_0.json", symbol_ids=[-1]}
+    return
+  }
+}
+```
+
+#### Supporting MLIR Operations
+
+The following operations are part of standard upstream MLIR dialects, used here only in the context of their permitted use within SDSC Bundles. For full specifications see the [MLIR dialect documentation](https://mlir.llvm.org/docs/Dialects/).
+
+| Operation | Summary |
+|---|---|
+| `scf.for` | Loop construct for iterating over a range of SDSC executions. |
+| `arith.constant` | Defines a compile-time constant SSA value (e.g. a base address or size). |
+| `arith.addi` | Integer addition — used to compute addresses from a base and an offset. |
+| `affine.apply` | Applies an affine map to compute per-iteration or per-core addresses. |
+
+##### `scf.for`
+
+Loop construct from the SCF dialect. Used to iteratively execute one or more SDSC operations (see [`scf.for` documentation](https://mlir.llvm.org/docs/Dialects/SCFDialect/#scffor-scfforop)).
+
+```mlir
+scf.for %iterator = %lower_bound to %upper_bound step %step {
+  // Loop body with SDSC executions
+}
+```
+
+**Constraints:**
+- Lower bound, upper bound, and step must all be resolvable to compile-time constants. No symbolic or runtime loop bounds are supported.
+- Loop-carried variables are not supported. The induction variable may be used freely inside the body (e.g. as an operand to `affine.apply` or `arith.addi`).
+- `sdscbundle.device_mem_allocate` should not appear inside the loop body — if it does, the backend still reserves only one buffer for the entire kernel, not one per iteration.
+
+Example:
+
+```mlir
+%c0 = arith.constant 0 : index
+%c1 = arith.constant 1 : index
+%c8 = arith.constant 8 : index
+
+scf.for %i = %c0 to %c8 step %c1 {
+  %addr = affine.apply affine_map<(d0) -> (1024 + 128*d0)> (%i)
+  sdscbundle.sdsc_execute (%addr) {sdsc_filename="sdsc.json", symbol_ids=[-1]}
+}
+```
+
+##### `arith.constant`
+
+Defines a compile-time constant SSA value. Used to define base addresses, loop bounds, step values, and sub-allocation offsets. Type must be `index` in SDSC Bundle usage.
+
+```mlir
+%name = arith.constant <value> : index
+```
+
+##### `arith.addi`
+
+Integer addition of two `index` SSA values. Used to compute memory addresses by adding a constant offset to a base address.
+
+```mlir
+%result = arith.addi %lhs, %rhs : index
+```
+
+##### `affine.apply`
+
+Applies a compile-time affine map to dimension and symbol operands, producing a single `index` result. Used to compute per-iteration or per-core memory addresses from a base address and loop variables. The affine map must be a linear combination of its dimension and symbol variables; symbol variables must be loop-invariant.
+
+```mlir
+%result = affine.apply affine_map<(dims)[symbols] -> (expression)> (dim_values)[symbol_values]
+```
+
+Example — stride-based address computation:
+
+```mlir
+#stride_map = affine_map<(d0)[base] -> (base + 128*d0)>
+%addr = affine.apply #stride_map (%i)[%base_address]
+```
+
+#### MLIR Bundle Validation
+
+Bundle `.mlir` files are enforced at two levels. For the full checklist see [MLIR Bundle API — Validation](sdsc_BUNDLE_APIs/MLIR-bundle-API.md#Validation).
+
+**1. Structural constraints — checked by the MLIR verifier:**
+- Only operations from the following dialects are permitted: `sdscbundle`, `affine`, `arith`, `func`, `math`, `scf`.
+- The number of operands to `sdscbundle.sdsc_execute` must equal the length of `symbol_ids`.
+- `sdscbundle.device_mem_allocate`: `size` must be a positive integer.
+- `sdscbundle.input_arg_extract`: source operand must be a `func.func` block argument of type `!sdscbundle.input_arg<index>`.
+- `func.func` parameters must be of type `index` or `!sdscbundle.input_arg<index>`.
+
+**2. Semantic constraints — checked during pipeline processing:**
+- All `scf.for` bounds must resolve to compile-time constants.
+- Symbol IDs must be unique across the bundle (reuse inside `scf.for` iterations is allowed).
+- `sdsc_filename` paths must resolve relative to the `.mlir` file location.
 
 ### `sdsc.json` filling
 
