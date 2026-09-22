@@ -458,165 +458,184 @@ The `SuperDsc` object is the top-level object of every `sdsc_*.json` file. Six f
 
 ### Supported OpFuncs in `sdsc.json`
 
-OpFuncs are specified within sdsc.json as field `OpFuncs opFuncName` in `sdsc.dscs_[0].computeOp_[0]`.
+The `opFuncName` field in `computeOp_` must be one of the strings in the table below. For the full reference including per-operation notes see [ComputeOperation — Supported Operations](sdsc_BUNDLE_APIs/computeoperation.md#supported-operations).
 
-| Category | OpFunc enum | OpFunc string | Op Precision | Constants | Notes
-| --- | --- | --- | -- | -- | -- |
-|  Matmul | BATCHMATMUL_FP8_FWD |  "batchmatmulfp8" | Inputs: FP8<1,4,3>, Output: DF16
-|         | BATCHMATMUL_FWD |   "batchmatmul" | DF16
-|         | BATCHMATMUL_INT4_FWD  |   "batchmatmulint4" | Inputs: INT4, Output: DF16
-|         | BATCHMATMUL_INT8_FWD  |   "batchmatmulint8" | Inputs: INT8, Output: DF16 (scaled)
-| Convolution | CONV2D_FP8_FWD  |   "conv2dfp8" | Inputs: FP8<1,4,3>, Output: DF16
-|         | CONV2D_FWD  |   "conv2d" | DF16
-|         | CONV2D_INT4_FWD  |   "conv2dint4" | Inputs: INT4, Output: DF16
-|         | CONV2D_INT8_FWD  |   "conv2dint8" | Inputs: INT8, Output: DF16 (scaled)
-|  Broadcast    |  ADD  |   "add"  | DF16 or FP32 |   | Broadcast supported on any number of dimensions and on one or both inputs
-|         | BATCHNORM_FWD  |   "batchnormfwd" | DF16 or FP32 
-|         | BIASADD  |   "biasadd" | DF16 or FP32 
-|         | EQUAL  |   "equal" | DF16 or FP32 
-|         | FNMS  |   "fnms" | DF16 or FP32 
-|         | GREATEREQUAL  |   "greaterequal" | DF16 or FP32 
-|         | LAYERNORM_NORM  |   "layernormnorm" | DF16 or FP32 
-|         | LESSEREQUAL  |   "lesserequal" | DF16 or FP32 
-|         | MAXIMUM  |   "maximum" | DF16 or FP32 
-|         | MINIMUM  |   "minimum" | DF16 or FP32 
-|         | MUL  |   "mul" | DF16 or FP32 
-|         | NOTEQUAL  |   "notequal" | DF16 or FP32 
-|         | REALDIV  |   "realdiv" | DF16 or FP32 
-|         | REVSUB  |   "revsub" | DF16 or FP32 
-|         | SUB  |   "sub" | DF16 or FP32 
-|         | WHERE3  |   "where3" | DF16 or FP32 
-|  Unary  | ABS  |   "abs" | DF16 or FP32 
-|         | CLIP_FWD  |   "clip"  |  DF16 or FP32 |  `clipMin`, `clipMax`: minimum and maximum values to clip at
-|         | EXP_FWD  |   "exp"  | DF16 or FP32 
-|         | FAST_EXP_FWD  |   "fastexp" | DF16
-|         | FAST_SIGMOID_FWD  |   "fastsigmoid" | DF16
-|         | FLOOR  |   "floor" | DF16 or FP32
-|         | GELU_FWD  |   "gelufwd" | DF16
-|         | IDENTITY  |   "identity" | DF16 or FP32 
-|         | LAYERNORM_SCALE  |  "layernormscale"  | DF16 or FP32 | `eps`: a small value added to the denominator in the calculation of layernorm for numerical stability
-|         | LEAKYRELU_FWD  |  "leakyrelufwd" | DF16
-|         | LOG_FWD  |   "log" | DF16
-|         | MISH_FWD  |   "mish" | DF16
-|         | NEG  |   "neg" | DF16 or FP32 
-|         | RECIPROCAL  |   "reciprocal" | DF16 or FP32 
-|         | RELU_FWD  |   "relufwd" | DF16 or FP32 
-|         | RELU6_FWD  |   "relu6fwd" | DF16
-|         | RSQRT  |   "rsqrt" | DF16
-|         | SIGMOID_FWD  |   "sigmoid" | DF16 or FP32 
-|         | SOFTPLUS  |   "softplus"  | DF16 | `softplusBeta`: value for the Softplus formulation <br>`softplusThresh`: values above this revert to a linear function
-|         | SILU_FWD  |   "silu" | DF16 or FP32 
-|         | SQRT_FWD  |   "sqrt" | DF16
-|         | TANH_FWD  |   "tanh" | DF16
-|  Reduction  | ABSMAX_NONSTICK  |   "absmaxnonstick" | DF16 or FP32 
-|         | ABSMAX  |   "absmax" | DF16 or FP32 
-|         | EXX2_ZEROMEAN  |   "exx2_zeromean" | DF16 or FP32 
-|         | EXX2  |   "exx2"  | DF16 or FP32  | `exx2scale` 
-|         | MAX_NONSTICK  |   "maxnonstick" | DF16 or FP32 
-|         | MAX  |   "max" | DF16 or FP32 
-|         | MEAN_NONSTICK  |   "meannonstick" | DF16 or FP32 | `scaling_factor`: reciprocal of the number of elements that are reduced, combined across all the reduction dimensions
-|         | MEAN  |   "mean"  | DF16 or FP32 | `scaling_factor`: reciprocal of the number of elements that are reduced, combined across all the reduction dimensions
-|         | MIN_NONSTICK  |   "minnonstick" | DF16 or FP32 
-|         | MIN  |   "min" | DF16 or FP32 
-|         | QUANT_SCALE_PER_TOKEN_FP8  |   "quantscalepertokenfp8"  | DF16 | `clipMin`, `clipMax`: minimum and maximum values to clip abs(input) distribution, typically smallest and largest positive values in the unquantized (input tensor) datatype <br>`mulConst`: reciprocal of the maximum value in the quantized datatype (for FP8<1,4,3> this is `1/448`)
-|         | QUANT_SCALE_PER_TOKEN  |   "quantscalepertoken" | DF16
-|         | SUM_NONSTICK  |   "sumnonstick" | DF16 or FP32 
-|         | SUM  |   "sum" | DF16 or FP32 
-|  Pooling  | AVGPOOL_FWD  |   "avgpoolfwd" | DF16 | `nmap`: reciprocal of the product of kernel size (`1/(kh*kw)`)
-|         | AVGPOOL_NMAP_FWD |   "avgpoolnmapfwd" | DF16 
-|         | DEPTHWISE_CONV_FWD  |   "depthwiseconv2dnative" | DF16 
-|         | MAXPOOL_FWD  |   "maxpoolfwd" | DF16
-| Scan    | MASK_BY_INDEX  |   "maskbyindex" | DF16 or FP32 
-|         | TOPK_INDEX  |   "topkindex" | DF16 or FP32 
-|         | TOPK_VALUE  |   "topkvalue" | DF16 or FP32 
-| Quantization | CSQ_INT4_WT  |   "csqint4wt"   | Inputs: DF16 Output: INT4 |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT4. Pack elements from four input sticks in a dimension different from the input stick dimension, alternating after every element
-|         | CSQ_INT4  |   "csqint4"  | Inputs: DF16 Output: INT4  |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT4. Alternating every 8 elements, pack elements from four input sticks: first two sticks in the same dimension as the input stick dimension, then two such groups taken across a dimension different from the input stick dimension
-|         | CSQ_INT8_CH  |   "csqint8ch"  | Inputs: DF16 Output: INT8  |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT8. Pack elements from two input sticks in the same dimension as the input stick dimension, alternating every 8 elements
-|         | CSQ_INT8_MB  |   "csqint8mb"  | Inputs: DF16 Output: INT8 |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT8. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating  every 8 elements
-|         | CSQ_INT8_WT  |   "csqint8wt"  | Inputs: DF16 Output: INT8 |  `scaleact`: pre-quantization scale factor <br>`shiftact`: pre-quantization offset  |  Apply scale and shift to DL16 and quantize to INT8. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating after every element
-|         | DL16TOFP32  |   "dl16tofp32"   | Input: DF16 Output: FP32 |  |  Convert DL16 to FP32. For every stick of input, two sticks will be produced
-|         | FP32TODL16  |   "fp32todl16"   | Input: FP32 Output: DF16 |  |  Quantize FP32 to DL16. Pack elements from two input sticks in the same dimension as the input stick dimension, alternating every 8 elements
-|         | FP8TODL16  |   "fp8todl16"   | Input: HFP8 Output: DF16 |  |  Convert FP8<1,4,3> to DL16. For every stick of input, two sticks will be produced
-|         | Q_FP8_CH  |   "qfp8ch"   | Input: DF16 Output: FP8<1,4,3> |  |  Quantize DL16 to FP8<1,4,3>. Pack elements from two input sticks in the same dimension as the input stick dimension, alternating every 8 elements
-|         | Q_FP8_MB  |   "qfp8mb"   | Input: DF16 Output: FP8<1,4,3> |  |  Quantize DL16 to FP8<1,4,3>. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating every 8 elements
-|         | Q_FP8_WT  |   "qfp8wt"   | Input: DF16 Output: FP8<1,4,3> |  |  Quantize DL16 to FP8<1,4,3>. Pack elements from two input sticks in a dimension different from the input stick dimension, alternating after every element
-| Stick Altering Data shuffle | ReStickifyOpHBM | "ReStickifyOpHBM" | DF16 | | Change the stick composition from one dimension to another dimension. Only one dimension is allowed in input and output stick layouts.
+> **Precision label:** All precisions previously labelled `DF16` are now `SEN169_FP16` in the schema and API reference.
 
+| Category | OpFunc enum | OpFunc string | Precision | Constants | Notes |
+|---|---|---|---|---|---|
+| Matmul | `BATCHMATMUL_FP8_FWD` | `"batchmatmulfp8"` | Inputs: FP8\<1,4,3\>, Output: SEN169_FP16 | | |
+| | `BATCHMATMUL_FWD` | `"batchmatmul"` | SEN169_FP16 | | |
+| | `BATCHMATMUL_INT4_FWD` | `"batchmatmulint4"` | Inputs: INT4, Output: SEN169_FP16 | | |
+| | `BATCHMATMUL_INT8_FWD` | `"batchmatmulint8"` | Inputs: INT8, Output: SEN169_FP16 (scaled) | | |
+| Convolution | `CONV2D_FP8_FWD` | `"conv2dfp8"` | Inputs: FP8\<1,4,3\>, Output: SEN169_FP16 | | |
+| | `CONV2D_FWD` | `"conv2d"` | SEN169_FP16 | | |
+| | `CONV2D_INT4_FWD` | `"conv2dint4"` | Inputs: INT4, Output: SEN169_FP16 | | |
+| | `CONV2D_INT8_FWD` | `"conv2dint8"` | Inputs: INT8, Output: SEN169_FP16 (scaled) | | |
+| Broadcast | `ADD` | `"add"` | SEN169_FP16 or FP32 | | Broadcast supported on any number of dimensions and on one or both inputs |
+| | `BATCHNORM_FWD` | `"batchnormfwd"` | SEN169_FP16 or FP32 | | |
+| | `BIASADD` | `"biasadd"` | SEN169_FP16 or FP32 | | |
+| | `EQUAL` | `"equal"` | SEN169_FP16 or FP32 | | |
+| | `FNMS` | `"fnms"` | SEN169_FP16 or FP32 | | |
+| | `GREATEREQUAL` | `"greaterequal"` | SEN169_FP16 or FP32 | | |
+| | `LAYERNORM_NORM` | `"layernormnorm"` | SEN169_FP16 or FP32 | | |
+| | `LESSEREQUAL` | `"lesserequal"` | SEN169_FP16 or FP32 | | |
+| | `MAXIMUM` | `"maximum"` | SEN169_FP16 or FP32 | | |
+| | `MINIMUM` | `"minimum"` | SEN169_FP16 or FP32 | | |
+| | `MUL` | `"mul"` | SEN169_FP16 or FP32 | | |
+| | `NOTEQUAL` | `"notequal"` | SEN169_FP16 or FP32 | | |
+| | `REALDIV` | `"realdiv"` | SEN169_FP16 or FP32 | | |
+| | `REVSUB` | `"revsub"` | SEN169_FP16 or FP32 | | |
+| | `SUB` | `"sub"` | SEN169_FP16 or FP32 | | |
+| | `WHERE3` | `"where3"` | SEN169_FP16 or FP32 | | |
+| Unary | `ABS` | `"abs"` | SEN169_FP16 or FP32 | | |
+| | `CLIP_FWD` | `"clip"` | SEN169_FP16 or FP32 | `clipMin`, `clipMax`: min and max values to clip at | |
+| | `EXP_FWD` | `"exp"` | SEN169_FP16 or FP32 | | |
+| | `FAST_EXP_FWD` | `"fastexp"` | SEN169_FP16 | | |
+| | `FAST_SIGMOID_FWD` | `"fastsigmoid"` | SEN169_FP16 | | |
+| | `FLOOR` | `"floor"` | SEN169_FP16 or FP32 | | |
+| | `GELU_FWD` | `"gelufwd"` | SEN169_FP16 | | |
+| | `IDENTITY` | `"identity"` | SEN169_FP16 or FP32 | | |
+| | `LAYERNORM_SCALE` | `"layernormscale"` | SEN169_FP16 or FP32 | `eps`: small value added to denominator for numerical stability | |
+| | `LEAKYRELU_FWD` | `"leakyrelufwd"` | SEN169_FP16 | | |
+| | `LOG_FWD` | `"log"` | SEN169_FP16 | | |
+| | `MISH_FWD` | `"mish"` | SEN169_FP16 | | |
+| | `NEG` | `"neg"` | SEN169_FP16 or FP32 | | |
+| | `RECIPROCAL` | `"reciprocal"` | SEN169_FP16 or FP32 | | |
+| | `RELU_FWD` | `"relufwd"` | SEN169_FP16 or FP32 | | |
+| | `RELU6_FWD` | `"relu6fwd"` | SEN169_FP16 | | |
+| | `RSQRT` | `"rsqrt"` | SEN169_FP16 | | |
+| | `SIGMOID_FWD` | `"sigmoid"` | SEN169_FP16 or FP32 | | |
+| | `SOFTPLUS` | `"softplus"` | SEN169_FP16 | `softplusBeta`: value for the Softplus formulation; `softplusThresh`: values above this revert to a linear function | |
+| | `SILU_FWD` | `"silu"` | SEN169_FP16 or FP32 | | |
+| | `SQRT_FWD` | `"sqrt"` | SEN169_FP16 | | |
+| | `TANH_FWD` | `"tanh"` | SEN169_FP16 | | |
+| Reduction | `ABSMAX_NONSTICK` | `"absmaxnonstick"` | SEN169_FP16 or FP32 | | |
+| | `ABSMAX` | `"absmax"` | SEN169_FP16 or FP32 | | |
+| | `EXX2_ZEROMEAN` | `"exx2_zeromean"` | SEN169_FP16 or FP32 | | |
+| | `EXX2` | `"exx2"` | SEN169_FP16 or FP32 | `exx2scale` | |
+| | `MAX_NONSTICK` | `"maxnonstick"` | SEN169_FP16 or FP32 | | |
+| | `MAX` | `"max"` | SEN169_FP16 or FP32 | | |
+| | `MEAN_NONSTICK` | `"meannonstick"` | SEN169_FP16 or FP32 | `scaling_factor`: reciprocal of elements reduced across all reduction dimensions | |
+| | `MEAN` | `"mean"` | SEN169_FP16 or FP32 | `scaling_factor`: reciprocal of elements reduced across all reduction dimensions | |
+| | `MIN_NONSTICK` | `"minnonstick"` | SEN169_FP16 or FP32 | | |
+| | `MIN` | `"min"` | SEN169_FP16 or FP32 | | |
+| | `QUANT_SCALE_PER_TOKEN_FP8` | `"quantscalepertokenfp8"` | SEN169_FP16 | `clipMin`, `clipMax`: clip bounds for abs(input) distribution; `mulConst`: reciprocal of max value in quantized datatype (for FP8\<1,4,3\> this is `1/448`) | |
+| | `QUANT_SCALE_PER_TOKEN` | `"quantscalepertoken"` | SEN169_FP16 | | |
+| | `SUM_NONSTICK` | `"sumnonstick"` | SEN169_FP16 or FP32 | | |
+| | `SUM` | `"sum"` | SEN169_FP16 or FP32 | | |
+| Pooling | `AVGPOOL_FWD` | `"avgpoolfwd"` | SEN169_FP16 | `nmap`: reciprocal of kernel size (`1/(kh*kw)`) | |
+| | `AVGPOOL_NMAP_FWD` | `"avgpoolnmapfwd"` | SEN169_FP16 | | |
+| | `DEPTHWISE_CONV_FWD` | `"depthwiseconv2dnative"` | SEN169_FP16 | | |
+| | `MAXPOOL_FWD` | `"maxpoolfwd"` | SEN169_FP16 | | |
+| Scan | `MASK_BY_INDEX` | `"maskbyindex"` | SEN169_FP16 or FP32 | | |
+| | `TOPK_INDEX` | `"topkindex"` | SEN169_FP16 or FP32 | | |
+| | `TOPK_VALUE` | `"topkvalue"` | SEN169_FP16 or FP32 | | |
+| Quantization | `CSQ_INT4_WT` | `"csqint4wt"` | Inputs: SEN169_FP16, Output: INT4 | `scaleact`: pre-quantization scale factor; `shiftact`: pre-quantization offset | Pack from 4 input sticks in different dimension, alternating after every element |
+| | `CSQ_INT4` | `"csqint4"` | Inputs: SEN169_FP16, Output: INT4 | `scaleact`; `shiftact` | Pack from 4 sticks: first 2 in same dimension, then 2 groups across a different dimension, alternating every 8 elements |
+| | `CSQ_INT8_CH` | `"csqint8ch"` | Inputs: SEN169_FP16, Output: INT8 | `scaleact`; `shiftact` | Pack from 2 input sticks in same dimension, alternating every 8 elements |
+| | `CSQ_INT8_MB` | `"csqint8mb"` | Inputs: SEN169_FP16, Output: INT8 | `scaleact`; `shiftact` | Pack from 2 input sticks in different dimension, alternating every 8 elements |
+| | `CSQ_INT8_WT` | `"csqint8wt"` | Inputs: SEN169_FP16, Output: INT8 | `scaleact`; `shiftact` | Pack from 2 input sticks in different dimension, alternating after every element |
+| | `DL16TOFP32` | `"dl16tofp32"` | Input: SEN169_FP16, Output: FP32 | | Convert SEN169_FP16 to FP32. Two output sticks per input stick |
+| | `FP32TODL16` | `"fp32todl16"` | Input: FP32, Output: SEN169_FP16 | | Pack from 2 input sticks in same dimension, alternating every 8 elements |
+| | `FP8TODL16` | `"fp8todl16"` | Input: FP8\<1,4,3\>, Output: SEN169_FP16 | | Convert FP8\<1,4,3\> to SEN169_FP16. Two output sticks per input stick |
+| | `Q_FP8_CH` | `"qfp8ch"` | Input: SEN169_FP16, Output: FP8\<1,4,3\> | | Pack from 2 input sticks in same dimension, alternating every 8 elements |
+| | `Q_FP8_MB` | `"qfp8mb"` | Input: SEN169_FP16, Output: FP8\<1,4,3\> | | Pack from 2 input sticks in different dimension, alternating every 8 elements |
+| | `Q_FP8_WT` | `"qfp8wt"` | Input: SEN169_FP16, Output: FP8\<1,4,3\> | | Pack from 2 input sticks in different dimension, alternating after every element |
+| Stick Altering Data Shuffle | `ReStickifyOpHBM` | `"ReStickifyOpHBM"` | SEN169_FP16 | | Change stick composition from one dimension to another. Only one dimension allowed in input and output stick layouts. See [Stick Layout Constraints](sdsc_BUNDLE_APIs/stick-layout-constraints.md#stick-altering-data-shuffle). |
 
-### Stick constraints for the operations
+### Stick Constraints for the Operations
 
+Each operation category imposes constraints on stick composition, restricting which dimensions can be present in the stick. Tensors must be padded to meet these constraints. There are no constraints on tensor layout beyond the stick.
 
-Each class of operation imposes constraints on the stick composition of its constituent tensors restricting which dimension can be present in the stick. Tensors will need to be padded to meet the stick constraints. There are noconstraints on the tensor layout beyond a stick.
-
-Note: Stick constraints in an operation can cause a ripple effect---a tensor may need to padded even in its non-stick dimension because that dimension appers in the stick of another tensor feeding to the same operation. This is needed to ensure span of a dimension is consistent across all tensors.
+**Important:** Stick constraints can cause a ripple effect — a tensor may need padding even in its non-stick dimension if that dimension appears in the stick of another tensor feeding the same operation. This ensures dimension span consistency across all tensors. For the complete per-category reference see [Stick Layout Constraints](sdsc_BUNDLE_APIs/stick-layout-constraints.md).
 
 #### BatchMatmul
-The BatchMatmul op takes 2 inputs (Input1, Input2) and produces an output (Output1). It has 4 types of semantic dimensions:
-* `reduction_dim`: Dimension that is present in Input1, Input2 and NOT in Output1. There can be only be a single dimension in this category. Note: this dimension gets reduced as part of the dot-product.
-* `generated_dim`: Dimension that is present in Input2, Output1 and NOT in Input1. There can be only be a single dimension in this category.
-* `preserved_dim`: Dimension that is present in Input1 and Output1 and NOT in Input2. There can be upto 2 dimensions in this category.
-* `noreuse_dim`: Dimension that is present in all tensors - Input1, Input2 and Output1. There can be upto 2 dimensions in this category.
 
-The following are the stick constraints that different precisons.
-* Output1 tensor:
-  * Stick composed of [`generated_dim`=64]. Note: Output1 is always in DF16 precision
-* Input1 tensor:
-  * DF16: Stick composed of [`reduction_dim`=64]
-  * FP8/INT8: Stick composed of [`reduction_dim`=128]
-  * INT4: Stick composed of 2 dimensions as: [`reduction_dim`=16, `preserved_dim`=2, `reduction_dim`=8]. Note: total of 256 elements in each stick.
-* Input2 tensor:
-  * DF16: Stick composed of [`generated_dim`=64]
-  * FP8/INT8: Stick composed of [`reduction_dim`=2, `generated_dim`=64]
-  * INT4: Stick composed of [`reduction_dim`=4, `generated_dim`=64]
+The BatchMatmul op takes 2 inputs (Input1, Input2) and produces one output (Output1). It has 4 types of semantic dimensions:
 
-Note: In Matmul, Input2 must also be padded along `reduction_dim` (which is not in its stick). This is because `reduction_dim` is part of the stick of Input1 and Input2 therefore needs to be padded for their dimension spans to be consistent.
+- `reduction_dim`: Present in Input1 and Input2, NOT in Output1. Single dimension only; gets reduced via dot-product.
+- `generated_dim`: Present in Input2 and Output1, NOT in Input1. Single dimension only.
+- `preserved_dim`: Present in Input1 and Output1, NOT in Input2. Up to 2 dimensions.
+- `noreuse_dim`: Present in all tensors. Up to 2 dimensions.
+
+Stick constraints by precision:
+
+| Tensor | SEN169_FP16 | FP8 / INT8 | INT4 |
+|---|---|---|---|
+| Output1 | `[generated_dim=64]` — always SEN169_FP16 | `[generated_dim=64]` | `[generated_dim=64]` |
+| Input1 | `[reduction_dim=64]` | `[reduction_dim=128]` | `[reduction_dim=16, preserved_dim=2, reduction_dim=8]` (256 elements total) |
+| Input2 | `[generated_dim=64]` | `[reduction_dim=2, generated_dim=64]` | `[reduction_dim=4, generated_dim=64]` |
+
+**Note:** Input2 must also be padded along `reduction_dim` (not in its stick) because `reduction_dim` is part of Input1's stick — dimension span must be consistent.
 
 #### Convolution
-Same as matmul with the only difference of the INT4 Input1 stick layout: [`reduction_dim`=16, `W`=2, `reduction_dim`=8], where `W` is the width in pixels according to `NHWC` notation.
+
+Same as BatchMatmul with one difference for the INT4 Input1 stick layout: `[reduction_dim=16, W=2, reduction_dim=8]`, where `W` is the width in pixels per NHWC notation.
 
 #### Reduction
-For sum/max/min/mean/absmax/exx2:
-* the reduction dimension should be the only dimension in the stick
-* same stick layout in input and output (output will have scale=-2 for reduced dimension)
 
-For sum-nonstick/max-nonstick/min-nonstick/mean-nonstick/absmax-nonstick (there is no nonstick version of exx2):
-* any number of non-reduction dimensions in the stick is allowed
-* same stick layout in input and output
+**Stick reductions** (`sum`, `max`, `min`, `mean`, `absmax`, `exx2`):
+- Reduction dimension must be the only dimension in the stick.
+- Same stick layout in input and output. Output has `scale=-2` for the reduced (stick) dimension.
 
-#### Unary and Broadcast operations
-Any stick layout is acceptable, but all inputs and output must have same stick layout.
-If a stick dimension has broadcast in a tensor, all stick dimensions of that tensor must have broadcast.
-If a stick dimension has broadcast in all tensors (inputs and output), then its size in the SDSC must be set to the number of elements that one stick would have if that dimension actually existed.
+**Non-stick reductions** (`sumnonstick`, `maxnonstick`, `minnonstick`, `meannonstick`, `absmaxnonstick`):
+- Any number of non-reduction dimensions allowed in the stick.
+- Same stick layout in input and output.
+- Note: no non-stick version exists for `exx2`.
+
+#### Unary and Broadcast Operations
+
+Any stick layout is acceptable, but all inputs and outputs must share the same stick layout. If a stick dimension has broadcast in a tensor, all stick dimensions of that tensor must have broadcast. If a stick dimension has broadcast in all tensors, its size in the SDSC must be set to the number of elements one stick would have if that dimension actually existed.
 
 #### Scan
 
-In top-k, neither the reduction dimension nor k can be in the stick, any number of other dimensions can be in the stick
+For top-k operations: neither the reduction dimension nor `k` can be in the stick; any number of other dimensions can be in the stick.
 
-#### layernormscale/layernormnorm/exx2
-Stick should only have the normalization dimension in it
+#### LayerNorm and EXX2
+
+Operations `layernormscale`, `layernormnorm`, `exx2`: stick must contain only the normalization dimension.
 
 #### Pooling
-Window dimensions not allowed in the stick, any number of other dimensions can be in the stick
 
-#### Quantization operations
-For all down-casting operations
-* the input should always have only one dimension in the stick (DL16: [`inpdim`=64], FP32: [`inpdim`=32])
-* for the `wt` family of quantizations, output stick should have one more dimension innermost (INT8/FP8: [`otherdim`=2,`inpdim`=64], INT4: [`otherdim`=4,`inpdim`=64])
-* for the `mb` family of quantizations, output stick should have one more dimension inserted at the slice level (INT8/FP8: [`inpdim`=8, `otherdim`=2, `inpdim`=8], INT4: [`inpdim`=16, `otherdim`=2, `inpdim`=8])
-* for the `ch` family of quantizations, output stick still only has one dimension, just more elements (INT8/FP8: [`inpdim`=128])
+Window dimensions not allowed in the stick; any number of other dimensions can be in the stick.
 
-For all up-casting operations, both input and output should have the same only one dimension in the stick.
+#### Quantization Operations
 
-#### Stick Altering Data shuffle
-Restickify can only operate on input sticks with elements from a single dimension d1 and produce output sticks with elements from a single dimension d2. There is no restriction on which d1 and d2 dimensions are picked.
+**Down-casting — input constraint:** input must have only one dimension in stick (`SEN169_FP16`: `[inpdim=64]`; `FP32`: `[inpdim=32]`).
 
-### Core work division constraints for the operations
-For all operations, any constituent dimension is allowed to be split across cores. The following constraints apply to the work assigned per core:
-* For all data tensors, The work assigned must be multiple of stick size in any given dimension. This restriction does not apply to index tensors used for indirect access.
-* The span of addresses accessed from DDR for any given tensor must not exceed 256MB.
-* For all index tensors used for indirect access, for each dimension present in the stick, the work assigned to a core should span an intergral number of sticks or <1 stick.
+**Output stick by family:**
 
-When operation involves reduction across multiple dimensions, only one of its reduction dimensions is allowed to be split across cores. There is no constraint on operations with a single reduction dimension.
+| Family | INT8 / FP8 | INT4 |
+|---|---|---|
+| `wt` (weight packing) | `[otherdim=2, inpdim=64]` | `[otherdim=4, inpdim=64]` |
+| `mb` (mini-batch packing) | `[inpdim=8, otherdim=2, inpdim=8]` | `[inpdim=16, otherdim=2, inpdim=8]` |
+| `ch` (channel packing) | `[inpdim=128]` | N/A |
+
+> **Note:** The general stick size limit is 128 bytes regardless of dtype (not 64 elements, which is fp16-specific). When tensors of different data types share a stick variable, the alignment check uses the largest `elems_per_stick` across those tensors.
+
+**Up-casting:** both input and output must have the same single dimension in the stick.
+
+#### Stick Altering Data Shuffle
+
+`ReStickifyOpHBM` converts a tensor from one stick layout to another — used when the graph contains a reshape or layout change requiring data re-tiling (e.g. after a `VirtualReshape`). The `HBM` suffix indicates data flows through HBM during the conversion.
+
+- Input stick must contain elements from exactly **one** dimension (`d1`).
+- Output stick must contain elements from exactly **one** dimension (`d2`).
+- `d1` and `d2` may be any primary dimensions — no restriction on which are chosen.
+- Only `SEN169_FP16` precision is supported.
+
+### Core Work Division Constraints
+
+For all operations, any constituent dimension may be split across cores. The following constraints apply to the work assigned per core. For the full reference see [Stick Layout Constraints — Core Work Division](sdsc_BUNDLE_APIs/stick-layout-constraints.md#core-work-division-constraints).
+
+**Data tensors:**
+- The per-core work extent in every stick dimension must be a multiple of the stick size for that dimension.
+- The contiguous range of device memory addressed by a single core for any tensor must not exceed **256 MB**.
+
+**Index tensors (indirect access):** the stick-multiple alignment constraint does not apply. Instead, for each stick dimension the per-core work extent must either span an **integral number of sticks** or span **fewer than one full stick**. A partial extent covering more than one stick but not a whole multiple is not permitted.
+
+**Reduction operations with multiple reduction dimensions:** only one reduction dimension may be split across cores. No constraint applies to operations with a single reduction dimension.
 
 ## Examples
 
