@@ -3,11 +3,7 @@
 **Spec Version:** 1.0.0
 **Status:** Active
 
-> Version numbers follow [Semantic Versioning](https://semver.org/):
-> **MAJOR** — breaking change to a field, type, or required constraint;
-> **MINOR** — new field, new object, or new operation added;
-> **PATCH** — correction, clarification, or editorial fix.
-> Bump the version in this header when a PR is merged.
+> The API document will follow the deeptoolsRelease versioning
 
 ---
 
