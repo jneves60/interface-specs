@@ -58,9 +58,41 @@ NOTES:
 
 ## Structure of SuperDSC-Bundle
 
-The backend expects the frontend to produce multiple output files, that work in conjuction to instruct the backend on how one or multiple programs can be compiled and executed in a sequence as part of a complex kernel. The expectation is to receive:
-* one or more sdsc.json files, each describing a Spyre operation
-* one mlir file with the SuperDsc-Bundle IR
+The backend expects the frontend to produce multiple output files that work in conjunction to instruct the backend on how one or multiple programs can be compiled and executed in a sequence as part of a complex kernel. The expectation is to receive:
+* one or more `sdsc_*.json` files, each describing a Spyre operation
+* one `bundle.mlir` file with the SuperDSC-Bundle IR
+
+### API Components
+
+The API consists of two primary components:
+
+1. **MLIR Bundle File** (`.mlir`) — Orchestrates execution flow, symbol management, and operation sequencing across one or more SDSC JSON files. See [MLIR Bundle API](sdsc_BUNDLE_APIs/MLIR-bundle-API.md) for the full dialect reference.
+2. **SDSC JSON Files** (`.json`) — Each file defines a single operation and its core mapping. See [SDSC JSON API](sdsc_BUNDLE_APIs/SDSC-json-api.md) for the step-by-step filling guide.
+
+All `sdsc_*.json` files must conform to the [SDSC Bundle JSON Schema](sdsc_BUNDLE_APIs/sdscbundle-schema.json). The schema is the normative reference for structural correctness — it enforces required fields, enum values, and type constraints at every level of the object hierarchy. Semantic constraints (cross-field consistency) are described in the individual object pages linked from [SDSC JSON API](sdsc_BUNDLE_APIs/SDSC-json-api.md).
+
+### SuperDSC JSON Structure
+
+SuperDSC is a self-contained compiled artifact that describes everything the Spyre hardware needs to execute a single scheduled operation deterministically. The top-level structure contains core fold properties, work-slice mappings, and a per-core execution schedule. A `dscs_` array holds one or more `DesignSpaceConfig` entries, each being a complete description of one compute configuration. See the [JSON Object Hierarchy](sdsc_BUNDLE_APIs/JSON-object-Hierarchy.md) for the full object tree.
+
+Each `DesignSpaceConfig` entry contains the following elements:
+
+- **Core fold properties** (`coreFoldProp_`, `numWkSlicesPerDim_`, `coreIdToWkSlice_`): how to divide the iteration space across 32 cores. For a tensor of shape (1024, 256), this encodes how many rows each core processes. The encoding gives each core an equal number of sticks and keeps each core within its addressable device memory limit.
+- **Tensor descriptors** (`labeledDs_`, `primaryDsInfo_`): for each tensor argument, the tiling structure defines which dimensions are stick dimensions, how the host-side shape maps to device-side tiles, memory residency (HBM vs. LX scratchpad), data format, and which dimensions each tensor iterates over fully vs. which are summed over (contracted) as in the K dimension of a matmul.
+- **Schedule tree** (`scheduleTree_`): a list of allocate nodes (one per tensor) that specify memory placement (HBM or LX scratchpad), dimension ordering, per-core start addresses via fold mappings, and coordinate information encoding how each dimension is split across cores with affine transformations.
+- **Data staging** (`dataStageParam_`): per-core dimension sizes for steady-state and epilogue passes, describing how data is partitioned for transfer into scratchpad.
+- **Compute operations** (`computeOp_`): one entry per operation, encoding the execution unit (PT or SFP), operation name, data format, fidelity, and the input/output tensor references from `labeledDs_`.
+
+**Folding** is a central concept in SuperDSC. A single parameterized artifact can represent multiple execution variants across time steps and cores without recompilation. Fold properties use affine transformations (`alpha * index + beta`) to compute per-core coordinates and addresses, so one JSON file describes the behavior of all 32 cores compactly instead of duplicating the description for each core. See [FoldProperty](sdsc_BUNDLE_APIs/foldproperty.md) and [FoldManager](sdsc_BUNDLE_APIs/foldmanager.md) for details.
+
+### Important Notes
+
+**DesignSpaceConfig can represent BOTH deep learning operators AND data-shuffle operations:**
+
+- **Deep learning operators**: Matmul, convolution, activations, reductions, etc.
+- **Data-shuffle operations**: Stick-breaking, non-stick breaking, gather, scatter
+
+**Tensor allocation need NOT be compatible with compute work division.** Data in one core can be directly available for compute in another core — the backend compiler will ensure proper data movement across cores. This functionality is fully supported by the backend.
 
 ### SuperDSC-Bundle intermediate representation in mlir
 
