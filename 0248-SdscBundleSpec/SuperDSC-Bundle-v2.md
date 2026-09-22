@@ -639,8 +639,43 @@ For all operations, any constituent dimension may be split across cores. The fol
 
 ## Examples
 
-Multiple examples in increasing order of complexity are available [here](examples/).
+The table below lists all available examples in recommended reading order. MLIR examples are in [`sdsc_BUNDLE_APIs/`](sdsc_BUNDLE_APIs/) and JSON examples in the same directory; low-level MLIR examples are in [`examples/`](examples/).
 
-## **Metrics **
+### MLIR Bundle Examples
+
+| # | Description | File |
+|---|---|---|
+| 1 | Single operation (no symbols) | [MLIR-bundle-usage-examples.md — Single Operation](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#single-operation-no-symbols) |
+| 2 | Sequential operations — kernel fusion (softmax) | [MLIR-bundle-usage-examples.md — Sequential Operations](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#sequential-operations-kernel-fusion) |
+| 3 | Symbolic address — runtime-provided base address | [MLIR-bundle-usage-examples.md — Symbolic Address](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#symbolic-address--runtime-provided-base-address) |
+| 4 | Symbolic address — per-core addresses from a runtime base | [MLIR-bundle-usage-examples.md — Per-Core Addresses](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#symbolic-address--per-core-addresses-from-a-runtime-base) |
+| 5 | Symbolic dimension size — single symbolic batch dimension | [MLIR-bundle-usage-examples.md — Symbolic Dimension](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#symbolic-dimension-size--single-symbolic-batch-dimension) |
+| 6 | Symbolic dimension size — split across cores | [MLIR-bundle-usage-examples.md — Symbolic Dimension Split](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#symbolic-dimension-size--symbolic-dimension-split-across-cores) |
+| 7 | Loop with dynamic addresses (`scf.for` + `affine.apply`) | [MLIR-bundle-usage-examples.md — Loop](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#loop-with-dynamic-addresses) |
+| 8 | Multi-core with per-core addresses | [MLIR-bundle-usage-examples.md — Multi-Core](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#multi-core-with-per-core-addresses) |
+| 9 | Device memory allocation — intermediate buffer | [MLIR-bundle-usage-examples.md — Intermediate Buffer](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#simple-intermediate-buffer) |
+| 10 | Device memory allocation — pool sub-allocation | [MLIR-bundle-usage-examples.md — Pool Sub-Allocation](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#pool-sub-allocation) |
+| 11 | Complete MLIR example — softmax with dynamic shapes | [MLIR-complete-example.md](sdsc_BUNDLE_APIs/MLIR-complete-example.md) |
+
+### JSON Examples
+
+| # | Description | File |
+|---|---|---|
+| 12 | Complete JSON example — simple GELU operation | [complete-example.md](sdsc_BUNDLE_APIs/complete-example.md) |
+| 13 | Indirect access — Top-K gather operation | [indirect-access-example.md](sdsc_BUNDLE_APIs/indirect-access-example.md) |
+
+### Low-Level MLIR Examples
+
+Lower-level MLIR examples in increasing order of complexity are available in [`examples/`](examples/).
+
+| # | File | Description |
+|---|---|---|
+| 1 | [1-single-no-sym.mlir](examples/1-single-no-sym.mlir) | Single operation, no symbolic values |
+| 2 | [2-softmax-no-sym.mlir](examples/2-softmax-no-sym.mlir) | Softmax kernel, no symbolic values |
+| 3 | [3-single-fake-sym.mlir](examples/3-single-fake-sym.mlir) | Single operation with symbolic addresses |
+| 4 | [4-loop-multi.mlir](examples/4-loop-multi.mlir) | Loop with multiple operations |
+
+## **Metrics**
+
 * Ability to express all torch operators that are mappable to AIU (post-inductor transformations and decompositions)
 * Ability to express desired computation mapping across cores for each operation
