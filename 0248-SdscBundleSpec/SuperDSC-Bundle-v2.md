@@ -316,22 +316,6 @@ Example — stride-based address computation:
 %addr = affine.apply #stride_map (%i)[%base_address]
 ```
 
-#### MLIR Bundle Validation
-
-Bundle `.mlir` files are enforced at two levels. For the full checklist see [MLIR Bundle API — Validation](sdsc_BUNDLE_APIs/MLIR-bundle-API.md#Validation).
-
-**1. Structural constraints — checked by the MLIR verifier:**
-- Only operations from the following dialects are permitted: `sdscbundle`, `affine`, `arith`, `func`, `math`, `scf`.
-- The number of operands to `sdscbundle.sdsc_execute` must equal the length of `symbol_ids`.
-- `sdscbundle.device_mem_allocate`: `size` must be a positive integer.
-- `sdscbundle.input_arg_extract`: source operand must be a `func.func` block argument of type `!sdscbundle.input_arg<index>`.
-- `func.func` parameters must be of type `index` or `!sdscbundle.input_arg<index>`.
-
-**2. Semantic constraints — checked during pipeline processing:**
-- All `scf.for` bounds must resolve to compile-time constants.
-- Symbol IDs must be unique across the bundle (reuse inside `scf.for` iterations is allowed).
-- `sdsc_filename` paths must resolve relative to the `.mlir` file location.
-
 ### `sdsc_*.json` Filling
 
 Each `sdsc_*.json` file describes a single torch operation. This section walks through filling one in the same order as the [SuperDsc object hierarchy](sdsc_BUNDLE_APIs/JSON-object-Hierarchy.md). For the complete step-by-step reference with all field constraints see [SDSC JSON API](sdsc_BUNDLE_APIs/SDSC-json-api.md).
