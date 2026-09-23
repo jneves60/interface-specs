@@ -168,7 +168,7 @@ The individual fields of the SuperDSC to express an operation and its core mappi
     * DataFormats dataFormat_ in `sdsc.dscs_[0].labeledDs_[x]`
   * memory residency (HBM vs LX)
     * `SenComponents component_` in AllocateNode
-      * for HBM allocations, whether the tensor is stored as a single unified tensor or per core
+    * for HBM allocations, whether the tensor is stored as a single unified tensor or per core
       * `bool nonUnifiedAllocInHBM_` in AllocateNode
       * `false` (default): unified allocation. The tensor lives in HBM as one single tensor covering all cores, sized by the total dimensions `N_` in `sdsc.dscs_[0]`. The data each core needs is a sub-rectangle of that one tensor. A start address is still filled for every core, but all of them are positions inside that one tensor: each core's address is the start of its sub-rectangle, i.e. a common tensor base plus the offset given by the core's slice coordinates and the layout strides.
       * `true`: non-unified allocation. The HBM data needed by each core is stored as its own smaller tensor, sized by the per-core ("core") datastage instead of by `N_`. Each of these per-core tensors is placed independently: they need not be contiguous with one another, need not follow a common stride, and can be at unrelated locations in HBM, so there is no single unified tensor holding the whole data structure.
