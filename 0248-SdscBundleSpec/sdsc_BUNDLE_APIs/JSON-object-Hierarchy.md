@@ -93,6 +93,7 @@ Root Object (Dynamic operation name key, e.g., "exp", "matmul")
                     │         ├─── nonUnifiedAllocInHBM_: boolean | 0 | 1
                     │         ├─── startAddressCoreCorelet_: FoldManager
                     │         ├─── backGapCore_: Object
+                    │         ├─── padding_: Object
                     │         ├─── indirectAllocType_: "no_indirection" | "value_tensor" | "index_tensor"
                     │         ├─── relatedIndirectAccessAlloc_: string
                     │         ├─── indexTensorType_: "index" | "address"
