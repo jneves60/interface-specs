@@ -237,35 +237,6 @@ In [`DesignSpaceConfig.computeOp_`](computeoperation.md):
 - For indirect access operations: populate `indirectAccessIndexLabeledDs` with
   the index tensor references.
 
-## Validation
-
-SDSC JSON files are validated at two levels:
-
-### 1. Schema validation
-
-Structural checks enforced by `sdscbundle-schema.json`. A file that fails
-schema validation is rejected by the backend loader before any semantic
-processing occurs. Schema-enforced constraints include required fields,
-enum values, and type constraints on every object in the hierarchy.
-
-### 2. Semantic validation
-
-Cross-field consistency checks that cannot be expressed in JSON Schema,
-enforced by the backend loader and pipeline. Violations result in a
-backend error during compilation:
-
-- `DesignSpaceConfig.numCoresUsed_` must equal the length of
-  `coreIdsUsed_`.
-- All core IDs in `SuperDsc.coreIdToDsc_` must be valid zero-based
-  indices into `dscs_`.
-- Symbol identifier strings in `startAddressCoreCorelet_.data_` must
-  correspond to symbol IDs supplied as operands to
-  `sdscbundle.sdsc_execute` in the accompanying `.mlir` bundle file.
-- Work assigned per core must be a multiple of the stick size for each
-  dimension. See [Stick Layout Constraints](stick-layout-constraints.md).
-- The DDR address span accessed by any single tensor must not exceed
-  256 MB.
-
 ---
 
 | [← Previous: MLIR Complete Example](MLIR-complete-example.md) | [↑ Table of Contents](README.md) | [Next: Object Hierarchy →](JSON-object-Hierarchy.md) |
