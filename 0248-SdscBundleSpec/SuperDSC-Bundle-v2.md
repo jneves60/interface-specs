@@ -399,7 +399,17 @@ In [`DesignSpaceConfig.scheduleTree_`](sdsc_BUNDLE_APIs/scheduletreenode.md), ad
     - typically used when the tensor is produced or consumed core-wise (e.g. the producing SDSC wrote each core's slice at its own address) and the frontend does not want to materialize a unified copy of it
     - only meaningful when `component_` is HBM; leave `false` for LX allocations
 - Set `layoutDimOrder_` and `maxDimSizes_` (use `-1` for unbound dimensions; use the page size for paged value tensors).
-- Set `startAddressCoreCorelet_` as a [`FoldManager`](sdsc_BUNDLE_APIs/foldmanager.md): first fold dimension uses `Map` function (each core ID maps to its own start address); second fold dimension uses `Const` (all corelets on a core share the same base). When the address is not known at compile time, set `isStartAddrSymbolic_: true` and use the symbol ID string (e.g. `"-1"`) as the `data_` value.
+- Set `startAddressCoreCorelet_` ([`FoldManager`](sdsc_BUNDLE_APIs/foldmanager.md)) — start address per core:
+  - first fold is for cores, set as Map fold type
+      - alpha=1, beta=0, factor=4
+  - coordinates also require spatial folds
+    - core fold
+      - for HBM, N/A → alpha=1, factor=1
+      - for unified HBM allocations, N/A → alpha=1, factor=1
+      - for LX, alpha=coordinate offset across slices, factor=number of slices in dimension
+      - for non-unified HBM allocations (`nonUnifiedAllocInHBM_` set), same as LX, as each core holds only its own slice
+    - corelet fold: N/A → alpha=1, factor=1
+    - row fold: N/A → alpha=1, factor=1
 - For back-gaps: populate `backGapCore_` with the gap in elements, keyed by dimension then core ID. Use `"-1"` as the core key for HBM; use the actual core ID for LX. Only back-gaps are encoded — front gaps are handled by advancing the start address.
 - For indirect access (paged tensors): set `indirectAllocType_` to `"value_tensor"` or `"index_tensor"`, set `relatedIndirectAccessAlloc_` to the counterpart node name, and set `indexTensorType_` (`"index"` or `"address"`) on the index tensor node.
 - Set `coordinates_` (a [`CoordinateContainer`](sdsc_BUNDLE_APIs/coordinatecontainer.md)): for each tensor dimension, add a [`CoordinateInfo`](sdsc_BUNDLE_APIs/coordinateinfo.md) entry whose `folds` [`FoldManager`](sdsc_BUNDLE_APIs/foldmanager.md) encodes the affine split hierarchy (core → corelet → row → elements). The product of all `factor_` values across all fold levels must equal the total element count for that dimension.
