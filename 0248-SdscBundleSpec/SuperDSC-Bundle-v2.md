@@ -613,7 +613,7 @@ For top-k operations: neither the reduction dimension nor `k` can be in the stic
 
 #### LayerNorm and EXX2
 
-Operations `layernormscale`, `layernormnorm`, `exx2`: stick must contain only the normalization dimension.
+Operations `layernormscale`, `layernormnorm`, `exx2`: stick should only have the normalization dimension in it.
 
 #### Pooling
 
