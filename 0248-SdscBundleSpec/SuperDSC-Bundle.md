@@ -181,14 +181,14 @@ The individual fields of the SuperDSC to express an operation and its core mappi
     * `FoldManager<int64_t> startAddressCoreCorelet_` in AllocateNode
     * first fold is for cores, set as Map fold type
         * alpha=1, beta=0, factor=4
-      * coordinates also require spatial folds
-        * core fold
-          * for HBM, N/A → alpha=1, factor=1
-          * for unified HBM allocations, N/A → alpha=1, factor=1
-          * for LX, alpha=coordinate offset across slices, factor=number of slices in dimension
-          * for non-unified HBM allocations (`nonUnifiedAllocInHBM_` set), same as LX, as each core holds only its own slice
-        * corelet fold: N/A → alpha=1, factor=1
-        * row fold: N/A → alpha=1, factor=1
+    * coordinates also require spatial folds
+      * core fold
+        * for HBM, N/A → alpha=1, factor=1
+        * for unified HBM allocations, N/A → alpha=1, factor=1
+        * for LX, alpha=coordinate offset across slices, factor=number of slices in dimension
+        * for non-unified HBM allocations (`nonUnifiedAllocInHBM_` set), same as LX, as each core holds only its own slice
+      * corelet fold: N/A → alpha=1, factor=1
+      * row fold: N/A → alpha=1, factor=1
   * layout
     * stick layout/sizes
       * add entry in `std::map<DsTypes, PrimaryDsInfo> primaryDsInfo_` in `sdsc.dscs_[0]`
