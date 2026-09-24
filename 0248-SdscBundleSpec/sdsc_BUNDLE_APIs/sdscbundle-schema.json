@@ -755,11 +755,6 @@
           "description": "Index tensors for indirect access operations (gather/scatter). See ScheduleTreeNode.indirectAllocType_.",
           "items": {"type": "string"}
         },
-        "interimLabeledDs": {
-          "type": "array",
-          "description": "Intermediate tensors used within the operation, not exposed as inputs or outputs.",
-          "items": {"type": "string"}
-        }
       },
       "additionalProperties": false
     },

@@ -30,8 +30,7 @@ function name, optional attributes, and the input/output tensors from
   "attributes_":                   <OperationAttributes>,
   "inputLabeledDs":                [<string>, ...],
   "outputLabeledDs":               [<string>, ...],
-  "indirectAccessIndexLabeledDs":  [<string>, ...],
-  "interimLabeledDs":              [<string>, ...]
+  "indirectAccessIndexLabeledDs":  [<string>, ...]
 }
 ```
 
@@ -47,7 +46,6 @@ All four required fields must be present. No additional properties are allowed.
 | `inputLabeledDs` | array of string | Yes | — | Input tensor references from `labeledDs_` using the `"<dsName_>-idx<N>"` naming convention. |
 | `outputLabeledDs` | array of string | Yes | — | Output tensor references from `labeledDs_` using the `"<dsName_>-idx<N>"` naming convention. |
 | `indirectAccessIndexLabeledDs` | array of string | No | — | Index tensors for indirect access operations (gather/scatter). See `ScheduleTreeNode.indirectAllocType_`. **Note:** no trailing underscore. |
-| `interimLabeledDs` | array of string | No | — | Intermediate tensors used within the operation, not exposed as inputs or outputs. **Note:** no trailing underscore. |
 
 ### attributes_ sub-fields
 
@@ -56,8 +54,8 @@ All four required fields must be present. No additional properties are allowed.
 | `dataFormat_` | string | No | — | Data format for this operation (e.g. `"SEN169_FP16"`). |
 | `fidelity_` | string | No | `"regular"` or `"fast"` | Computation fidelity level. `"regular"` = standard precision; `"fast"` = reduced-precision fast path. |
 
-**Note on field naming:** `exUnit`, `inputLabeledDs`, `outputLabeledDs`, `indirectAccessIndexLabeledDs`,
-and `interimLabeledDs` lack the trailing underscore used by most other fields. The serialized keys
+**Note on field naming:** `exUnit`, `inputLabeledDs`, `outputLabeledDs`, and `indirectAccessIndexLabeledDs`
+lack the trailing underscore used by most other fields. The serialized keys
 in the JSON bundle use these exact names — do not add trailing underscores when writing bundle JSON.
 
 ## Example

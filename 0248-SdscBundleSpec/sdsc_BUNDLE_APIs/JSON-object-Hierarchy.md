@@ -151,8 +151,7 @@ Root Object (Dynamic operation name key, e.g., "exp", "matmul")
                               │    └─── fidelity_: "regular" | "fast"
                               ├─── inputLabeledDs: Array<string> (required)
                               ├─── outputLabeledDs: Array<string> (required)
-                              ├─── indirectAccessIndexLabeledDs: Array<string>
-                              └─── interimLabeledDs: Array<string>
+                              └─── indirectAccessIndexLabeledDs: Array<string>
 ```
 
 ## Key Structural Points
