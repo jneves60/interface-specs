@@ -41,7 +41,7 @@ An SDSC JSON file is structured as a single top-level key (the operation name) w
 | Blue | Bundle / DSC structure | `SuperDsc`, `WrappedDesignSpaceConfig`, `DesignSpaceConfig` |
 | Violet | Tensor objects | `LabeledDataStructure`, `MemoryOrganization`, `PrimaryDsInfo`, `ConstantInfo` |
 | Green | Scheduling & coordinate objects | `ScheduleTreeNode`, `CoordinateContainer`, `CoordinateInfo`, `DataStageParam` |
-| Amber | Compute objects | `ComputeOperation`, `attributes_` |
+| Amber | Compute objects | `ComputeOperation` (+ `attributes_` sub-object) |
 
 | Component | Role | Reference |
 |---|---|---|
