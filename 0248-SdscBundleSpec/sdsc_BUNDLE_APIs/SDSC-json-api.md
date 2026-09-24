@@ -135,7 +135,7 @@ In [`DesignSpaceConfig.dataStageParam_`](datastageparam.md):
 - Set `ss_` and `el_` to the per-core tile sizes. When work divides evenly
   `ss_` and `el_` are identical; `el_` carries the smaller final tile
   when it does not.
-- For window/padded operations (avgpool, depthwise conv2d): add `paddingSizes_`
+- For window/padded operations (avgpool2d, maxpool2d, conv2d, depthwise conv2d): add `paddingSizes_`
   to both `ss_` and `el_`. If a padded dimension is split across cores, set
   `padFront_` and `padBack_` to `-1` in the per-core datastage entry.
   See [Padding](padding.md) for the full field set.

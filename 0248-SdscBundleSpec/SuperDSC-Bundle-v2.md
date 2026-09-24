@@ -372,7 +372,7 @@ In [`DesignSpaceConfig.dataStageParam_`](sdsc_BUNDLE_APIs/datastageparam.md):
 
 - Add exactly one entry with key `"0"`. Set `name_` to `"core"`.
 - Set `ss_` and `el_` to the per-core tile sizes. When work divides evenly `ss_` and `el_` are identical; `el_` carries the smaller final tile when it does not.
-- For window/padded operations (avgpool, depthwise conv2d): add `paddingSizes_` to both `ss_` and `el_`. If a padded dimension is split across cores, set `padFront_` and `padBack_` to `-1` in the per-core datastage entry. See [Padding](sdsc_BUNDLE_APIs/padding.md) for the full field set.
+- For window/padded operations (avgpool2d, maxpool2d, conv2d, depthwise conv2d): add `paddingSizes_` to both `ss_` and `el_`. If a padded dimension is split across cores, set `padFront_` and `padBack_` to `-1` in the per-core datastage entry. See [Padding](sdsc_BUNDLE_APIs/padding.md) for the full field set.
 - For symbolic dimensions split across cores: `granularity_` must be a multiple of the number of cores in the split, and `ss_`/`el_` values must be scaled to the per-core size.
 
 #### Step 5 — Tensor layout (`primaryDsInfo_`)
