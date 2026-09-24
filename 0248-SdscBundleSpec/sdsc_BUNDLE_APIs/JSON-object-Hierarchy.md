@@ -14,7 +14,7 @@ Root Object (Dynamic operation name key, e.g., "exp", "matmul")
      │
      ├─── sdscFolds_: FoldManager
      │    ├─── dim_prop_func: Array<Object>
-     │    │    └─── Const | Map | Affine | WkSplit
+     │    │    └─── Const | Map | Affine
      │    ├─── dim_prop_attr: Array<FoldProperty>
      │    └─── data_: Object (coordinate-indexed values)
      │

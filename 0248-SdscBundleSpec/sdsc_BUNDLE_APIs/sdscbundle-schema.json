@@ -222,7 +222,7 @@
       "properties": {
         "dim_prop_func": {
           "type": "array",
-          "description": "One fold function per dimension (same length as dim_prop_attr). Each element is a single-key object: Const (same value for all indices), Map (lookup in data_), Affine (alpha*index+beta), or WkSplit (work-slice index from coreIdToWkSlice_).",
+          "description": "One fold function per dimension (same length as dim_prop_attr). Each element is a single-key object: Const (same value for all indices), Map (lookup in data_), or Affine (alpha*index+beta).",
           "items": {
             "type": "object",
             "properties": {
@@ -234,8 +234,7 @@
                   "alpha_": {"type": "integer", "description": "Affine scale factor"},
                   "beta_": {"type": "integer", "description": "Affine offset"}
                 }
-              },
-              "WkSplit": {"type": "object"}
+              }
             }
           }
         },
