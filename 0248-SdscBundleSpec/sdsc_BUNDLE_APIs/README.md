@@ -102,12 +102,12 @@ Documents are organized in the recommended reading order, grouped by learning st
 
 ---
 
-### Stage 8 — Production Readiness
+### Stage 8 — References
 
-> Reference glossary.
+> External specifications, MLIR dialect documentation, and the normative JSON schema.
 
 | # | Section | File |
 |---|---------|------|
-| 8.1 | Reference Documents | [reference.md](reference.md) |
+| 8.1 | References | [reference.md](reference.md) |
 
 ---

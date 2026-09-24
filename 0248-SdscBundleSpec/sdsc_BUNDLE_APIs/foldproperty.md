@@ -18,7 +18,7 @@ knows which loop index to use.
 
 ## Context
 
-`FoldProperty` appears in three places:
+`FoldProperty` appears in four places:
 
 | Parent field | Role |
 |---|---|

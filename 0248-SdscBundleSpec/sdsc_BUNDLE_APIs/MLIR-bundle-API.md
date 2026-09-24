@@ -618,10 +618,8 @@ Add a fixed offset to a base address:
 Combine a base address with a loop-derived stride:
 
 ```mlir
-%base     = arith.constant 1024 : index
-%stride   = arith.constant 128  : index
-%i_stride = arith.muli %i, %stride : index
-%addr     = arith.addi %base, %i_stride : index
+%base = arith.constant 1024 : index
+%addr = affine.apply affine_map<(d0)[s0] -> (s0 + 128*d0)> (%i)[%base]
 sdscbundle.sdsc_execute (%addr) {
   sdsc_filename="sdsc.json",
   symbol_ids=[-1]
