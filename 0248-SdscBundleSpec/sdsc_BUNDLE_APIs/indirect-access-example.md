@@ -332,7 +332,6 @@ The value tensor uses `dsType_: "KERNEL"` in `labeledDs_`; the index tensor uses
                 "dataFormat_": "SEN169_FP16",
                 "fidelity_":   "regular"
               },
-              "location": "Inner",
               "inputLabeledDs":               ["topk-Input-idx0"],
               "outputLabeledDs":              ["topk-Output-idx1"],
               "indirectAccessIndexLabeledDs": ["topk-Indices-idx3"]
