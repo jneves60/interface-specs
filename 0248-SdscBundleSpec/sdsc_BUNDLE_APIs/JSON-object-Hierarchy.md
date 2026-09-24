@@ -128,13 +128,11 @@ Root Object (Dynamic operation name key, e.g., "exp", "matmul")
                     │              │    ├─── isPresent: 0 | 1 (required)
                     │              │    ├─── isPadded: 0 | 1
                     │              │    ├─── isZeroPadded: 0 | 1
-                    │              │    ├─── dsOffset: integer
                     │              │    └─── allocateNode_: string
                     │              └─── lx: MemorySlot
                     │                   ├─── isPresent: 0 | 1 (required)
                     │                   ├─── isPadded: 0 | 1
                     │                   ├─── isZeroPadded: 0 | 1
-                    │                   ├─── dsOffset: integer
                     │                   └─── allocateNode_: string
                     │
                     ├─── constantInfo_: Object<index → ConstantInfo> | string "{}"
