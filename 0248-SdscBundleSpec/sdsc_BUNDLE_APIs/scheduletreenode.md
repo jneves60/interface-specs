@@ -6,10 +6,9 @@ tensor in a specific memory component or orchestrates a data-movement step.
 Nodes are linked by their `prev_` field to form a dependency chain, and refer
 to tensors by their zero-based index into `labeledDs_` via `ldsIdx_`.
 
-The schedule tree is a list of nodes that can be of types BLOCK, LOOP,
-TRANSFER, COMPUTE, SYNC, CONDITION, ALLOCATE, and STICKMASK, among others.
-Only `ALLOCATE` nodes need to be filled in from the front end — one per tensor
-in `labeledDs_`.
+The schedule tree contains `allocate` nodes — one per tensor in `labeledDs_`.
+The backend may add other node types during compilation; those are opaque to
+the frontend and do not need to be filled in.
 
 ## Context
 
