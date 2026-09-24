@@ -20,11 +20,11 @@ An `8 x 100` fp16 tensor.  fp16 sticks hold 64 elements, and `100 % 64 = 36`, so
 
 The emitted descriptor for a pointwise `mul` on that tensor:
 
-```json
-"N_": {"name_": "n", "mb_": 8, "out_": 128},
-"dataStageParam_[0].ss_.paddingSizes_": {},
-"scheduleTree_[0].coordinates_.coordInfo.out.padding": "nopad"
-```
+| Field path | Value |
+|---|---|
+| `N_.out_` | `128` (padded extent) |
+| `dataStageParam_[0].ss_.paddingSizes_` | `{}` (empty) |
+| `scheduleTree_[0].coordinates_.coordInfo.out.padding` | `"nopad"` |
 
 Three observations:
 
