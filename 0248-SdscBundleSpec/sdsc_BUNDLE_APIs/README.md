@@ -57,7 +57,8 @@ Documents are organized in the recommended reading order, grouped by learning st
 | 4.2 | FoldProperty | [foldproperty.md](foldproperty.md) |
 | 4.3 | FoldManager | [foldmanager.md](foldmanager.md) |
 | 4.4 | Padding | [padding.md](padding.md) |
-| 4.5 | Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |
+| 4.5 | Stick-Alignment Padding | [stick-padding.md](stick-padding.md) |
+| 4.6 | Stick Layout Constraints | [stick-layout-constraints.md](stick-layout-constraints.md) |
 
 ---
 
