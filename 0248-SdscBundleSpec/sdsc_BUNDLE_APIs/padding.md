@@ -12,7 +12,7 @@ When a dimension is padded due to window/padded operations like convolution, det
 |---|---|
 | `N_` (top-level op descriptor) | `sdsc_spec.padding_sizes` |
 | `dataStageParam_[0].ss_` (per-core schedule) | `padding_sizes_per_core` in the steady-state phase if set, else `padding_sizes` |
-| `dataStageParam_[0].el_` (per-core element loop) | `padding_sizes_per_core` in the epilog phase if set, else `padding_sizes` |
+| `dataStageParam_[0].el_` (per-core element loop) | `padding_sizes_per_core` in the epilogue phase if set, else `padding_sizes` |
 
 If a padded dimension is chunked across cores, `padFront_` and `padBack_` must be set to `-1` in the core datastage entry (that is, in the entries under `dataStageParam_[0]`).
 

@@ -154,8 +154,8 @@ The table is sourced from the [SuperDSC-Bundle Interface Specification](https://
 | | `SUM` | `"sum"` | SEN169_FP16 or FP32 | | |
 | Pooling | `AVGPOOL_FWD` | `"avgpoolfwd"` | SEN169_FP16 | `nmap`: reciprocal of kernel size (`1/(kh*kw)`) | |
 | | `AVGPOOL_NMAP_FWD` | `"avgpoolnmapfwd"` | SEN169_FP16 | | |
-| | `DEPTHWISE_CONV_FWD` | `"depthwiseconv2dnative"` | SEN169_FP16 | | |
 | | `MAXPOOL_FWD` | `"maxpoolfwd"` | SEN169_FP16 | | |
+| Convolution (depthwise) | `DEPTHWISE_CONV_FWD` | `"depthwiseconv2dnative"` | SEN169_FP16 | | |
 | Scan | `MASK_BY_INDEX` | `"maskbyindex"` | SEN169_FP16 or FP32 | | |
 | | `TOPK_INDEX` | `"topkindex"` | SEN169_FP16 or FP32 | | |
 | | `TOPK_VALUE` | `"topkvalue"` | SEN169_FP16 or FP32 | | |

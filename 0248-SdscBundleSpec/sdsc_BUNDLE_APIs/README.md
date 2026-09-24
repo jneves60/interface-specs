@@ -93,7 +93,7 @@ Documents are organized in the recommended reading order, grouped by learning st
 
 ### Stage 7 — Worked Examples
 
-> End-to-end examples that tie all objects together; read after completing Stage 4.
+> End-to-end examples that tie all objects together; read after completing Stage 6.
 
 | # | Section | File |
 |---|---------|------|
