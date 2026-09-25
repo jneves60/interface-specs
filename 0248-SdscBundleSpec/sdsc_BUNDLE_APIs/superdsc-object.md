@@ -56,7 +56,7 @@ Each entry in `dscs_` is a single-key object — the key is the operation name
 
 Six fields are required. No additional properties are allowed.
 
-| Field | Type | Required | Constraints | Description |
+| Field | Type | Required † | Constraints | Description |
 |---|---|---|---|---|
 | `sdscFoldProps_` | array of [FoldProperty](foldproperty.md) | No | — | SDSC-level fold properties when the bundle spans multiple fold dimensions above the core level. |
 | `sdscFolds_` | [FoldManager](foldmanager.md) | No | — | Fold manager encoding addresses or mappings at the bundle level, above the per-core level. |
@@ -140,5 +140,5 @@ In practice, the standard step tuple for single-operation bundles is `[-1, 0, 0,
 
 ---
 
-| [← Previous: JSON Schema](sdscbundle-schema.json) | [↑ Table of Contents](README.md) | [Next: FoldProperty →](foldproperty.md) |
+| [← Previous: Object Hierarchy](JSON-object-Hierarchy.md) | [↑ Table of Contents](README.md) | [Next: FoldProperty →](foldproperty.md) |
 |:--|:--:|--:|

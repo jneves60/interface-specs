@@ -13,11 +13,11 @@ This document describes `SpyreCode` the artifacts produced by the Deeptools back
 
 ## **Proposed Implementation**
 
-### Terminology and Backgroud Notes:
+### Terminology and Background Notes:
 The execution of a computation kernel on the Spyre device is referred to as a <u>job</u>. The <u>computation kernel</u>  comprises of sequence of operations, uses dynamic shapes with input/output tensors resident on host or device. Job execution on Spyre involves a combination of executing programs on Spyre cores (using a compute control block) and transfers between host &#8660; Spyre (using a DMA control block). Jobs executed on Spyre use a (maximum) 128GB virtual address space, split into 8 segments each having a maximum length of 16GB.
 
 ### Components of `SpyreCode`
-`SpyreCode` facilites the runtime to execute a job on Spyre. It comprises of 3 components:
+`SpyreCode` facilitates the runtime to execute a job on Spyre. It comprises of 4 components:
 * Job execution plan
 * Job preparation plan
 * Job Binaries (a.k.a. `init.bin`)
@@ -30,7 +30,7 @@ The execution of a computation kernel on the Spyre device is referred to as a <u
   Figure 1. Components of `SpyreCode`
 </p>  
 
-In the virtual address space corresponding to a job, the last segment (SegmentId=7) is **reserved for use by `SpyreCode`**. This excludes SegmentId=7 from being used for data tensors allocated by user-code (using .to() operation) or by compiler fronend (torch-inductor) generated code.
+In the virtual address space corresponding to a job, the last segment (SegmentId=7) is **reserved for use by `SpyreCode`**. This excludes SegmentId=7 from being used for data tensors allocated by user-code (using .to() operation) or by compiler frontend (torch-inductor) generated code.
 
 The following sections detail the different components of `SpyreCode`.
 
@@ -45,9 +45,9 @@ The command types in `JobPlanCommand` and their attributes are explained below:
   * `ohandle`: A handle for the output tensor produced by the host function API. This output tensor could be transferred to the device or fed to another host function.
   * `oshape`: Shape of the tensor fed to `ohandle`
   * `hcm`: A json object that contains metadata needed by the host function for its processing. This json object is produced by the backend compiler as part of `SpyreCode`
-* `ComputeOnDevice`: Triggers execution of computation on Sypre Cores. This is achieved by runtime sending a control message to the card firmware which generates a compute control block (CB). Its attributes are:
+* `ComputeOnDevice`: Triggers execution of computation on Spyre Cores. This is achieved by runtime sending a control message to the card firmware which generates a compute control block (CB). Its attributes are:
   * `job_bin_ptr`: Starting virtual address of the job binary (limited to SegmentId=7). Spyre requires start address to be a multiple of 128B.
-* `DataTransfer`: Triggers a data transfer between host and Sypre.The runtime sends a control message to the card firmare to generate a DMAI or DMAO control block to effect the transfer. Its attributes are:
+* `DataTransfer`: Triggers a data transfer between host and Spyre. The runtime sends a control message to the card firmware to generate a DMAI or DMAO control block to effect the transfer. Its attributes are:
   * `direction`: `0` indicates transfer to device and `1` indicates transfer from device
   * `host_handle`: A handle for the tensor on the host side.
   * `size`: Size of the data transfer (in Bytes)
@@ -118,5 +118,5 @@ The job prepration plan is comprised of 2 commands.
 Next, the job executplan comprises of 3 commands.
 * The first command is to execute a host function `ComputeOnHost`, which takes the input arguments (4 in this case) and the host compute metadata (*hcm.json*) as its inputs, and produces a data tensor (T1) needed for program correction. The *hcm.json* contains information pertaining to how the input arguments (symbols) must be interpreted in the context of the job binary. For example, if a shape of a dimension in a tensor is symbolic during compilation, then its value (provided as part of input arguments) will be used to correct one of loop counts in the job binary.
 * The second command transfers T1 to the device to a specific location indicated by the *dev_ptr*
-* Finally, the last command executes the job binary. In this case, the job binary contains additional program instructions (which are executed on Sypre core) to first read T1 and make corrections to future program instructions. Then the corrected program instructions are executed (on Spyre cores), successfully completing the kernel execution with the desired tensor address/shape.
+* Finally, the last command executes the job binary. In this case, the job binary contains additional program instructions (which are executed on Spyre core) to first read T1 and make corrections to future program instructions. Then the corrected program instructions are executed (on Spyre cores), successfully completing the kernel execution with the desired tensor address/shape.
 

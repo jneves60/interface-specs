@@ -139,9 +139,9 @@ across cores, corelets, rows, and the final leaf entities via its `folds`
 
 | Field | Values | Description |
 |---|---|---|
-| `spatial` | typically `3` | Number of spatial split levels (core, corelet, row). |
+| `spatial` | `3` when split across cores/corelets/rows; `0` when collapsed/unpartitioned | Number of spatial split levels (core, corelet, row). Use `0` when the dimension is not partitioned across the spatial hierarchy. |
 | `temporal` | `0` | Set to `0` by the frontend. |
-| `elemArr` | `1` or `2` | `1` for non-stick dimensions; `2` for stick dimensions. |
+| `elemArr` | `1` for non-stick dimensions; `2` for stick dimensions; `0` when collapsed | Encodes whether this dimension maps to leaf elements or multiple sticks per slice. Use `0` when the dimension is collapsed (matches `spatial: 0`). |
 | `padding` | `"nopad"`, `"lowered_padded"`, `"padded_nozeropad"`, `"padded_wzeropad"`, `"padded_fullspan"`, or `"padded_fullspan_wunneeded"` | Padding state for this dimension. `"nopad"` is the common case; see [CoordinateInfo](coordinateinfo.md) for the full enum and [Padding](padding.md) for semantics. |
 | `folds` | [FoldManager](foldmanager.md) | Encodes the dimension split hierarchy. |
 
