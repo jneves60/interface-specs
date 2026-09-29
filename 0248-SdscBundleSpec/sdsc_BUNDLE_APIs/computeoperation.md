@@ -88,7 +88,6 @@ Tensor names follow the `"<dsName_>-idx<ldsIdx_>"` convention.
 ## Supported Operations
 
 The `opFuncName` value must be one of the strings in the table below.
-The table is sourced from the [SuperDSC-Bundle Interface Specification](https://github.com/torch-spyre/interface-specs/blob/main/0248-SdscBundleSpec/SuperDSC-Bundle.md).
 
 | Category | OpFunc enum | OpFunc string | Precision | Constants | Notes |
 |---|---|---|---|---|---|
@@ -100,6 +99,7 @@ The table is sourced from the [SuperDSC-Bundle Interface Specification](https://
 | | `CONV2D_FWD` | `"conv2d"` | SEN169_FP16 | | |
 | | `CONV2D_INT4_FWD` | `"conv2dint4"` | Inputs: INT4, Output: SEN169_FP16 | | |
 | | `CONV2D_INT8_FWD` | `"conv2dint8"` | Inputs: INT8, Output: SEN169_FP16 (scaled) | | |
+| Convolution (depthwise) | `DEPTHWISE_CONV_FWD` | `"depthwiseconv2dnative"` | SEN169_FP16 | | |
 | Broadcast | `ADD` | `"add"` | SEN169_FP16 or FP32 | | Broadcast supported on any number of dimensions and on one or both inputs |
 | | `BATCHNORM_FWD` | `"batchnormfwd"` | SEN169_FP16 or FP32 | | |
 | | `BIASADD` | `"biasadd"` | SEN169_FP16 or FP32 | | |
@@ -155,7 +155,6 @@ The table is sourced from the [SuperDSC-Bundle Interface Specification](https://
 | Pooling | `AVGPOOL_FWD` | `"avgpoolfwd"` | SEN169_FP16 | `nmap`: reciprocal of kernel size (`1/(kh*kw)`) | |
 | | `AVGPOOL_NMAP_FWD` | `"avgpoolnmapfwd"` | SEN169_FP16 | | |
 | | `MAXPOOL_FWD` | `"maxpoolfwd"` | SEN169_FP16 | | |
-| Convolution (depthwise) | `DEPTHWISE_CONV_FWD` | `"depthwiseconv2dnative"` | SEN169_FP16 | | |
 | Scan | `MASK_BY_INDEX` | `"maskbyindex"` | SEN169_FP16 or FP32 | | |
 | | `TOPK_INDEX` | `"topkindex"` | SEN169_FP16 or FP32 | | |
 | | `TOPK_VALUE` | `"topkvalue"` | SEN169_FP16 or FP32 | | |

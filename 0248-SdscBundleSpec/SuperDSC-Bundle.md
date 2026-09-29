@@ -440,7 +440,7 @@ In [`DesignSpaceConfig.constantInfo_`](sdsc_BUNDLE_APIs/constantinfo.md):
 
 In [`DesignSpaceConfig.computeOp_`](sdsc_BUNDLE_APIs/computeoperation.md):
 
-- Set `opFuncName` to the operation string (e.g. `"gelufwd"`, `"batchmatmul"`). See [Supported OpFuncs](#supported-opfuncs-in-sdscjson) below for the full table.
+- Set `opFuncName` to the operation string (e.g. `"gelufwd"`, `"batchmatmul"`). See [Supported Operations](sdsc_BUNDLE_APIs/computeoperation.md#supported-operations) for the full table.
 - Set `attributes_.dataFormat_` to the execution format (`"SEN169_FP16"`, `"IEEE_FP32"`, …).
 - Set `attributes_.fidelity_` to `"regular"` or `"fast"` (optional).
 - Set `exUnit` to `"sfp"` or `"pt"`.
@@ -475,91 +475,7 @@ The `SuperDsc` object is the top-level object of every `sdsc_*.json` file. Six f
 
 ### Supported OpFuncs in `sdsc.json`
 
-The `opFuncName` field in `computeOp_` must be one of the strings in the table below. For the full reference including per-operation notes see [ComputeOperation — Supported Operations](sdsc_BUNDLE_APIs/computeoperation.md#supported-operations).
-
-> **Precision label:** All precisions previously labelled `DF16` are now `SEN169_FP16` in the schema and API reference.
-
-| Category | OpFunc enum | OpFunc string | Precision | Constants | Notes |
-|---|---|---|---|---|---|
-| Matmul | `BATCHMATMUL_FP8_FWD` | `"batchmatmulfp8"` | Inputs: FP8\<1,4,3\>, Output: SEN169_FP16 | | |
-| | `BATCHMATMUL_FWD` | `"batchmatmul"` | SEN169_FP16 | | |
-| | `BATCHMATMUL_INT4_FWD` | `"batchmatmulint4"` | Inputs: INT4, Output: SEN169_FP16 | | |
-| | `BATCHMATMUL_INT8_FWD` | `"batchmatmulint8"` | Inputs: INT8, Output: SEN169_FP16 (scaled) | | |
-| Convolution | `CONV2D_FP8_FWD` | `"conv2dfp8"` | Inputs: FP8\<1,4,3\>, Output: SEN169_FP16 | | |
-| | `CONV2D_FWD` | `"conv2d"` | SEN169_FP16 | | |
-| | `CONV2D_INT4_FWD` | `"conv2dint4"` | Inputs: INT4, Output: SEN169_FP16 | | |
-| | `CONV2D_INT8_FWD` | `"conv2dint8"` | Inputs: INT8, Output: SEN169_FP16 (scaled) | | |
-| | `DEPTHWISE_CONV_FWD` | `"depthwiseconv2dnative"` | SEN169_FP16 | | |
-| Broadcast | `ADD` | `"add"` | SEN169_FP16 or FP32 | | Broadcast supported on any number of dimensions and on one or both inputs |
-| | `BATCHNORM_FWD` | `"batchnormfwd"` | SEN169_FP16 or FP32 | | |
-| | `BIASADD` | `"biasadd"` | SEN169_FP16 or FP32 | | |
-| | `EQUAL` | `"equal"` | SEN169_FP16 or FP32 | | |
-| | `FNMS` | `"fnms"` | SEN169_FP16 or FP32 | | |
-| | `GREATEREQUAL` | `"greaterequal"` | SEN169_FP16 or FP32 | | |
-| | `LAYERNORM_NORM` | `"layernormnorm"` | SEN169_FP16 or FP32 | | |
-| | `LESSEREQUAL` | `"lesserequal"` | SEN169_FP16 or FP32 | | |
-| | `MAXIMUM` | `"maximum"` | SEN169_FP16 or FP32 | | |
-| | `MINIMUM` | `"minimum"` | SEN169_FP16 or FP32 | | |
-| | `MUL` | `"mul"` | SEN169_FP16 or FP32 | | |
-| | `NOTEQUAL` | `"notequal"` | SEN169_FP16 or FP32 | | |
-| | `REALDIV` | `"realdiv"` | SEN169_FP16 or FP32 | | |
-| | `REVSUB` | `"revsub"` | SEN169_FP16 or FP32 | | |
-| | `SUB` | `"sub"` | SEN169_FP16 or FP32 | | |
-| | `WHERE3` | `"where3"` | SEN169_FP16 or FP32 | | |
-| Unary | `ABS` | `"abs"` | SEN169_FP16 or FP32 | | |
-| | `CLIP_FWD` | `"clip"` | SEN169_FP16 or FP32 | `clipMin`, `clipMax`: min and max values to clip at | |
-| | `EXP_FWD` | `"exp"` | SEN169_FP16 or FP32 | | |
-| | `FAST_EXP_FWD` | `"fastexp"` | SEN169_FP16 | | |
-| | `FAST_SIGMOID_FWD` | `"fastsigmoid"` | SEN169_FP16 | | |
-| | `FLOOR` | `"floor"` | SEN169_FP16 or FP32 | | |
-| | `GELU_FWD` | `"gelufwd"` | SEN169_FP16 | | |
-| | `IDENTITY` | `"identity"` | SEN169_FP16 or FP32 | | |
-| | `LAYERNORM_SCALE` | `"layernormscale"` | SEN169_FP16 or FP32 | `eps`: small value added to denominator for numerical stability | |
-| | `LEAKYRELU_FWD` | `"leakyrelufwd"` | SEN169_FP16 | | |
-| | `LOG_FWD` | `"log"` | SEN169_FP16 | | |
-| | `MISH_FWD` | `"mish"` | SEN169_FP16 | | |
-| | `NEG` | `"neg"` | SEN169_FP16 or FP32 | | |
-| | `RECIPROCAL` | `"reciprocal"` | SEN169_FP16 or FP32 | | |
-| | `RELU_FWD` | `"relufwd"` | SEN169_FP16 or FP32 | | |
-| | `RELU6_FWD` | `"relu6fwd"` | SEN169_FP16 | | |
-| | `RSQRT` | `"rsqrt"` | SEN169_FP16 | | |
-| | `SIGMOID_FWD` | `"sigmoid"` | SEN169_FP16 or FP32 | | |
-| | `SOFTPLUS` | `"softplus"` | SEN169_FP16 | `softplusBeta`: value for the Softplus formulation; `softplusThresh`: values above this revert to a linear function | |
-| | `SILU_FWD` | `"silu"` | SEN169_FP16 or FP32 | | |
-| | `SQRT_FWD` | `"sqrt"` | SEN169_FP16 | | |
-| | `TANH_FWD` | `"tanh"` | SEN169_FP16 | | |
-| Reduction | `ABSMAX_NONSTICK` | `"absmaxnonstick"` | SEN169_FP16 or FP32 | | |
-| | `ABSMAX` | `"absmax"` | SEN169_FP16 or FP32 | | |
-| | `EXX2_ZEROMEAN` | `"exx2_zeromean"` | SEN169_FP16 or FP32 | | |
-| | `EXX2` | `"exx2"` | SEN169_FP16 or FP32 | `exx2scale` | |
-| | `MAX_NONSTICK` | `"maxnonstick"` | SEN169_FP16 or FP32 | | |
-| | `MAX` | `"max"` | SEN169_FP16 or FP32 | | |
-| | `MEAN_NONSTICK` | `"meannonstick"` | SEN169_FP16 or FP32 | `scaling_factor`: reciprocal of elements reduced across all reduction dimensions | |
-| | `MEAN` | `"mean"` | SEN169_FP16 or FP32 | `scaling_factor`: reciprocal of elements reduced across all reduction dimensions | |
-| | `MIN_NONSTICK` | `"minnonstick"` | SEN169_FP16 or FP32 | | |
-| | `MIN` | `"min"` | SEN169_FP16 or FP32 | | |
-| | `QUANT_SCALE_PER_TOKEN_FP8` | `"quantscalepertokenfp8"` | SEN169_FP16 | `clipMin`, `clipMax`: clip bounds for abs(input) distribution; `mulConst`: reciprocal of max value in quantized datatype (for FP8\<1,4,3\> this is `1/448`) | |
-| | `QUANT_SCALE_PER_TOKEN` | `"quantscalepertoken"` | SEN169_FP16 | | |
-| | `SUM_NONSTICK` | `"sumnonstick"` | SEN169_FP16 or FP32 | | |
-| | `SUM` | `"sum"` | SEN169_FP16 or FP32 | | |
-| Pooling | `AVGPOOL_FWD` | `"avgpoolfwd"` | SEN169_FP16 | `nmap`: reciprocal of kernel size (`1/(kh*kw)`) | |
-| | `AVGPOOL_NMAP_FWD` | `"avgpoolnmapfwd"` | SEN169_FP16 | | |
-| | `MAXPOOL_FWD` | `"maxpoolfwd"` | SEN169_FP16 | | |
-| Scan | `MASK_BY_INDEX` | `"maskbyindex"` | SEN169_FP16 or FP32 | | |
-| | `TOPK_INDEX` | `"topkindex"` | SEN169_FP16 or FP32 | | |
-| | `TOPK_VALUE` | `"topkvalue"` | SEN169_FP16 or FP32 | | |
-| Quantization | `CSQ_INT4_WT` | `"csqint4wt"` | Inputs: SEN169_FP16, Output: INT4 | `scaleact`: pre-quantization scale factor; `shiftact`: pre-quantization offset | Pack from 4 input sticks in different dimension, alternating after every element |
-| | `CSQ_INT4` | `"csqint4"` | Inputs: SEN169_FP16, Output: INT4 | `scaleact`; `shiftact` | Pack from 4 sticks: first 2 in same dimension, then 2 groups across a different dimension, alternating every 8 elements |
-| | `CSQ_INT8_CH` | `"csqint8ch"` | Inputs: SEN169_FP16, Output: INT8 | `scaleact`; `shiftact` | Pack from 2 input sticks in same dimension, alternating every 8 elements |
-| | `CSQ_INT8_MB` | `"csqint8mb"` | Inputs: SEN169_FP16, Output: INT8 | `scaleact`; `shiftact` | Pack from 2 input sticks in different dimension, alternating every 8 elements |
-| | `CSQ_INT8_WT` | `"csqint8wt"` | Inputs: SEN169_FP16, Output: INT8 | `scaleact`; `shiftact` | Pack from 2 input sticks in different dimension, alternating after every element |
-| | `DL16TOFP32` | `"dl16tofp32"` | Input: SEN169_FP16, Output: FP32 | | Convert SEN169_FP16 to FP32. Two output sticks per input stick |
-| | `FP32TODL16` | `"fp32todl16"` | Input: FP32, Output: SEN169_FP16 | | Pack from 2 input sticks in same dimension, alternating every 8 elements |
-| | `FP8TODL16` | `"fp8todl16"` | Input: FP8\<1,4,3\>, Output: SEN169_FP16 | | Convert FP8\<1,4,3\> to SEN169_FP16. Two output sticks per input stick |
-| | `Q_FP8_CH` | `"qfp8ch"` | Input: SEN169_FP16, Output: FP8\<1,4,3\> | | Pack from 2 input sticks in same dimension, alternating every 8 elements |
-| | `Q_FP8_MB` | `"qfp8mb"` | Input: SEN169_FP16, Output: FP8\<1,4,3\> | | Pack from 2 input sticks in different dimension, alternating every 8 elements |
-| | `Q_FP8_WT` | `"qfp8wt"` | Input: SEN169_FP16, Output: FP8\<1,4,3\> | | Pack from 2 input sticks in different dimension, alternating after every element |
-| Stick Altering Data Shuffle | `ReStickifyOpHBM` | `"ReStickifyOpHBM"` | SEN169_FP16 | | Change stick composition from one dimension to another. Only one dimension allowed in input and output stick layouts. See [Stick Layout Constraints](sdsc_BUNDLE_APIs/stick-layout-constraints.md#stick-altering-data-shuffle). |
+For the full list of supported `opFuncName` values, see [ComputeOperation — Supported Operations](sdsc_BUNDLE_APIs/computeoperation.md#supported-operations).
 
 ### Stick Constraints for the Operations
 
