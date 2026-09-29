@@ -481,94 +481,13 @@ For the full list of supported `opFuncName` values, see [ComputeOperation — Su
 
 Each operation category imposes constraints on stick composition, restricting which dimensions can be present in the stick. Tensors must be padded to meet these constraints. There are no constraints on tensor layout beyond the stick.
 
-**Important:** Stick constraints can cause a ripple effect — a tensor may need padding even in its non-stick dimension if that dimension appears in the stick of another tensor feeding the same operation. This ensures dimension span consistency across all tensors. For the complete per-category reference see [Stick Layout Constraints](sdsc_BUNDLE_APIs/stick-layout-constraints.md).
+**Important:** Stick constraints can cause a ripple effect — a tensor may need padding even in its non-stick dimension if that dimension appears in the stick of another tensor feeding the same operation. This ensures dimension span consistency across all tensors.
 
-#### BatchMatmul
-
-The BatchMatmul op takes 2 inputs (Input1, Input2) and produces one output (Output1). It has 4 types of semantic dimensions:
-
-- `reduction_dim`: Present in Input1 and Input2, NOT in Output1. Single dimension only; gets reduced via dot-product.
-- `generated_dim`: Present in Input2 and Output1, NOT in Input1. Single dimension only.
-- `preserved_dim`: Present in Input1 and Output1, NOT in Input2. Up to 2 dimensions.
-- `noreuse_dim`: Present in all tensors. Up to 2 dimensions.
-
-Stick constraints by precision:
-
-| Tensor | SEN169_FP16 | FP8 / INT8 | INT4 |
-|---|---|---|---|
-| Output1 | `[generated_dim=64]` — always SEN169_FP16 | `[generated_dim=64]` | `[generated_dim=64]` |
-| Input1 | `[reduction_dim=64]` | `[reduction_dim=128]` | `[reduction_dim=16, preserved_dim=2, reduction_dim=8]` (256 elements total) |
-| Input2 | `[generated_dim=64]` | `[reduction_dim=2, generated_dim=64]` | `[reduction_dim=4, generated_dim=64]` |
-
-**Note:** Input2 must also be padded along `reduction_dim` (not in its stick) because `reduction_dim` is part of Input1's stick — dimension span must be consistent.
-
-#### Convolution
-
-Same as BatchMatmul with one difference for the INT4 Input1 stick layout: `[reduction_dim=16, W=2, reduction_dim=8]`, where `W` is the width in pixels per NHWC notation.
-
-#### Reduction
-
-**Stick reductions** (`sum`, `max`, `min`, `mean`, `absmax`, `exx2`):
-- Reduction dimension must be the only dimension in the stick.
-- Same stick layout in input and output. Output has `scale=-2` for the reduced (stick) dimension.
-
-**Non-stick reductions** (`sumnonstick`, `maxnonstick`, `minnonstick`, `meannonstick`, `absmaxnonstick`):
-- Any number of non-reduction dimensions allowed in the stick.
-- Same stick layout in input and output.
-- Note: no non-stick version exists for `exx2`.
-
-#### Unary and Broadcast Operations
-
-Any stick layout is acceptable, but all inputs and outputs must share the same stick layout. If a stick dimension has broadcast in a tensor, all stick dimensions of that tensor must have broadcast. If a stick dimension has broadcast in all tensors, its size in the SDSC must be set to the number of elements one stick would have if that dimension actually existed.
-
-#### Scan
-
-For top-k operations: neither the reduction dimension nor `k` can be in the stick; any number of other dimensions can be in the stick.
-
-#### LayerNorm and EXX2
-
-Operations `layernormscale`, `layernormnorm`, `exx2`: stick should only have the normalization dimension in it.
-
-#### Pooling
-
-Window dimensions not allowed in the stick; any number of other dimensions can be in the stick.
-
-#### Quantization Operations
-
-**Down-casting — input constraint:** input must have only one dimension in stick (`SEN169_FP16`: `[inpdim=64]`; `FP32`: `[inpdim=32]`).
-
-**Output stick by family:**
-
-| Family | INT8 / FP8 | INT4 |
-|---|---|---|
-| `wt` (weight packing) | `[otherdim=2, inpdim=64]` | `[otherdim=4, inpdim=64]` |
-| `mb` (mini-batch packing) | `[inpdim=8, otherdim=2, inpdim=8]` | `[inpdim=16, otherdim=2, inpdim=8]` |
-| `ch` (channel packing) | `[inpdim=128]` | N/A |
-
-> **Note:** The general stick size limit is 128 bytes regardless of dtype (not 64 elements, which is fp16-specific). When tensors of different data types share a stick variable, the alignment check uses the largest `elems_per_stick` across those tensors.
-
-**Up-casting:** both input and output must have the same single dimension in the stick.
-
-#### Stick Altering Data Shuffle
-
-`ReStickifyOpHBM` converts a tensor from one stick layout to another — used when the graph contains a reshape or layout change requiring data re-tiling (e.g. after a `VirtualReshape`). The `HBM` suffix indicates data flows through HBM during the conversion.
-
-- Input stick must contain elements from exactly **one** dimension (`d1`).
-- Output stick must contain elements from exactly **one** dimension (`d2`).
-- `d1` and `d2` may be any primary dimensions — no restriction on which are chosen.
-- Only `SEN169_FP16` precision is supported.
+For per-category stick layouts and padding rules see [Stick Layout Constraints](sdsc_BUNDLE_APIs/stick-layout-constraints.md).
 
 ### Core Work Division Constraints
 
-For all operations, any constituent dimension may be split across cores. The following constraints apply to the work assigned per core. For the full reference see [Stick Layout Constraints — Core Work Division](sdsc_BUNDLE_APIs/stick-layout-constraints.md#core-work-division-constraints).
-
-**Data tensors:**
-- The per-core work extent in every stick dimension must be a multiple of the stick size for that dimension.
-- The contiguous range of device memory addressed by a single core for any tensor must not exceed **256 MB**.
-
-**Index tensors (indirect access):** the stick-multiple alignment constraint does not apply. Instead, for each stick dimension the per-core work extent must either span an **integral number of sticks** or span **fewer than one full stick**. A partial extent covering more than one stick but not a whole multiple is not permitted.
-
-**Reduction operations with multiple reduction dimensions:** only one reduction dimension may be split across cores. No constraint applies to operations with a single reduction dimension.
+For per-core work extent rules (stick-multiple alignment, DDR address span, index tensors, and multi-dimension reduction splits) see [Stick Layout Constraints — Core Work Division](sdsc_BUNDLE_APIs/stick-layout-constraints.md#core-work-division-constraints).
 
 ## Examples
 
