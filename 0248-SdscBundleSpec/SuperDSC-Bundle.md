@@ -121,7 +121,7 @@ The `bundle.mlir` file conveys a complex kernel made of one or multiple operatio
 
 #### Bundle Container
 
-A SuperDSC Bundle is expressed as a standard MLIR `module` containing a single `func.func`. The function declares the bundle entry point: it has no return values and its body ends with `return`. It may declare zero or more parameters — each is either a compile-time `index` value or a runtime-provided `!sdscbundle.input_arg<index>` value (which must be extracted with `sdscbundle.input_arg_extract` before use).
+A SuperDSC Bundle is expressed as a standard MLIR `module` containing a single `func.func`. The function declares the bundle entry point: it has no return values and its body ends with `return`. It MAY declare zero or more parameters — each is either a compile-time `index` value or a runtime-provided `!sdscbundle.input_arg<index>` value (which MUST be extracted with `sdscbundle.input_arg_extract` before use).
 
 ```mlir
 module {
@@ -139,7 +139,7 @@ Each parameter is one of:
 |---|---|
 | *(none)* | No parameters — all symbol values are embedded as `arith.constant` values inside the function body. |
 | `index` | A resolved symbol value passed directly as a constant index. |
-| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value. May carry optional `granularity=N` and/or `max_value=N` annotations. Must be extracted with `sdscbundle.input_arg_extract` before use. |
+| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value. MAY carry OPTIONAL `granularity=N` and/or `max_value=N` annotations. MUST be extracted with `sdscbundle.input_arg_extract` before use. |
 
 #### Symbolic Values and Addresses
 
@@ -169,9 +169,9 @@ For the full list of supported `opFuncName` values, see [ComputeOperation — Su
 
 ### Stick Constraints for the Operations
 
-Each operation category imposes constraints on stick composition, restricting which dimensions can be present in the stick. Tensors must be padded to meet these constraints. There are no constraints on tensor layout beyond the stick.
+Each operation category imposes constraints on stick composition, restricting which dimensions can be present in the stick. Tensors MUST be padded to meet these constraints. There are no constraints on tensor layout beyond the stick.
 
-**Important:** Stick constraints can cause a ripple effect — a tensor may need padding even in its non-stick dimension if that dimension appears in the stick of another tensor feeding the same operation. This ensures dimension span consistency across all tensors.
+**Important:** Stick constraints can cause a ripple effect — a tensor MAY need padding even in its non-stick dimension if that dimension appears in the stick of another tensor feeding the same operation. This ensures dimension span consistency across all tensors.
 
 For per-category stick layouts and padding rules see [Stick Layout Constraints](spec/json/stick-layout-constraints.md).
 

@@ -185,7 +185,7 @@ will be allocated:
   `"value_tensor"` or `"index_tensor"`, set `relatedIndirectAccessAlloc_` to
   the name of the counterpart node, and set `indexTensorType_` (`"index"` or
   `"address"`) on the index tensor's node. For direct (non-indirect) tensors
-  the field may be omitted or set to `"no_indirection"`.
+  the field MAY be omitted or set to `"no_indirection"`.
 - Set `coordinates_` (a [`CoordinateContainer`](coordinatecontainer.md)): for
   each tensor dimension, add a [`CoordinateInfo`](coordinateinfo.md) entry
   whose `folds` [`FoldManager`](foldmanager.md) encodes the affine split

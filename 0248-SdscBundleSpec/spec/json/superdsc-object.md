@@ -10,7 +10,7 @@ per-operation compute configurations.
 ## Context
 
 A `SuperDsc` object is the value of the single top-level key in an SDSC JSON
-file. That key is the operation name and must match the pattern
+file. That key is the operation name and MUST match the pattern
 `^[a-zA-Z0-9_/\-][a-zA-Z0-9_/\-]*$`. Each JSON file contains exactly one
 such key (`minProperties: 1`, `additionalProperties: false`).
 
@@ -67,7 +67,7 @@ Six fields are required. No additional properties are allowed.
 | `dimToSymbolMappingOpcodeCorrection_` | map&lt;string, string&gt; | No | Keys: dim names | Symbol mapping corrections applied during opcode generation. Keys are dimension names; values are corrected symbol names. |
 | `inputSymbolsAndTags_` | map&lt;string, string&gt; | No | Keys: symbol names | Input symbols and their associated tags for symbolic dimension resolution. |
 | `symbolDefinitions_` | object | No | — | Variable definitions for symbolic dimensions used across the bundle. |
-| `datadscs_` | array of object | No | — | Array of data-operation DSCs (e.g. transpose, slice) attached to this `SuperDsc`. Each element is imported by the backend as a `DataOpDsc`. The frontend only emits this field when symbolic dimensions are present, and always as an empty array `[]`; consumers must tolerate its absence. |
+| `datadscs_` | array of object | No | — | Array of data-operation DSCs (e.g. transpose, slice) attached to this `SuperDsc`. Each element is imported by the backend as a `DataOpDsc`. The frontend only emits this field when symbolic dimensions are present, and always as an empty array `[]`; consumers MUST tolerate its absence. |
 | `coreIdToDsc_` | map&lt;string, integer&gt; | Yes | Keys: `^[0-9]+$`; values >= 0 | Maps each core ID (string integer) to a zero-based index into `dscs_`. Multiple cores with the same index share one `DesignSpaceConfig`. |
 | `numWkSlicesPerDim_` | map&lt;string, integer&gt; | No | Keys: dim names; values >= 1 | Total number of work slices per dimension across all cores. |
 | `coreIdToWkSlice_` | map&lt;string, map&lt;string, integer&gt;&gt; | No | Outer keys: core IDs; inner keys: dim names; values >= 0 | Maps each core ID to a map of dimension name → work slice index assigned to that core. |
@@ -78,7 +78,7 @@ Six fields are required. No additional properties are allowed.
 fields. The serialized key in the JSON bundle is `coreIdToDscSchedule` (no underscore) — this
 inconsistency is a known anomaly. Do not add a trailing underscore when writing bundle JSON.
 
-**† `debug_handle_` presence convention:** The field is optional per the schema — the key may be omitted entirely when provenance is unavailable. However, the torch-spyre frontend always emits the key, setting it to `null` when no provenance information exists rather than omitting it. Consumers must therefore tolerate both a missing key and an explicit `null` value.
+**† `debug_handle_` presence convention:** The field is optional per the schema — the key may be omitted entirely when provenance is unavailable. However, the torch-spyre frontend always emits the key, setting it to `null` when no provenance information exists rather than omitting it. Consumers MUST therefore tolerate both a missing key and an explicit `null` value.
 
 ## Example
 

@@ -7,7 +7,7 @@ A SuperDSC Bundle is expressed as a standard MLIR `module` containing a single
 capture values defined outside. The `func.func` declares the bundle entry point:
 it has no return values and its body ends with `return`.
 
-The function may declare zero or more parameters. Each parameter is a runtime-provided
+The function MAY declare zero or more parameters. Each parameter is a runtime-provided
 value — either a tensor base address or a symbolic dimension size — that the bundle
 body uses to compute symbol values passed to `sdscbundle.sdsc_execute`.
 
@@ -132,8 +132,8 @@ On the **JSON side**, symbolic dimension sizes are expressed by:
   dimension names (e.g. `"mb_"`, `"in_"`) to symbolic variable names, declaring
   which dimensions are symbolic.
 - [`DataStructDims.symbolicDimInfo_`](../json/datastructdims.md) — for each symbolic
-  dimension, records `maxSize_` (the upper bound the backend must plan for) and
-  `granularity_` (the step the runtime value must be a multiple of).
+  dimension, records `maxSize_` (the upper bound the backend MUST plan for) and
+  `granularity_` (the step the runtime value MUST be a multiple of).
 - [`DataStructDims.maxSymbolicVolume_`](../json/datastructdims.md) — caps the combined
   volume across a set of symbolic dimensions.
 - [`SuperDsc.symbolDefinitions_`](../json/superdsc-object.md),
@@ -160,7 +160,7 @@ entry (size).
 
 One consequence: when a symbolic dimension is **split across cores**, the
 per-core start addresses become data-dependent on the runtime dimension value
-and must therefore also become symbolic. In that case both kinds of symbolic
+and MUST therefore also become symbolic. In that case both kinds of symbolic
 value appear together in the same JSON file — `symbolicDimInfo_` on the
 dimension side and `isStartAddrSymbolic_` on the address side.
 
@@ -193,7 +193,7 @@ means by which a frontend compiler communicates with the Spyre backend.
 **Description:**
 
 Instantiates and executes a SuperDSC operation. Each call references one SDSC
-JSON file. A single `func.func` body may contain one or more `sdsc_execute`
+JSON file. A single `func.func` body MAY contain one or more `sdsc_execute`
 calls in sequence, with each call referencing a different JSON file. This is how
 kernel fusion is expressed — multiple operations (e.g., the five steps of a
 softmax) are chained as sequential invocations within the same function. Each
@@ -635,7 +635,7 @@ or per-core memory addresses from a base address and loop variables.
 %result = affine.apply affine_map<(dims)[symbols] -> (expression)> (dim_values)[symbol_values]
 ```
 
-Affine maps may also be defined as top-level named aliases:
+Affine maps MAY also be defined as top-level named aliases:
 
 ```mlir
 #map_name = affine_map<(d0, d1, ...)[s0, s1, ...] -> (expression)>
@@ -664,7 +664,7 @@ expression with the supplied operands.
 **Constraints:**
 
 - The affine map MUST be expressible as a linear combination of its dimension
-  and symbol variables; non-linear expressions are not permitted.
+  and symbol variables; non-linear expressions MUST NOT be used.
 - Symbol variables MUST be loop-invariant (i.e., defined outside any enclosing
   `scf.for`).
 

@@ -10,7 +10,7 @@ scratchpad, or both.
 
 `memOrg_` is a required field of every [`LabeledDataStructure`](labeleddatastructure.md)
 entry in `labeledDs_`. The corresponding [`ScheduleTreeNode`](scheduletreenode.md)
-allocate node's `component_` field (`"hbm"` or `"lx"`) must be consistent
+allocate node's `component_` field (`"hbm"` or `"lx"`) MUST be consistent
 with whichever memory key has `"isPresent": 1` here.
 
 ```json
