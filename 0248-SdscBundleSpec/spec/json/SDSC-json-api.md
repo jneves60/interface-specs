@@ -27,7 +27,7 @@ The schema enforces:
 
 ## Key Components
 
-An SDSC JSON file is structured as a single top-level key (the operation name) whose value is a **SuperDsc** object. The SuperDsc object holds a few top-level fields and a `dscs_[]` array of **DesignSpaceConfig** entries. Each `dscs_[]` entry is itself a single-key object wrapping a `DesignSpaceConfig` — some of its fields are leaf values while others are composite objects that drill down further into the object hierarchy.
+An SDSC JSON file is structured as a single top-level key (the operation name) whose value is a **SuperDSC** object. The SuperDSC object holds a few top-level fields and a `dscs_[]` array of **DesignSpaceConfig** entries. Each `dscs_[]` entry is itself a single-key object wrapping a `DesignSpaceConfig` — some of its fields are leaf values while others are composite objects that drill down further into the object hierarchy.
 
 ![SDSC JSON File — Object Hierarchy](figures/sdsc_json_hierarchy.png)
 
@@ -38,7 +38,7 @@ An SDSC JSON file is structured as a single top-level key (the operation name) w
 | Colour | Group | Objects |
 |---|---|---|
 | Dark grey | Fold / coordinate reusables | `FoldProperty`, `FoldManager`, `DebugHandle`, `SourceLoc`, `ProvenanceTransform` |
-| Blue | Bundle / DSC structure | `SuperDsc`, `WrappedDesignSpaceConfig`, `DesignSpaceConfig` |
+| Blue | Bundle / DSC structure | `SuperDsc` (SuperDSC), `WrappedDesignSpaceConfig`, `DesignSpaceConfig` |
 | Violet | Tensor objects | `LabeledDataStructure`, `MemoryOrganization`, `PrimaryDsInfo`, `ConstantInfo` |
 | Green | Scheduling & coordinate objects | `ScheduleTreeNode`, `CoordinateContainer`, `CoordinateInfo`, `DataStageParam` |
 | Amber | Compute objects | `ComputeOperation` (+ `attributes_` sub-object) |
@@ -46,7 +46,7 @@ An SDSC JSON file is structured as a single top-level key (the operation name) w
 | Component | Role | Reference |
 |---|---|---|
 | **Object Hierarchy** | Full object tree of the entire JSON format | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) |
-| **SuperDsc** | Root object — holds fold properties, work-slice maps, core schedule, and the `dscs_[]` array | [superdsc-object.md](superdsc-object.md) |
+| **SuperDSC** | Root object — holds fold properties, work-slice maps, core schedule, and the `dscs_[]` array | [superdsc-object.md](superdsc-object.md) |
 | **DesignSpaceConfig** | Per-operation configuration — tensors, staging, schedule, and compute | [designspaceconfig.md](designspaceconfig.md) |
 | **LabeledDataStructure** | Tensor descriptor — role, format, scale, and memory residency | [labeleddatastructure.md](labeleddatastructure.md) |
 | **PrimaryDsInfo** | Tensor-type layout — memory dimension order and stick configuration | [primarydsinfo.md](primarydsinfo.md) |
@@ -60,15 +60,15 @@ An SDSC JSON file is structured as a single top-level key (the operation name) w
 ## Filling a JSON File — Step-by-Step
 
 This section walks through filling an SDSC JSON file in the same order as the
-[`SuperDsc` object hierarchy](JSON-object-Hierarchy.md): top-level container
+[`SuperDsc` object hierarchy](JSON-object-Hierarchy.md): SuperDSC top-level container
 first, then the per-operation `DesignSpaceConfig` fields in the order they
 appear in the schema, finishing with the deepest leaf objects.
 
 | Step | Object / Field | Hierarchy level |
 |---|---|---|
-| 1 | Root key · `SuperDsc`: `coreFoldProp_`, `coreletFoldProp_`, `numCoresUsed_` | Root → SuperDsc |
-| 2 | `SuperDsc`: `numWkSlicesPerDim_`, `coreIdToWkSlice_`, `coreIdToDsc_`, `coreIdToDscSchedule` | SuperDsc |
-| 3 | `dscs_` entry · `DesignSpaceConfig`: `numCoresUsed_`, `coreIdsUsed_` | SuperDsc → DSC |
+| 1 | Root key · `SuperDsc`: `coreFoldProp_`, `coreletFoldProp_`, `numCoresUsed_` | Root → SuperDSC |
+| 2 | `SuperDsc`: `numWkSlicesPerDim_`, `coreIdToWkSlice_`, `coreIdToDsc_`, `coreIdToDscSchedule` | SuperDSC |
+| 3 | `dscs_` entry · `DesignSpaceConfig`: `numCoresUsed_`, `coreIdsUsed_` | SuperDSC → DSC |
 | 4 | `DesignSpaceConfig`: `N_`, `dataStageParam_` | DSC |
 | 5 | `DesignSpaceConfig`: `primaryDsInfo_` | DSC |
 | 6 | `DesignSpaceConfig`: `scheduleTree_` → `ScheduleTreeNode` → `coordinates_` → `CoordinateInfo` | DSC (deepest branch) |
@@ -76,7 +76,7 @@ appear in the schema, finishing with the deepest leaf objects.
 | 8 | `DesignSpaceConfig`: `constantInfo_` → `ConstantInfo` | DSC |
 | 9 | `DesignSpaceConfig`: `computeOp_` → `ComputeOperation` | DSC (last leaf) |
 
-### Step 1 — Root key and SuperDsc fold properties
+### Step 1 — Root key and SuperDSC fold properties
 
 Create the root object with a single key — the operation name string
 (pattern `^[a-zA-Z0-9_/\-][a-zA-Z0-9_/\-]*$`). Its value is the
@@ -90,7 +90,7 @@ every [`FoldManager`](foldmanager.md) used later inherits from these:
 - (Optional) Set `sdscFoldProps_` and `sdscFolds_` only when bundle-level fold
   dimensions above the core level are required.
 
-### Step 2 — SuperDsc work-division maps
+### Step 2 — SuperDSC work-division maps
 
 Still in [`SuperDsc`](superdsc-object.md), fill the maps that assign work
 slices and DSC indices to cores:
@@ -131,13 +131,13 @@ In [`DesignSpaceConfig.N_`](datastructdims.md):
 
 In [`DesignSpaceConfig.dataStageParam_`](datastageparam.md):
 
-- Add exactly one entry with key `"0"`. Set `name_` to `"core"`.
+- Add exactly one entry with key `"0"`. Optionally set `name_` to `"core"` — the schema does not require it, but it is conventional for all compute operations.
 - Set `ss_` and `el_` to the per-core tile sizes. When work divides evenly
   `ss_` and `el_` are identical; `el_` carries the smaller final tile
   when it does not.
 - For window/padded operations (avgpool2d, maxpool2d, conv2d, depthwise conv2d): add `paddingSizes_`
   to both `ss_` and `el_`. If a padded dimension is split across cores, set
-  `padFront_` and `padBack_` to `-1` in the per-core datastage entry.
+  `padFront_` and `padBack_` to `-1` in the per-core data staging entry.
   See [Padding](padding.md) for the full field set.
 - For symbolic dimensions: add `symbolicDimInfo_` inside each
   [`DataStructDims`](datastructdims.md). Set `maxSize_` to the upper bound and

@@ -43,6 +43,9 @@ quantity: a **restickify** op.  On a `restickify` op, stick-alignment widening i
 to the iteration space for both the old and the new stick dim. A dim that is not given arg's
 stick dimension — typically the input's old stick dim — can then have a device size smaller than
 the widened iteration extent. The shortfall is emitted as a positive `backGapCore_` entry on that arg.
+For HBM restickify allocations use `"-1"` as the core ID key (the sentinel for
+HBM); for LX allocations use the actual core ID. See
+[`backGapCore_`](scheduletreenode.md#fields) for the full field description.
 The stick dim's own widening stays undeclared.
 
 ---

@@ -1,6 +1,6 @@
 # Padding
 
-For window/padded operations, such as convolution, padding information must be added to both `N_` and `dataStageParam_` in `sdsc.dscs_[0]`, capturing information about front/back padding, stride, and related kernel dimension. If a padded dimension is chunked across cores, front/back padding must be set to `-1` in the core datastage entry.
+For window/padded operations, such as convolution, padding information must be added to both `N_` and `dataStageParam_` in `sdsc.dscs_[0]`, capturing information about front/back padding, stride, and related kernel dimension. If a padded dimension is chunked across cores, front/back padding must be set to `-1` in the core data staging entry.
 
 When a dimension is padded due to window/padded operations like convolution, details of padding need to be specified via the following fields. `paddingSizes_` is only emitted when `sdsc_spec.padding_sizes` is non-empty — currently convolution and pooling families of operators (**avgpool2d**, **maxpool2d**, **conv2d**, and **depthwise conv2d**). All other operations (pointwise, matmul, reductions, transpose, etc.) leave it absent entirely.
 
@@ -14,7 +14,7 @@ When a dimension is padded due to window/padded operations like convolution, det
 | `dataStageParam_[0].ss_` (per-core schedule) | `padding_sizes_per_core` in the steady-state phase if set, else `padding_sizes` |
 | `dataStageParam_[0].el_` (per-core element loop) | `padding_sizes_per_core` in the epilogue phase if set, else `padding_sizes` |
 
-If a padded dimension is chunked across cores, `padFront_` and `padBack_` must be set to `-1` in the core datastage entry (that is, in the entries under `dataStageParam_[0]`).
+If a padded dimension is chunked across cores, `padFront_` and `padBack_` must be set to `-1` in the core data staging entry (that is, in the entries under `dataStageParam_[0]`).
 
 ### Fields
 

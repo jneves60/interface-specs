@@ -5,7 +5,7 @@ The following diagram shows the complete object hierarchy of the sdscbundle-sche
 ```
 Root Object (Dynamic operation name key, e.g., "exp", "matmul")
 │
-└─── SuperDsc (Bundle-level configuration)
+└─── SuperDSC (Bundle-level configuration)
      │
      ├─── sdscFoldProps_: Array<FoldProperty>
      │    └─── FoldProperty
@@ -157,7 +157,7 @@ Root Object (Dynamic operation name key, e.g., "exp", "matmul")
 ## Key Structural Points
 
 1. **Root Level**: Dynamic operation name as key (e.g., "exp", "matmul", "softmax")
-2. **SuperDsc**: Bundle-level configuration containing fold properties and array of DSCs
+2. **SuperDSC**: Bundle-level configuration containing fold properties and array of DSCs
 3. **WrappedDesignSpaceConfig**: Each DSC in the `dscs_` array is wrapped with operation name
 4. **DesignSpaceConfig**: Core operation configuration with tensors, scheduling, and compute ops
 5. **FoldManager**: Reusable structure for coordinate management at multiple levels

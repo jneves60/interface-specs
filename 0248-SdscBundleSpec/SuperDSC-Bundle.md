@@ -15,16 +15,65 @@
 
 ## **Summary**
 
-This document describes the `SuperDSC-Bundle`, the interface between the torch-spyre frontend compiler and the Spyre backend compiler (Deeptools).
+This document is the entry point for the `SuperDSC-Bundle` interface specification — the contract between the **torch-spyre** frontend compiler and the **Deeptools** backend compiler. A SuperDSC-Bundle consists of one `bundle.mlir` file and one or more `sdsc_*.json` files. Together they describe everything the Spyre hardware needs to compile and execute a complex kernel.
 
 For the complete API reference see the [Spec Map](#spec-map) at the end of this document.
 
-## **Motivation**
-The interface is essential to connect the torch-spyre frontend compiler with the Deeptools backend compiler to successfully map any operation to Spyre.
+## Scope
 
-## **Proposed Implementation**
+This specification defines the binary interface between the **torch-spyre** frontend compiler and the **Deeptools** backend compiler via the SuperDSC-Bundle artifact. It covers:
 
-The figure below illustrates what is called the Spyre Stack, where a user-written PyTorch program is compiled by torch-spyre to generate a set of files known as the **SuperDSC-Bundle**. A PyTorch file may translate into several SuperDSC-Bundles, each one composed of a `bundle.mlir` file and several `sdsc_*.json` files. Each SuperDSC-Bundle is compiled by Deeptools to generate the assembly code and execution plan that runs on the Spyre AI Accelerator Card.
+- The schema and semantic rules for `sdsc_*.json` files
+- The `sdscbundle` MLIR dialect used in `bundle.mlir`
+- All operations expressible on the Spyre hardware at the data-parallel abstraction level
+- Conformance rules for both file types
+
+It does **not** cover:
+
+- The internal implementation of torch-spyre or Deeptools
+- The `SpyreCode` format produced by the backend
+- The future KTIR interface (see [Normative References](#normative-references))
+
+**Audience:** engineers writing or consuming a SuperDSC-Bundle — either implementing a frontend compiler that emits the bundle or a backend compiler that ingests it.
+
+**Conformance:** a bundle is conformant when every `sdsc_*.json` file validates against [`sdscbundle-schema.json`](spec/sdscbundle-schema.json) and every semantic rule stated in the individual object pages is satisfied. The goal is to be able to express all torch operators that are mappable to Spyre (post-inductor transformations and decompositions) and to express any desired computation mapping across cores for each operation.
+
+## Normative References
+
+| Reference | Role |
+|-----------|------|
+| [`sdscbundle-schema.json`](spec/sdscbundle-schema.json) | Machine-readable structural contract. Validates required fields, enum values, and type constraints for all `sdsc_*.json` files. Written against **JSON Schema draft 2020-12**. |
+| [MLIR SCF Dialect](https://mlir.llvm.org/docs/Dialects/SCFDialect/) | `scf.for` used in bundle loops |
+| [MLIR Affine Dialect](https://mlir.llvm.org/docs/Dialects/Affine/) | `affine.apply` used for address computation |
+| [MLIR Arith Dialect](https://mlir.llvm.org/docs/Dialects/ArithDialect/) | `arith.constant`, `arith.addi` used in bundles |
+| [torch-spyre](https://torch-spyre.readthedocs.io/) | Upstream frontend compiler; defines supported PyTorch ops |
+
+**Informative references** (not normative):
+
+| Reference | Purpose |
+|-----------|---------|
+| [KTIR RFC](https://github.com/torch-spyre/rfcs/blob/main/0682-KtirSpec/0682-KtirSpecRFC.md) | Future replacement interface for SuperDSC-Bundle |
+| [Deeptools paper](https://research.ibm.com/publications/deeptools-compiler-and-execution-runtime-extensions-for-rapid-ai-accelerator) | Background on the backend compiler |
+
+## Terms and Definitions
+
+| Term | Definition |
+|------|------------|
+| **SuperDSC** | *Super Design Space Configuration.* A JSON-based IR that describes the tile-level compute graph for all cores of a Spyre device for a single scheduled torch operation. |
+| **SuperDSC-Bundle** | A set of files — one `bundle.mlir` and one or more `sdsc_*.json` files — that collectively describe a complex kernel to be compiled and executed on Spyre. |
+| **DSC (DesignSpaceConfig)** | One entry in the `dscs_[]` array of a SuperDSC object. Holds the tensor descriptors, schedule tree, data staging, and compute operation for one compute configuration. |
+| **core** | A single processing unit on Spyre, comprising one compute engine (AIU) and one scratchpad memory (LX). Spyre currently has 32 cores. |
+| **corelet** | A sub-unit within a core. Each core contains two corelets; `coreletFoldProp_.factor_` is always `2`. |
+| **fold / folding** | A mechanism by which a single parameterised JSON artifact represents the behaviour of all cores compactly. Fold properties encode affine transformations (`α × index + β`) that compute per-core coordinates and addresses without duplicating the descriptor for each core. See [FoldProperty](spec/json/foldproperty.md) and [FoldManager](spec/json/foldmanager.md). |
+| **work division** | The assignment of portions of the operation's iteration space to individual cores, expressed via `numWkSlicesPerDim_`, `coreIdToWkSlice_`, and `coreFoldProp_`. |
+| **stick** | The innermost contiguous unit of tensor storage on Spyre. Each tensor dimension is either a *stick dimension* (innermost, packed) or a *non-stick dimension* (outer). The stick size and composition are constrained per operation category. See [Stick Layout Constraints](spec/json/stick-layout-constraints.md). |
+| **data staging** | The process of transferring tile-sized slices of tensor data into LX scratchpad before compute. Described by `DataStageParam` entries (`ss_` for steady-state tiles, `el_` for the epilogue tile). |
+| **symbolic value** | A dimension size or tensor start address that is not known at compile time and is resolved just before the job is launched on Spyre. Represented by a symbol ID string; bound via `sdscbundle.sdsc_execute`'s `symbol_ids` operand. |
+| **SpyreCode** | The compiled output produced by Deeptools from a SuperDSC-Bundle. Contains the job binary, job plan, and any program-correction tables needed to resolve symbolic values at launch. |
+
+## Execution Model
+
+A user-written PyTorch program is compiled by torch-spyre to generate a set of files known as the **SuperDSC-Bundle**. A PyTorch file may translate into several SuperDSC-Bundles, each one composed of a `bundle.mlir` file and several `sdsc_*.json` files. Each SuperDSC-Bundle is compiled by Deeptools to generate the assembly code and execution plan that runs on the Spyre AI Accelerator Card.
 
 <p align="center">
   <img src="spec/json/figures/torch_spyre_backend_flow.png" alt="torch_spyre_backend_flow" width="650"/>
@@ -33,7 +82,7 @@ The figure below illustrates what is called the Spyre Stack, where a user-writte
   Figure 1. High-level view of SuperDSC-Bundle API within the torch-spyre stack
 </p>
 
-`SuperDSC-Bundle` views the Spyre hardware at the data-parallel level of hardware abstraction. In this abstraction, Spyre is viewed as having multiple cores, with each core having a compute engine and a scratchpad memory. The cores are interfaced with each other and off-chip memory banks using an on-chip interconnect fabric.
+`SuperDSC-Bundle` views the Spyre hardware at the data-parallel level of abstraction: multiple cores, each with a compute engine (AIU) and scratchpad memory (LX), connected to each other and to off-chip memory (HBM/DDR) via an on-chip interconnect fabric.
 
 <p align="center">
   <img src="spec/json/figures/data_parallel_hw_abstraction.png" alt="data_parallel_hw_abstraction" width="450"/>
@@ -42,57 +91,28 @@ The figure below illustrates what is called the Spyre Stack, where a user-writte
   Figure 2. Hardware abstraction of multi-core accelerator embodied in `SuperDSC-Bundle`
 </p>
 
-`SuperDSC-Bundle` enables the frontend compilers to express data-parallel mappings of:
-* Complex kernels comprised of a sequence of operations
-* The work division (or computation split) across RaPiD cores of Spyre for each operation
-* The placement of input/output tensors to each operation either in DDR memory or LX scratchpad of the RaPiD cores
-* Shapes of the operations and tensors is allowed to be static or symbolic
-* The start address of the tensors in DDR and LX is allowed to be a fixed number or symbolic
+When dimension sizes or tensor start addresses are symbolic, `SpyreCode` carries program-correction tables that are resolved just-in-time before the job is launched on Spyre.
 
-The `SuperDSC-Bundle` specification is used by the Deeptools backend compiler to produce `SpyreCode` containing the job binary, a job plan and other compiled artifacts. In the scenario where either the start-address and/or shapes are symbolic, `SpyreCode` allows for the program binary to contain variables that need to be substituted or corrected before execution. The mechanism to effect program correction just-in-time before the job is launched onto Spyre is also produced by the backend compiler as part of `SpyreCode`.
-
-NOTES:
-* Frontend/Backend compiler interface will transition to a new interface called Kernel Tile Intermediate Representation (KTIR) in the future (https://github.com/torch-spyre/rfcs/blob/main/0682-KtirSpec/0682-KtirSpecRFC.md)
-* `SuperDSC` (without bundle capability) is the current interface between Deeptools frontend compiler and Deeptools backend compiler
-* `SpyreCode` is tracked through: https://github.com/torch-spyre/torch-spyre/issues/277
+> **Notes**
+> - The Frontend/Backend compiler interface will transition to a new interface called Kernel Tile Intermediate Representation (KTIR) in the future (https://github.com/torch-spyre/rfcs/blob/main/0682-KtirSpec/0682-KtirSpecRFC.md)
+> - `SuperDSC` (without bundle capability) is the current interface between Deeptools frontend compiler and Deeptools backend compiler
+> - `SpyreCode` is tracked through: https://github.com/torch-spyre/torch-spyre/issues/277
 
 ## Structure of SuperDSC-Bundle
 
-The backend expects the frontend to produce multiple output files that work in conjunction to instruct the backend on how one or multiple programs can be compiled and executed in a sequence as part of a complex kernel. The expectation is to receive:
-* one or more `sdsc_*.json` files, each describing a Spyre operation
-* one `bundle.mlir` file with the SuperDSC-Bundle IR
+A SuperDSC-Bundle contains:
+
+- One or more `sdsc_*.json` files, each describing a single Spyre operation
+- One `bundle.mlir` file with the SuperDSC-Bundle IR
 
 ### API Components
 
 The API consists of two primary components:
 
 1. **MLIR Bundle File** (`.mlir`) — Orchestrates execution flow, symbol management, and operation sequencing across one or more SDSC JSON files. See [MLIR Bundle API](spec/dialect/MLIR-bundle-API.md) for the full dialect reference.
-2. **SDSC JSON Files** (`.json`) — Each file defines a single operation and its core mapping. See [SDSC JSON API](spec/json/SDSC-json-api.md) for the step-by-step filling guide.
+2. **SDSC JSON Files** (`.json`) — Each file defines a single operation and its core mapping. See [SDSC JSON API](spec/json/SDSC-json-api.md) for the step-by-step filling guide and the [JSON Object Hierarchy](spec/json/JSON-object-Hierarchy.md) for the full object tree.
 
-All `sdsc_*.json` files must conform to the [SDSC Bundle JSON Schema](spec/sdscbundle-schema.json). The schema is the normative reference for structural correctness — it enforces required fields, enum values, and type constraints at every level of the object hierarchy. Semantic constraints (cross-field consistency) are described in the individual object pages linked from [SDSC JSON API](spec/json/SDSC-json-api.md).
-
-### SuperDSC JSON Structure
-
-SuperDSC is a self-contained compiled artifact that describes everything the Spyre hardware needs to execute a single scheduled operation deterministically. The top-level structure contains core fold properties, work-slice mappings, and a per-core execution schedule. A `dscs_` array holds one or more `DesignSpaceConfig` entries, each being a complete description of one compute configuration. See the [JSON Object Hierarchy](spec/json/JSON-object-Hierarchy.md) for the full object tree.
-
-Each `DesignSpaceConfig` entry contains the following elements:
-
-- **Core fold properties** (`coreFoldProp_`, `numWkSlicesPerDim_`, `coreIdToWkSlice_`): how to divide the iteration space across 32 cores. For a tensor of shape (1024, 256), this encodes how many rows each core processes. The encoding gives each core an equal number of sticks and keeps each core within its addressable device memory limit.
-- **Tensor descriptors** (`labeledDs_`, `primaryDsInfo_`): for each tensor argument, the tiling structure defines which dimensions are stick dimensions, how the host-side shape maps to device-side tiles, memory residency (HBM vs. LX scratchpad), data format, and which dimensions each tensor iterates over fully vs. which are summed over (contracted) as in the K dimension of a matmul.
-- **Schedule tree** (`scheduleTree_`): a list of allocate nodes (one per tensor) that specify memory placement (HBM or LX scratchpad), dimension ordering, per-core start addresses via fold mappings, and coordinate information encoding how each dimension is split across cores with affine transformations.
-- **Data staging** (`dataStageParam_`): per-core dimension sizes for steady-state and epilogue passes, describing how data is partitioned for transfer into scratchpad.
-- **Compute operations** (`computeOp_`): one entry per operation, encoding the execution unit (PT or SFP), operation name, data format, fidelity, and the input/output tensor references from `labeledDs_`.
-
-**Folding** is a central concept in SuperDSC. A single parameterized artifact can represent multiple execution variants across time steps and cores without recompilation. Fold properties use affine transformations (`alpha * index + beta`) to compute per-core coordinates and addresses, so one JSON file describes the behavior of all 32 cores compactly instead of duplicating the description for each core. See [FoldProperty](spec/json/foldproperty.md) and [FoldManager](spec/json/foldmanager.md) for details.
-
-### Important Notes
-
-**DesignSpaceConfig can represent BOTH deep learning operators AND data-shuffle operations:**
-
-- **Deep learning operators**: Matmul, convolution, activations, reductions, etc.
-- **Data-shuffle operations**: Stick-breaking, non-stick breaking, gather, scatter
-
-**Tensor allocation need NOT be compatible with compute work division.** Data in one core can be directly available for compute in another core — the backend compiler will ensure proper data movement across cores. This functionality is fully supported by the backend.
+> **Note:** `DesignSpaceConfig` can represent both deep learning operators (matmul, convolution, activations, reductions) and data-shuffle operations (stick-breaking, gather, scatter). Tensor allocation need not be compatible with compute work division — the backend compiler ensures proper data movement across cores.
 
 ### SuperDSC-Bundle MLIR Representation
 
@@ -138,9 +158,9 @@ For the complete reference — `sdscbundle.sdsc_execute`, `sdscbundle.device_mem
 
 Each `sdsc_*.json` file describes a single torch operation. For the complete step-by-step filling guide (Steps 1–9) with all field constraints and instructions, see [SDSC JSON API](spec/json/SDSC-json-api.md).
 
-### SuperDsc Object Fields
+### SuperDSC Object Fields
 
-The `SuperDsc` object is the top-level object of every `sdsc_*.json` file. For the full field reference see [SuperDsc Object](spec/json/superdsc-object.md).
+The `SuperDsc` object is the top-level object of every `sdsc_*.json` file. For the full field reference see [SuperDSC Object](spec/json/superdsc-object.md).
 
 ### Supported OpFuncs in `sdsc.json`
 
@@ -185,11 +205,6 @@ The table below lists all available examples in recommended reading order.
 | 12 | Complete JSON example — simple GELU operation | [JSON-examples.md — Complete Example](spec/json/JSON-examples.md#complete-example--simple-gelu-operation) |
 | 13 | Indirect access — Top-K gather operation | [JSON-examples.md — Indirect Access](spec/json/JSON-examples.md#indirect-access-example--top-k-gather-operation) |
 
-## **Metrics**
-
-* Ability to express all torch operators that are mappable to AIU (post-inductor transformations and decompositions)
-* Ability to express desired computation mapping across cores for each operation
-
 ---
 
 ## Spec Map
@@ -222,7 +237,7 @@ Quick reference to every document in this specification, grouped by role.
 
 | Object | File |
 |--------|------|
-| SuperDsc | [superdsc-object.md](spec/json/superdsc-object.md) |
+| SuperDSC | [superdsc-object.md](spec/json/superdsc-object.md) |
 | FoldProperty | [foldproperty.md](spec/json/foldproperty.md) |
 | FoldManager | [foldmanager.md](spec/json/foldmanager.md) |
 | Padding | [padding.md](spec/json/padding.md) |

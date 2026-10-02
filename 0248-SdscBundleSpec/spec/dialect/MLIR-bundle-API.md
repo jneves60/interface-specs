@@ -149,8 +149,9 @@ using the same mechanism as symbolic addresses.
 
 From the MLIR perspective both kinds of symbolic value are unified: they are
 passed as operands to `sdscbundle.sdsc_execute` and bound via `symbol_ids`.
-The `symbol_ids` attribute description in `SuperDSC-Bundle.md` explicitly
-states the list covers *"symbolic start addresses or sizes"*.
+The `symbol_ids` list covers both symbolic start addresses and symbolic
+dimension sizes — see the [`sdscbundle.sdsc_execute`](#sdscbundlesdsc_execute)
+syntax table above.
 
 The distinction is entirely on the JSON side — the backend routes each symbol
 ID to the appropriate field depending on whether it is bound to an
