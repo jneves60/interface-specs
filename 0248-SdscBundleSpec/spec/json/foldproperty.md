@@ -75,4 +75,3 @@ splitting at that level (all cores see the same slice).
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

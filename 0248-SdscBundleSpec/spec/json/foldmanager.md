@@ -123,4 +123,3 @@ Core index `i` maps to coordinate `32 * i`. The corelet dimension has
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

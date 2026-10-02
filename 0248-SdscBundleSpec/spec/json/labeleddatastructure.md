@@ -119,4 +119,3 @@ same tensor is referenced by name in `computeOp_`.
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

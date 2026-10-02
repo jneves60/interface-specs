@@ -68,4 +68,3 @@ The example below shows a collapsed `mb` dimension (`spatial: 0`, `elemArr: 0`) 
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

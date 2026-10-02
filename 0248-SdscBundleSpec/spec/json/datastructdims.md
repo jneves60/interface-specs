@@ -167,4 +167,3 @@ the full-size tile (2) and `el_` holds the smaller final tile (1):
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

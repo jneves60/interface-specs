@@ -124,4 +124,3 @@ The rows split cleanly along the `unneededPad_ > padBack` condition above:
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

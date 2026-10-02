@@ -174,4 +174,3 @@ The `opFuncName` value must be one of the strings in the table below.
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

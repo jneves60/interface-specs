@@ -102,4 +102,3 @@ A minimal 2-core GELU DSC showing required fields only:
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

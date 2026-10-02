@@ -177,4 +177,3 @@ Root Object (Dynamic operation name key, e.g., "exp", "matmul")
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

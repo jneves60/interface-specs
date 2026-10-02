@@ -84,4 +84,3 @@ DesignSpaceConfig can represent **BOTH** deep learning operators AND data-shuffl
 ---
 
 [↑ Spec Map](../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

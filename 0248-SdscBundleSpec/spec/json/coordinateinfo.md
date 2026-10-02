@@ -66,4 +66,3 @@ the spatial hierarchy.
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

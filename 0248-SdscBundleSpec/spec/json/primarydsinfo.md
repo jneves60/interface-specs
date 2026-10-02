@@ -81,4 +81,3 @@ to establish which layout applies to a given tensor in the `labeledDs_` array.
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

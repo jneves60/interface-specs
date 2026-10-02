@@ -80,4 +80,3 @@ Both `hbm` and `lx` are optional keys; omitting a key is equivalent to
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

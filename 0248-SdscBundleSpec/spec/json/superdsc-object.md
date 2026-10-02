@@ -141,4 +141,3 @@ In practice, the standard step tuple for single-operation bundles is `[-1, 0, 0,
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

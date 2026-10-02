@@ -199,4 +199,3 @@ operations that reduce along a single dimension.
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

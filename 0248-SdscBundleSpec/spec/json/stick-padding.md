@@ -48,4 +48,3 @@ The stick dim's own widening stays undeclared.
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

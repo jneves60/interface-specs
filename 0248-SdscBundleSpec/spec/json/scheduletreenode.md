@@ -330,4 +330,3 @@ tensor in LX scratchpad with tiling coordinates.
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

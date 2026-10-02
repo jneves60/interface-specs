@@ -103,4 +103,3 @@ core index 0, time-step index 0.
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|

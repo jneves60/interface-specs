@@ -240,4 +240,3 @@ In [`DesignSpaceConfig.computeOp_`](computeoperation.md):
 ---
 
 [↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
-|:--|:--:|--:|
