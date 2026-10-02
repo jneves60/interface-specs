@@ -108,7 +108,7 @@ a value inside `DataStructDims.symbolicDimInfo_`, keyed by dimension name
 | `maxSize_` | `max_value=N` | `sdscbundle.input_arg_extract max_value` |
 | `granularity_` | `granularity=N` | `sdscbundle.input_arg_extract granularity` |
 
-See [`sdscbundle.input_arg_extract`](MLIR-bundle-API.md#sdscbundleinput_arg_extract) for the full MLIR usage.
+See [`sdscbundle.input_arg_extract`](../dialect/MLIR-bundle-API.md#sdscbundleinput_arg_extract) for the full MLIR usage.
 
 ### Example
 
@@ -166,5 +166,5 @@ the full-size tile (2) and `el_` holds the smaller final tile (1):
 
 ---
 
-| [← Previous: PrimaryDsInfo](primarydsinfo.md) | [↑ Table of Contents](README.md) | [Next: DataStageParam →](datastageparam.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

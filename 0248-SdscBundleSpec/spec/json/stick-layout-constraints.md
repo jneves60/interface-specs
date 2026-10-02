@@ -198,5 +198,5 @@ operations that reduce along a single dimension.
 
 ---
 
-| [← Previous: Stick-Alignment Padding](stick-padding.md) | [↑ Table of Contents](README.md) | [Next: DesignSpaceConfig →](designspaceconfig.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

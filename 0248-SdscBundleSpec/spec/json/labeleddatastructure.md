@@ -118,5 +118,5 @@ same tensor is referenced by name in `computeOp_`.
 
 ---
 
-| [← Previous: DesignSpaceConfig](designspaceconfig.md) | [↑ Table of Contents](README.md) | [Next: MemoryOrganization →](memoryorganization.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

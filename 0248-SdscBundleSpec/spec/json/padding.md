@@ -123,5 +123,5 @@ The rows split cleanly along the `unneededPad_ > padBack` condition above:
 
 ---
 
-| [← Previous: FoldManager](foldmanager.md) | [↑ Table of Contents](README.md) | [Next: Stick-Alignment Padding →](stick-padding.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

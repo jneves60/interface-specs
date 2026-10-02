@@ -15,9 +15,8 @@
 
 ## Normative Schema
 
-- [SDSC Bundle JSON Schema](sdscbundle-schema.json)
+- [SDSC Bundle JSON Schema](../sdscbundle-schema.json)
 
 ---
 
-| [← Previous: Indirect Access Example (JSON)](indirect-access-example.md) | [↑ Table of Contents](README.md) | |
-|:--|:--:|--:|
+[↑ Spec Map](../SuperDSC-Bundle.md#spec-map)

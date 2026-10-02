@@ -79,5 +79,5 @@ Both `hbm` and `lx` are optional keys; omitting a key is equivalent to
 
 ---
 
-| [← Previous: LabeledDataStructure](labeleddatastructure.md) | [↑ Table of Contents](README.md) | [Next: PrimaryDsInfo →](primarydsinfo.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

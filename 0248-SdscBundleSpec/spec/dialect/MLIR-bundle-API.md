@@ -107,7 +107,7 @@ allocation or on a per-core layout that is computed by the backend.
 On the **JSON side**, a symbolic address is expressed by:
 - Setting `isStartAddrSymbolic_: true` on the `allocate` node in
   `scheduleTree_` inside the relevant
-  [`ScheduleTreeNode`](scheduletreenode.md).
+  [`ScheduleTreeNode`](../json/scheduletreenode.md).
 - Placing symbolic identifier strings (rather than concrete integers) in the
   `data_` entries of `startAddressCoreCorelet_` on that same node.
 
@@ -128,17 +128,17 @@ length or batch size — that varies at runtime and is therefore not a fixed
 integer in the JSON.
 
 On the **JSON side**, symbolic dimension sizes are expressed by:
-- [`DesignSpaceConfig.dimToSymbolMapping_`](designspaceconfig.md) — maps
+- [`DesignSpaceConfig.dimToSymbolMapping_`](../json/designspaceconfig.md) — maps
   dimension names (e.g. `"mb_"`, `"in_"`) to symbolic variable names, declaring
   which dimensions are symbolic.
-- [`DataStructDims.symbolicDimInfo_`](datastructdims.md) — for each symbolic
+- [`DataStructDims.symbolicDimInfo_`](../json/datastructdims.md) — for each symbolic
   dimension, records `maxSize_` (the upper bound the backend must plan for) and
   `granularity_` (the step the runtime value must be a multiple of).
-- [`DataStructDims.maxSymbolicVolume_`](datastructdims.md) — caps the combined
+- [`DataStructDims.maxSymbolicVolume_`](../json/datastructdims.md) — caps the combined
   volume across a set of symbolic dimensions.
-- [`SuperDsc.symbolDefinitions_`](superdsc-object.md),
-  [`inputSymbolsAndTags_`](superdsc-object.md), and
-  [`dimToSymbolMappingOpcodeCorrection_`](superdsc-object.md) — top-level
+- [`SuperDsc.symbolDefinitions_`](../json/superdsc-object.md),
+  [`inputSymbolsAndTags_`](../json/superdsc-object.md), and
+  [`dimToSymbolMappingOpcodeCorrection_`](../json/superdsc-object.md) — top-level
   symbol registry and opcode correction maps at the `SuperDsc` level.
 
 On the **MLIR side**, the runtime value for each symbolic dimension size is
@@ -277,7 +277,7 @@ sdscbundle.sdsc_execute (%addr_c0, %addr_c1) {
 Sequential operations — multiple JSON files in one function (softmax kernel
 fusion):
 
-![Softmax equation](figures/softmax_equation.png)
+![Softmax equation](../json/figures/softmax_equation.png)
 
 *The softmax function: for each element x_i, divide its exponent by the sum of
 exponents of all elements.*
@@ -748,5 +748,5 @@ compilation:
 
 ---
 
-| [← Previous: Overview](Overview.md) | [↑ Table of Contents](README.md) | [Next: Bundle Usage Examples →](MLIR-bundle-usage-examples.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

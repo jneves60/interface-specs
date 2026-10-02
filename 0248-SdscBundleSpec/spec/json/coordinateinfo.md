@@ -65,5 +65,5 @@ the spatial hierarchy.
 
 ---
 
-| [← Previous: CoordinateContainer](coordinatecontainer.md) | [↑ Table of Contents](README.md) | [Next: ComputeOperation →](computeoperation.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

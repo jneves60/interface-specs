@@ -124,7 +124,7 @@ bytes apart.
 Start addresses in `data_` can be **symbolic**: instead of a concrete byte
 offset, a symbolic identifier is used as the value and is substituted just
 before the job is launched. Symbolic bindings are declared in the bundle MLIR
-file — see [MLIR Bundle API](MLIR-bundle-API.md). Set `isStartAddrSymbolic_`
+file — see [MLIR Bundle API](../dialect/MLIR-bundle-API.md). Set `isStartAddrSymbolic_`
 to `true` / `1` when symbolic addresses are used.
 
 ## coordinates_
@@ -329,5 +329,5 @@ tensor in LX scratchpad with tiling coordinates.
 
 ---
 
-| [← Previous: DataStageParam](datastageparam.md) | [↑ Table of Contents](README.md) | [Next: CoordinateContainer →](coordinatecontainer.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

@@ -510,5 +510,5 @@ module {
 
 ---
 
-| [← Previous: MLIR Bundle API](MLIR-bundle-API.md) | [↑ Table of Contents](README.md) | [Next: Complete Example →](MLIR-complete-example.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

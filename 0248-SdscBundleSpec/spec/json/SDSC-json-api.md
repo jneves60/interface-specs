@@ -4,7 +4,7 @@
 
 Each `sdsc_*.json` file in a SuperDSC-Bundle describes a single torch operation to be executed on the Spyre card. One JSON file encodes everything the hardware needs to execute that operation deterministically across 1 or multiple cores: how the iteration space is divided, how tensors are laid out in memory, where data lives (HBM vs. LX scratchpad), and what compute to perform.
 
-A PyTorch model may translate into several SuperDSC-Bundles. Each bundle is composed of a `bundle.mlir` file (which orchestrates execution flow and symbol management — see [MLIR Bundle API](MLIR-bundle-API.md)) and one or more `sdsc_*.json` files. Each JSON file corresponds to one torch operation.
+A PyTorch model may translate into several SuperDSC-Bundles. Each bundle is composed of a `bundle.mlir` file (which orchestrates execution flow and symbol management — see [MLIR Bundle API](../dialect/MLIR-bundle-API.md)) and one or more `sdsc_*.json` files. Each JSON file corresponds to one torch operation.
 
 The different sections of an SDSC JSON file describe the following:
 
@@ -14,7 +14,7 @@ The different sections of an SDSC JSON file describe the following:
 - **Data staging** — per-core tile sizes for steady-state and epilogue passes
 - **Compute operations** — execution unit, operation name, and input/output tensor references
 
-All `sdsc_*.json` files in a SuperDSC-Bundle must conform to [`sdscbundle-schema.json`](sdscbundle-schema.json),
+All `sdsc_*.json` files in a SuperDSC-Bundle must conform to [`sdscbundle-schema.json`](../sdscbundle-schema.json),
 the machine-readable contract written against [JSON Schema draft 2020-12](https://json-schema.org/draft/2020-12).
 
 The schema enforces:
@@ -239,5 +239,5 @@ In [`DesignSpaceConfig.computeOp_`](computeoperation.md):
 
 ---
 
-| [← Previous: MLIR Complete Example](MLIR-complete-example.md) | [↑ Table of Contents](README.md) | [Next: Object Hierarchy →](JSON-object-Hierarchy.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|

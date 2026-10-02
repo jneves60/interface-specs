@@ -17,7 +17,7 @@
 
 This document describes the `SuperDSC-Bundle`, the interface between the torch-spyre frontend compiler and the Spyre backend compiler (Deeptools).
 
-For the detailed API reference organized by learning stage see the [SDSC Bundle API Documentation](sdsc_BUNDLE_APIs/README.md).
+For the complete API reference see the [Spec Map](#spec-map) at the end of this document.
 
 ## **Motivation**
 The interface is essential to connect the torch-spyre frontend compiler with the Deeptools backend compiler to successfully map any operation to Spyre.
@@ -27,7 +27,7 @@ The interface is essential to connect the torch-spyre frontend compiler with the
 The figure below illustrates what is called the Spyre Stack, where a user-written PyTorch program is compiled by torch-spyre to generate a set of files known as the **SuperDSC-Bundle**. A PyTorch file may translate into several SuperDSC-Bundles, each one composed of a `bundle.mlir` file and several `sdsc_*.json` files. Each SuperDSC-Bundle is compiled by Deeptools to generate the assembly code and execution plan that runs on the Spyre AI Accelerator Card.
 
 <p align="center">
-  <img src="sdsc_BUNDLE_APIs/figures/torch_spyre_backend_flow.png" alt="torch_spyre_backend_flow" width="650"/>
+  <img src="spec/json/figures/torch_spyre_backend_flow.png" alt="torch_spyre_backend_flow" width="650"/>
 </p>
 <p align="center">
   Figure 1. High-level view of SuperDSC-Bundle API within the torch-spyre stack
@@ -36,7 +36,7 @@ The figure below illustrates what is called the Spyre Stack, where a user-writte
 `SuperDSC-Bundle` views the Spyre hardware at the data-parallel level of hardware abstraction. In this abstraction, Spyre is viewed as having multiple cores, with each core having a compute engine and a scratchpad memory. The cores are interfaced with each other and off-chip memory banks using an on-chip interconnect fabric.
 
 <p align="center">
-  <img src="sdsc_BUNDLE_APIs/figures/data_parallel_hw_abstraction.png" alt="data_parallel_hw_abstraction" width="450"/>
+  <img src="spec/json/figures/data_parallel_hw_abstraction.png" alt="data_parallel_hw_abstraction" width="450"/>
 </p>
 <p align="center">
   Figure 2. Hardware abstraction of multi-core accelerator embodied in `SuperDSC-Bundle`
@@ -66,14 +66,14 @@ The backend expects the frontend to produce multiple output files that work in c
 
 The API consists of two primary components:
 
-1. **MLIR Bundle File** (`.mlir`) — Orchestrates execution flow, symbol management, and operation sequencing across one or more SDSC JSON files. See [MLIR Bundle API](sdsc_BUNDLE_APIs/MLIR-bundle-API.md) for the full dialect reference.
-2. **SDSC JSON Files** (`.json`) — Each file defines a single operation and its core mapping. See [SDSC JSON API](sdsc_BUNDLE_APIs/SDSC-json-api.md) for the step-by-step filling guide.
+1. **MLIR Bundle File** (`.mlir`) — Orchestrates execution flow, symbol management, and operation sequencing across one or more SDSC JSON files. See [MLIR Bundle API](spec/dialect/MLIR-bundle-API.md) for the full dialect reference.
+2. **SDSC JSON Files** (`.json`) — Each file defines a single operation and its core mapping. See [SDSC JSON API](spec/json/SDSC-json-api.md) for the step-by-step filling guide.
 
-All `sdsc_*.json` files must conform to the [SDSC Bundle JSON Schema](sdsc_BUNDLE_APIs/sdscbundle-schema.json). The schema is the normative reference for structural correctness — it enforces required fields, enum values, and type constraints at every level of the object hierarchy. Semantic constraints (cross-field consistency) are described in the individual object pages linked from [SDSC JSON API](sdsc_BUNDLE_APIs/SDSC-json-api.md).
+All `sdsc_*.json` files must conform to the [SDSC Bundle JSON Schema](spec/sdscbundle-schema.json). The schema is the normative reference for structural correctness — it enforces required fields, enum values, and type constraints at every level of the object hierarchy. Semantic constraints (cross-field consistency) are described in the individual object pages linked from [SDSC JSON API](spec/json/SDSC-json-api.md).
 
 ### SuperDSC JSON Structure
 
-SuperDSC is a self-contained compiled artifact that describes everything the Spyre hardware needs to execute a single scheduled operation deterministically. The top-level structure contains core fold properties, work-slice mappings, and a per-core execution schedule. A `dscs_` array holds one or more `DesignSpaceConfig` entries, each being a complete description of one compute configuration. See the [JSON Object Hierarchy](sdsc_BUNDLE_APIs/JSON-object-Hierarchy.md) for the full object tree.
+SuperDSC is a self-contained compiled artifact that describes everything the Spyre hardware needs to execute a single scheduled operation deterministically. The top-level structure contains core fold properties, work-slice mappings, and a per-core execution schedule. A `dscs_` array holds one or more `DesignSpaceConfig` entries, each being a complete description of one compute configuration. See the [JSON Object Hierarchy](spec/json/JSON-object-Hierarchy.md) for the full object tree.
 
 Each `DesignSpaceConfig` entry contains the following elements:
 
@@ -83,7 +83,7 @@ Each `DesignSpaceConfig` entry contains the following elements:
 - **Data staging** (`dataStageParam_`): per-core dimension sizes for steady-state and epilogue passes, describing how data is partitioned for transfer into scratchpad.
 - **Compute operations** (`computeOp_`): one entry per operation, encoding the execution unit (PT or SFP), operation name, data format, fidelity, and the input/output tensor references from `labeledDs_`.
 
-**Folding** is a central concept in SuperDSC. A single parameterized artifact can represent multiple execution variants across time steps and cores without recompilation. Fold properties use affine transformations (`alpha * index + beta`) to compute per-core coordinates and addresses, so one JSON file describes the behavior of all 32 cores compactly instead of duplicating the description for each core. See [FoldProperty](sdsc_BUNDLE_APIs/foldproperty.md) and [FoldManager](sdsc_BUNDLE_APIs/foldmanager.md) for details.
+**Folding** is a central concept in SuperDSC. A single parameterized artifact can represent multiple execution variants across time steps and cores without recompilation. Fold properties use affine transformations (`alpha * index + beta`) to compute per-core coordinates and addresses, so one JSON file describes the behavior of all 32 cores compactly instead of duplicating the description for each core. See [FoldProperty](spec/json/foldproperty.md) and [FoldManager](spec/json/foldmanager.md) for details.
 
 ### Important Notes
 
@@ -96,7 +96,7 @@ Each `DesignSpaceConfig` entry contains the following elements:
 
 ### SuperDSC-Bundle MLIR Representation
 
-The `bundle.mlir` file conveys a complex kernel made of one or multiple operations. It chains together multiple SDSC operations in sequence and can add loops around them using new and existing MLIR operations. For the complete dialect reference with all syntax tables and examples see [MLIR Bundle API](sdsc_BUNDLE_APIs/MLIR-bundle-API.md).
+The `bundle.mlir` file conveys a complex kernel made of one or multiple operations. It chains together multiple SDSC operations in sequence and can add loops around them using new and existing MLIR operations. For the complete dialect reference with all syntax tables and examples see [MLIR Bundle API](spec/dialect/MLIR-bundle-API.md).
 
 #### Bundle Container
 
@@ -220,8 +220,8 @@ Extracts a named field from a `!sdscbundle.input_arg<index>` bundle parameter. E
 
 Extractable fields:
 - `value` — the runtime base address or dimension size provided by the caller. Available on all `input_arg` parameters.
-- `granularity` — the step constraint for a symbolic dimension size; corresponds to `granularity_` in [`SymbolicDimInfo`](sdsc_BUNDLE_APIs/datastructdims.md).
-- `max_value` — the upper bound for a symbolic dimension size; corresponds to `maxSize_` in [`SymbolicDimInfo`](sdsc_BUNDLE_APIs/datastructdims.md).
+- `granularity` — the step constraint for a symbolic dimension size; corresponds to `granularity_` in [`SymbolicDimInfo`](spec/json/datastructdims.md).
+- `max_value` — the upper bound for a symbolic dimension size; corresponds to `maxSize_` in [`SymbolicDimInfo`](spec/json/datastructdims.md).
 
 ```mlir
 %result = sdscbundle.input_arg_extract value       from %arg : !sdscbundle.input_arg<index> -> index
@@ -318,23 +318,23 @@ Example — stride-based address computation:
 
 ### `sdsc_*.json` Filling
 
-Each `sdsc_*.json` file describes a single torch operation. This section walks through filling one in the same order as the [SuperDsc object hierarchy](sdsc_BUNDLE_APIs/JSON-object-Hierarchy.md). For the complete step-by-step reference with all field constraints see [SDSC JSON API](sdsc_BUNDLE_APIs/SDSC-json-api.md).
+Each `sdsc_*.json` file describes a single torch operation. This section walks through filling one in the same order as the [SuperDsc object hierarchy](spec/json/JSON-object-Hierarchy.md). For the complete step-by-step reference with all field constraints see [SDSC JSON API](spec/json/SDSC-json-api.md).
 
 | Step | Object / Field | Reference |
 |---|---|---|
-| 1 | Root key · `SuperDsc`: `coreFoldProp_`, `coreletFoldProp_`, `numCoresUsed_` | [SuperDsc Object](sdsc_BUNDLE_APIs/superdsc-object.md) |
-| 2 | `SuperDsc`: `numWkSlicesPerDim_`, `coreIdToWkSlice_`, `coreIdToDsc_`, `coreIdToDscSchedule` | [SuperDsc Object](sdsc_BUNDLE_APIs/superdsc-object.md) |
-| 3 | `dscs_` entry · `DesignSpaceConfig`: `numCoresUsed_`, `coreIdsUsed_` | [DesignSpaceConfig](sdsc_BUNDLE_APIs/designspaceconfig.md) |
-| 4 | `DesignSpaceConfig`: `N_`, `dataStageParam_` | [DataStructDims](sdsc_BUNDLE_APIs/datastructdims.md) · [DataStageParam](sdsc_BUNDLE_APIs/datastageparam.md) |
-| 5 | `DesignSpaceConfig`: `primaryDsInfo_` | [PrimaryDsInfo](sdsc_BUNDLE_APIs/primarydsinfo.md) · [Stick Layout Constraints](sdsc_BUNDLE_APIs/stick-layout-constraints.md) |
-| 6 | `DesignSpaceConfig`: `scheduleTree_` → `ScheduleTreeNode` → `coordinates_` → `CoordinateInfo` | [ScheduleTreeNode](sdsc_BUNDLE_APIs/scheduletreenode.md) · [CoordinateInfo](sdsc_BUNDLE_APIs/coordinateinfo.md) |
-| 7 | `DesignSpaceConfig`: `labeledDs_` → `LabeledDataStructure` → `memOrg_` | [LabeledDataStructure](sdsc_BUNDLE_APIs/labeleddatastructure.md) · [MemoryOrganization](sdsc_BUNDLE_APIs/memoryorganization.md) |
-| 8 | `DesignSpaceConfig`: `constantInfo_` → `ConstantInfo` | [ConstantInfo](sdsc_BUNDLE_APIs/constantinfo.md) |
-| 9 | `DesignSpaceConfig`: `computeOp_` → `ComputeOperation` | [ComputeOperation](sdsc_BUNDLE_APIs/computeoperation.md) |
+| 1 | Root key · `SuperDsc`: `coreFoldProp_`, `coreletFoldProp_`, `numCoresUsed_` | [SuperDsc Object](spec/json/superdsc-object.md) |
+| 2 | `SuperDsc`: `numWkSlicesPerDim_`, `coreIdToWkSlice_`, `coreIdToDsc_`, `coreIdToDscSchedule` | [SuperDsc Object](spec/json/superdsc-object.md) |
+| 3 | `dscs_` entry · `DesignSpaceConfig`: `numCoresUsed_`, `coreIdsUsed_` | [DesignSpaceConfig](spec/json/designspaceconfig.md) |
+| 4 | `DesignSpaceConfig`: `N_`, `dataStageParam_` | [DataStructDims](spec/json/datastructdims.md) · [DataStageParam](spec/json/datastageparam.md) |
+| 5 | `DesignSpaceConfig`: `primaryDsInfo_` | [PrimaryDsInfo](spec/json/primarydsinfo.md) · [Stick Layout Constraints](spec/json/stick-layout-constraints.md) |
+| 6 | `DesignSpaceConfig`: `scheduleTree_` → `ScheduleTreeNode` → `coordinates_` → `CoordinateInfo` | [ScheduleTreeNode](spec/json/scheduletreenode.md) · [CoordinateInfo](spec/json/coordinateinfo.md) |
+| 7 | `DesignSpaceConfig`: `labeledDs_` → `LabeledDataStructure` → `memOrg_` | [LabeledDataStructure](spec/json/labeleddatastructure.md) · [MemoryOrganization](spec/json/memoryorganization.md) |
+| 8 | `DesignSpaceConfig`: `constantInfo_` → `ConstantInfo` | [ConstantInfo](spec/json/constantinfo.md) |
+| 9 | `DesignSpaceConfig`: `computeOp_` → `ComputeOperation` | [ComputeOperation](spec/json/computeoperation.md) |
 
 #### Step 1 — Root key and SuperDsc fold properties
 
-Create the root object with a single key — the operation name string (pattern `^[a-zA-Z0-9_/\-][a-zA-Z0-9_/\-]*$`). Its value is the [`SuperDsc`](sdsc_BUNDLE_APIs/superdsc-object.md) object. Fill the fold properties first, as every [`FoldManager`](sdsc_BUNDLE_APIs/foldmanager.md) used later inherits from these:
+Create the root object with a single key — the operation name string (pattern `^[a-zA-Z0-9_/\-][a-zA-Z0-9_/\-]*$`). Its value is the [`SuperDsc`](spec/json/superdsc-object.md) object. Fill the fold properties first, as every [`FoldManager`](spec/json/foldmanager.md) used later inherits from these:
 
 - Set `coreFoldProp_.factor_` to a value between 1 and the maximum number of cores in use (e.g. `32` for a full-chip bundle). Set `label_` to `"core"`.
 - Set `coreletFoldProp_.factor_` to `2`. Set `label_` to `"corelet"`.
@@ -343,12 +343,12 @@ Create the root object with a single key — the operation name string (pattern 
 
 #### Step 2 — SuperDsc work-division maps
 
-Still in [`SuperDsc`](sdsc_BUNDLE_APIs/superdsc-object.md), fill the maps that assign work slices and DSC indices to cores:
+Still in [`SuperDsc`](spec/json/superdsc-object.md), fill the maps that assign work slices and DSC indices to cores:
 
 - Set `numWkSlicesPerDim_`: for each dimension being split across cores, record the total number of slices (e.g. `{"mb": 2}` for a 2-way minibatch split).
 - Set `coreIdToWkSlice_`: for each core ID, map each split dimension to the slice index that core handles (e.g. `{"0": {"mb": 0}, "1": {"mb": 1}}`).
 - Set `coreIdToDsc_`: map each core ID (as a string integer) to its zero-based index into `dscs_`. All cores typically map to `0` when work is balanced.
-- Set `coreIdToDscSchedule`: for each core, one schedule tuple `[-1, 0, 0, 0]` covers the common case (single DSC, no data-op DSC, no barriers). The four integers are `[datadsc_idx, dldsc_idx, before_sync, after_sync]`. See [SuperDsc Object — Schedule step tuple](sdsc_BUNDLE_APIs/superdsc-object.md#schedule-step-tuple) for details.
+- Set `coreIdToDscSchedule`: for each core, one schedule tuple `[-1, 0, 0, 0]` covers the common case (single DSC, no data-op DSC, no barriers). The four integers are `[datadsc_idx, dldsc_idx, before_sync, after_sync]`. See [SuperDsc Object — Schedule step tuple](spec/json/superdsc-object.md#schedule-step-tuple) for details.
 - (Optional) Populate `inputSymbolsAndTags_`, `symbolDefinitions_`, and `dimToSymbolMappingOpcodeCorrection_` when symbolic dimensions are used.
 - (Optional) Populate `datadscs_` as `[]` when symbolic dimensions are present; omit otherwise.
 
@@ -356,36 +356,36 @@ Still in [`SuperDsc`](sdsc_BUNDLE_APIs/superdsc-object.md), fill the maps that a
 
 #### Step 3 — DesignSpaceConfig identity
 
-Add one entry to `dscs_` — a single-key object `{"<op_name>": <DesignSpaceConfig>}`. Inside the [`DesignSpaceConfig`](sdsc_BUNDLE_APIs/designspaceconfig.md), set the core identity fields first:
+Add one entry to `dscs_` — a single-key object `{"<op_name>": <DesignSpaceConfig>}`. Inside the [`DesignSpaceConfig`](spec/json/designspaceconfig.md), set the core identity fields first:
 
 - Set `numCoresUsed_` and `coreIdsUsed_` to match the cores assigned to this DSC via `coreIdToDsc_` in Step 2.
 
 #### Step 4 — Total operation dimensions (`N_`) and data staging (`dataStageParam_`)
 
-In [`DesignSpaceConfig.N_`](sdsc_BUNDLE_APIs/datastructdims.md):
+In [`DesignSpaceConfig.N_`](spec/json/datastructdims.md):
 
 - Set each dimension field that participates in the operation to its total (un-tiled) size. Set all others to `-1`.
 - For symbolic dimensions, set the field to `-1` (sentinel) and populate `dimToSymbolMapping_` to link each symbolic dimension name to its symbol ID.
-- For symbolic dimensions: add `symbolicDimInfo_` inside each [`DataStructDims`](sdsc_BUNDLE_APIs/datastructdims.md) with `maxSize_` (upper bound) and `granularity_` (step constraint). Use `maxSymbolicVolume_` to cap the combined volume across a set of symbolic dimensions.
+- For symbolic dimensions: add `symbolicDimInfo_` inside each [`DataStructDims`](spec/json/datastructdims.md) with `maxSize_` (upper bound) and `granularity_` (step constraint). Use `maxSymbolicVolume_` to cap the combined volume across a set of symbolic dimensions.
 
-In [`DesignSpaceConfig.dataStageParam_`](sdsc_BUNDLE_APIs/datastageparam.md):
+In [`DesignSpaceConfig.dataStageParam_`](spec/json/datastageparam.md):
 
 - Add exactly one entry with key `"0"`. Set `name_` to `"core"`.
 - Set `ss_` and `el_` to the per-core tile sizes. When work divides evenly `ss_` and `el_` are identical; `el_` carries the smaller final tile when it does not.
-- For window/padded operations (avgpool2d, maxpool2d, conv2d, depthwise conv2d): add `paddingSizes_` to both `ss_` and `el_`. If a padded dimension is split across cores, set `padFront_` and `padBack_` to `-1` in the per-core datastage entry. See [Padding](sdsc_BUNDLE_APIs/padding.md) for the full field set.
+- For window/padded operations (avgpool2d, maxpool2d, conv2d, depthwise conv2d): add `paddingSizes_` to both `ss_` and `el_`. If a padded dimension is split across cores, set `padFront_` and `padBack_` to `-1` in the per-core datastage entry. See [Padding](spec/json/padding.md) for the full field set.
 - For symbolic dimensions split across cores: `granularity_` must be a multiple of the number of cores in the split, and `ss_`/`el_` values must be scaled to the per-core size.
 
 #### Step 5 — Tensor layout (`primaryDsInfo_`)
 
-In [`DesignSpaceConfig.primaryDsInfo_`](sdsc_BUNDLE_APIs/primarydsinfo.md), add one entry for each distinct tensor role. Multiple tensors that share the same stick layout can share one entry:
+In [`DesignSpaceConfig.primaryDsInfo_`](spec/json/primarydsinfo.md), add one entry for each distinct tensor role. Multiple tensors that share the same stick layout can share one entry:
 
 - Key each entry by `dsType_` (`"INPUT"`, `"OUTPUT"`, `"KERNEL"`, `"KERNEL_IDX"`).
 - Set `layoutDimOrder_` (outermost dimension first).
-- Set `stickDimOrder_` and `stickSize_` as parallel arrays. Consult [Stick Layout Constraints](sdsc_BUNDLE_APIs/stick-layout-constraints.md) for the exact stick rules for each operation category.
+- Set `stickDimOrder_` and `stickSize_` as parallel arrays. Consult [Stick Layout Constraints](spec/json/stick-layout-constraints.md) for the exact stick rules for each operation category.
 
 #### Step 6 — Memory allocation schedule (`scheduleTree_`)
 
-In [`DesignSpaceConfig.scheduleTree_`](sdsc_BUNDLE_APIs/scheduletreenode.md), add one [`ScheduleTreeNode`](sdsc_BUNDLE_APIs/scheduletreenode.md) per tensor, in allocation order:
+In [`DesignSpaceConfig.scheduleTree_`](spec/json/scheduletreenode.md), add one [`ScheduleTreeNode`](spec/json/scheduletreenode.md) per tensor, in allocation order:
 
 - Set `nodeType_: "allocate"`, a unique `name_`, and `ldsIdx_` matching the tensor's sequential position in `labeledDs_` (filled in Step 7).
 - Set `component_` to `"hbm"` or `"lx"`.
@@ -399,7 +399,7 @@ In [`DesignSpaceConfig.scheduleTree_`](sdsc_BUNDLE_APIs/scheduletreenode.md), ad
     - typically used when the tensor is produced or consumed core-wise (e.g. the producing SDSC wrote each core's slice at its own address) and the frontend does not want to materialize a unified copy of it
     - only meaningful when `component_` is HBM; leave `false` for LX allocations
 - Set `layoutDimOrder_` and `maxDimSizes_` (use `-1` for unbound dimensions; use the page size for paged value tensors).
-- Set `startAddressCoreCorelet_` ([`FoldManager`](sdsc_BUNDLE_APIs/foldmanager.md)) — start address per core:
+- Set `startAddressCoreCorelet_` ([`FoldManager`](spec/json/foldmanager.md)) — start address per core:
   - first fold is for cores, set as Map fold type
       - alpha=1, beta=0, factor=`numCoresUsed_` (the total number of cores used for this bundle)
   - coordinates also require spatial folds
@@ -410,37 +410,37 @@ In [`DesignSpaceConfig.scheduleTree_`](sdsc_BUNDLE_APIs/scheduletreenode.md), ad
       - for non-unified HBM allocations (`nonUnifiedAllocInHBM_` set), same as LX, as each core holds only its own slice
     - corelet fold: N/A → alpha=1, factor=1
     - row fold: N/A → alpha=1, factor=1
-- For back-gaps: populate `backGapCore_` with the gap in elements, keyed by dimension then core ID. Use `"-1"` as the core key for HBM; use the actual core ID for LX. Only back-gaps are encoded — front gaps are handled by advancing the start address. See [Stick-Alignment Padding](sdsc_BUNDLE_APIs/stick-padding.md) for the restickify case where stick-alignment widening is the source of the gap.
+- For back-gaps: populate `backGapCore_` with the gap in elements, keyed by dimension then core ID. Use `"-1"` as the core key for HBM; use the actual core ID for LX. Only back-gaps are encoded — front gaps are handled by advancing the start address. See [Stick-Alignment Padding](spec/json/stick-padding.md) for the restickify case where stick-alignment widening is the source of the gap.
 - For indirect access (paged tensors): set `indirectAllocType_` to `"value_tensor"` or `"index_tensor"`, set `relatedIndirectAccessAlloc_` to the counterpart node name, and set `indexTensorType_` (`"index"` or `"address"`) on the index tensor node.
-- Set `coordinates_` (a [`CoordinateContainer`](sdsc_BUNDLE_APIs/coordinatecontainer.md)): for each tensor dimension, add a [`CoordinateInfo`](sdsc_BUNDLE_APIs/coordinateinfo.md) entry whose `folds` [`FoldManager`](sdsc_BUNDLE_APIs/foldmanager.md) encodes the affine split hierarchy (core → corelet → row → elements). The product of all `factor_` values across all fold levels must equal the total element count for that dimension.
+- Set `coordinates_` (a [`CoordinateContainer`](spec/json/coordinatecontainer.md)): for each tensor dimension, add a [`CoordinateInfo`](spec/json/coordinateinfo.md) entry whose `folds` [`FoldManager`](spec/json/foldmanager.md) encodes the affine split hierarchy (core → corelet → row → elements). The product of all `factor_` values across all fold levels must equal the total element count for that dimension.
 
 Example coordinate sequence `0, 1, 2, 3, 64, 65, 66, 67, 4, 5, 6, 7, 68, 69, 70, 71` is expressed as folds (outer to inner): `alpha=4, beta=0, factor=2` → `alpha=64, beta=0, factor=2` → `alpha=1, beta=0, factor=4`. Coordinates also require spatial folds: for unified HBM core fold use `alpha=1, factor=1`; for LX use `alpha=coordinate offset across slices, factor=number of slices`; for non-unified HBM (`nonUnifiedAllocInHBM_: true`) use the same convention as LX, since each core holds only its own slice.
 
 #### Step 7 — Tensor descriptors (`labeledDs_`)
 
-In [`DesignSpaceConfig.labeledDs_`](sdsc_BUNDLE_APIs/labeleddatastructure.md), add one [`LabeledDataStructure`](sdsc_BUNDLE_APIs/labeleddatastructure.md) per tensor in the same order used for `ldsIdx_` in Step 6:
+In [`DesignSpaceConfig.labeledDs_`](spec/json/labeleddatastructure.md), add one [`LabeledDataStructure`](spec/json/labeleddatastructure.md) per tensor in the same order used for `ldsIdx_` in Step 6:
 
 - Assign sequential `ldsIdx_` values (0, 1, 2, …) and a unique `dsName_`.
 - Set `dsType_` to match the key used in `primaryDsInfo_` (Step 5).
 - Set `dataFormat_` and optionally `wordLength`.
 - Set `scale_`: one entry per layout dimension in `layoutDimOrder_` order. `1` = normal, `-1` = reduced/broadcast, `-2` = reduced/broadcast stick dimension.
-- Set `memOrg_` ([`MemoryOrganization`](sdsc_BUNDLE_APIs/memoryorganization.md)): set `hbm.isPresent` and/or `lx.isPresent` to `1` to match the `component_` set on the corresponding `scheduleTree_` node (Step 6).
+- Set `memOrg_` ([`MemoryOrganization`](spec/json/memoryorganization.md)): set `hbm.isPresent` and/or `lx.isPresent` to `1` to match the `component_` set on the corresponding `scheduleTree_` node (Step 6).
 
 #### Step 8 — Constants (`constantInfo_`)
 
-In [`DesignSpaceConfig.constantInfo_`](sdsc_BUNDLE_APIs/constantinfo.md):
+In [`DesignSpaceConfig.constantInfo_`](spec/json/constantinfo.md):
 
 - If the operation requires no constants, set the field to the string `"{}"` (do not omit the field).
 - Otherwise, add one entry per constant, keyed by sequential string integer (`"0"`, `"1"`, …). For each:
   - Set `name_` to the agreed constant name for that operation.
   - Set `dataFormat_` to match the tensors it is applied to.
-  - Set `data_` as a [`FoldManager`](sdsc_BUNDLE_APIs/foldmanager.md): use `Const` at both the core and corelet fold levels when the value is the same on all cores (the common case). Use `Map` at the core level only when the value differs per core. Encode the value in the specified `dataFormat_` without zero-padding to 32 bits; only one element entry in the vector is needed.
+  - Set `data_` as a [`FoldManager`](spec/json/foldmanager.md): use `Const` at both the core and corelet fold levels when the value is the same on all cores (the common case). Use `Map` at the core level only when the value differs per core. Encode the value in the specified `dataFormat_` without zero-padding to 32 bits; only one element entry in the vector is needed.
 
 #### Step 9 — Compute operation (`computeOp_`)
 
-In [`DesignSpaceConfig.computeOp_`](sdsc_BUNDLE_APIs/computeoperation.md):
+In [`DesignSpaceConfig.computeOp_`](spec/json/computeoperation.md):
 
-- Set `opFuncName` to the operation string (e.g. `"gelufwd"`, `"batchmatmul"`). See [Supported Operations](sdsc_BUNDLE_APIs/computeoperation.md#supported-operations) for the full table.
+- Set `opFuncName` to the operation string (e.g. `"gelufwd"`, `"batchmatmul"`). See [Supported Operations](spec/json/computeoperation.md#supported-operations) for the full table.
 - Set `attributes_.dataFormat_` to the execution format (`"SEN169_FP16"`, `"IEEE_FP32"`, …).
 - Set `attributes_.fidelity_` to `"regular"` or `"fast"` (optional).
 - Set `exUnit` to `"sfp"` or `"pt"`.
@@ -451,14 +451,14 @@ In [`DesignSpaceConfig.computeOp_`](sdsc_BUNDLE_APIs/computeoperation.md):
 
 ### SuperDsc Object Fields
 
-The `SuperDsc` object is the top-level object of every `sdsc_*.json` file. Six fields are required; no additional properties are allowed. For the full reference see [SuperDsc Object](sdsc_BUNDLE_APIs/superdsc-object.md).
+The `SuperDsc` object is the top-level object of every `sdsc_*.json` file. Six fields are required; no additional properties are allowed. For the full reference see [SuperDsc Object](spec/json/superdsc-object.md).
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `sdscFoldProps_` | array of [FoldProperty](sdsc_BUNDLE_APIs/foldproperty.md) | No | SDSC-level fold properties for bundle-level fold dimensions above the core level. |
-| `sdscFolds_` | [FoldManager](sdsc_BUNDLE_APIs/foldmanager.md) | No | Fold manager encoding addresses or mappings at the bundle level. |
-| `coreFoldProp_` | [FoldProperty](sdsc_BUNDLE_APIs/foldproperty.md) | **Yes** | Fold factor and label for the core level (e.g. `factor_: 32, label_: "core"`). |
-| `coreletFoldProp_` | [FoldProperty](sdsc_BUNDLE_APIs/foldproperty.md) | **Yes** | Fold factor and label for the corelet level (e.g. `factor_: 2, label_: "corelet"`). |
+| `sdscFoldProps_` | array of [FoldProperty](spec/json/foldproperty.md) | No | SDSC-level fold properties for bundle-level fold dimensions above the core level. |
+| `sdscFolds_` | [FoldManager](spec/json/foldmanager.md) | No | Fold manager encoding addresses or mappings at the bundle level. |
+| `coreFoldProp_` | [FoldProperty](spec/json/foldproperty.md) | **Yes** | Fold factor and label for the core level (e.g. `factor_: 32, label_: "core"`). |
+| `coreletFoldProp_` | [FoldProperty](spec/json/foldproperty.md) | **Yes** | Fold factor and label for the corelet level (e.g. `factor_: 2, label_: "corelet"`). |
 | `numCoresUsed_` | integer (≥ 1) | **Yes** | Total number of Spyre cores used across all DSCs in this file. |
 | `debug_handle_` | DebugHandle or null | No | Source-to-kernel provenance emitted by the frontend (source file/line, ATen op name, lowering chain, fusion origins, rewrite history). `null` is a valid value when provenance is unavailable. |
 | `dimToSymbolMappingOpcodeCorrection_` | map\<string, string\> | No | Symbol mapping corrections applied during opcode generation. Keys are dimension names. |
@@ -475,7 +475,7 @@ The `SuperDsc` object is the top-level object of every `sdsc_*.json` file. Six f
 
 ### Supported OpFuncs in `sdsc.json`
 
-For the full list of supported `opFuncName` values, see [ComputeOperation — Supported Operations](sdsc_BUNDLE_APIs/computeoperation.md#supported-operations).
+For the full list of supported `opFuncName` values, see [ComputeOperation — Supported Operations](spec/json/computeoperation.md#supported-operations).
 
 ### Stick Constraints for the Operations
 
@@ -483,51 +483,114 @@ Each operation category imposes constraints on stick composition, restricting wh
 
 **Important:** Stick constraints can cause a ripple effect — a tensor may need padding even in its non-stick dimension if that dimension appears in the stick of another tensor feeding the same operation. This ensures dimension span consistency across all tensors.
 
-For per-category stick layouts and padding rules see [Stick Layout Constraints](sdsc_BUNDLE_APIs/stick-layout-constraints.md).
+For per-category stick layouts and padding rules see [Stick Layout Constraints](spec/json/stick-layout-constraints.md).
 
 ### Core Work Division Constraints
 
-For per-core work extent rules (stick-multiple alignment, DDR address span, index tensors, and multi-dimension reduction splits) see [Stick Layout Constraints — Core Work Division](sdsc_BUNDLE_APIs/stick-layout-constraints.md#core-work-division-constraints).
+For per-core work extent rules (stick-multiple alignment, DDR address span, index tensors, and multi-dimension reduction splits) see [Stick Layout Constraints — Core Work Division](spec/json/stick-layout-constraints.md#core-work-division-constraints).
 
 ## Examples
 
-The table below lists all available examples in recommended reading order. MLIR examples are in [`sdsc_BUNDLE_APIs/`](sdsc_BUNDLE_APIs/) and JSON examples in the same directory; low-level MLIR examples are in [`examples/`](examples/).
+The table below lists all available examples in recommended reading order. MLIR examples are in [`spec/json/`](spec/json/); low-level MLIR examples are in [`guide/`](guide/).
 
 ### MLIR Bundle Examples
 
 | # | Description | File |
 |---|---|---|
-| 1 | Single operation (no symbols) | [MLIR-bundle-usage-examples.md — Single Operation](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#single-operation-no-symbols) |
-| 2 | Sequential operations — kernel fusion (softmax) | [MLIR-bundle-usage-examples.md — Sequential Operations](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#sequential-operations-kernel-fusion) |
-| 3 | Symbolic address — runtime-provided base address | [MLIR-bundle-usage-examples.md — Symbolic Address](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#symbolic-address--runtime-provided-base-address) |
-| 4 | Symbolic address — per-core addresses from a runtime base | [MLIR-bundle-usage-examples.md — Per-Core Addresses](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#symbolic-address--per-core-addresses-from-a-runtime-base) |
-| 5 | Symbolic dimension size — single symbolic batch dimension | [MLIR-bundle-usage-examples.md — Symbolic Dimension](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#symbolic-dimension-size--single-symbolic-batch-dimension) |
-| 6 | Symbolic dimension size — split across cores | [MLIR-bundle-usage-examples.md — Symbolic Dimension Split](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#symbolic-dimension-size--symbolic-dimension-split-across-cores) |
-| 7 | Loop with dynamic addresses (`scf.for` + `affine.apply`) | [MLIR-bundle-usage-examples.md — Loop](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#loop-with-dynamic-addresses) |
-| 8 | Multi-core with per-core addresses | [MLIR-bundle-usage-examples.md — Multi-Core](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#multi-core-with-per-core-addresses) |
-| 9 | Device memory allocation — intermediate buffer | [MLIR-bundle-usage-examples.md — Intermediate Buffer](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#simple-intermediate-buffer) |
-| 10 | Device memory allocation — pool sub-allocation | [MLIR-bundle-usage-examples.md — Pool Sub-Allocation](sdsc_BUNDLE_APIs/MLIR-bundle-usage-examples.md#pool-sub-allocation) |
-| 11 | Complete MLIR example — softmax with dynamic shapes | [MLIR-complete-example.md](sdsc_BUNDLE_APIs/MLIR-complete-example.md) |
+| 1 | Single operation (no symbols) | [MLIR-examples.md — Single Operation](spec/json/MLIR-examples.md#single-operation-no-symbols) |
+| 2 | Sequential operations — kernel fusion (softmax) | [MLIR-examples.md — Sequential Operations](spec/json/MLIR-examples.md#sequential-operations-kernel-fusion) |
+| 3 | Symbolic address — runtime-provided base address | [MLIR-examples.md — Symbolic Address](spec/json/MLIR-examples.md#symbolic-address--runtime-provided-base-address) |
+| 4 | Symbolic address — per-core addresses from a runtime base | [MLIR-examples.md — Per-Core Addresses](spec/json/MLIR-examples.md#symbolic-address--per-core-addresses-from-a-runtime-base) |
+| 5 | Symbolic dimension size — single symbolic batch dimension | [MLIR-examples.md — Symbolic Dimension](spec/json/MLIR-examples.md#symbolic-dimension-size--single-symbolic-batch-dimension) |
+| 6 | Symbolic dimension size — split across cores | [MLIR-examples.md — Symbolic Dimension Split](spec/json/MLIR-examples.md#symbolic-dimension-size--symbolic-dimension-split-across-cores) |
+| 7 | Loop with dynamic addresses (`scf.for` + `affine.apply`) | [MLIR-examples.md — Loop](spec/json/MLIR-examples.md#loop-with-dynamic-addresses) |
+| 8 | Multi-core with per-core addresses | [MLIR-examples.md — Multi-Core](spec/json/MLIR-examples.md#multi-core-with-per-core-addresses) |
+| 9 | Device memory allocation — intermediate buffer | [MLIR-examples.md — Intermediate Buffer](spec/json/MLIR-examples.md#simple-intermediate-buffer) |
+| 10 | Device memory allocation — pool sub-allocation | [MLIR-examples.md — Pool Sub-Allocation](spec/json/MLIR-examples.md#pool-sub-allocation) |
+| 11 | Complete MLIR example — softmax with dynamic shapes | [MLIR-complete-example.md](spec/json/MLIR-complete-example.md) |
 
 ### JSON Examples
 
 | # | Description | File |
 |---|---|---|
-| 12 | Complete JSON example — simple GELU operation | [complete-example.md](sdsc_BUNDLE_APIs/complete-example.md) |
-| 13 | Indirect access — Top-K gather operation | [indirect-access-example.md](sdsc_BUNDLE_APIs/indirect-access-example.md) |
+| 12 | Complete JSON example — simple GELU operation | [JSON-examples.md — Complete Example](spec/json/JSON-examples.md#complete-example--simple-gelu-operation) |
+| 13 | Indirect access — Top-K gather operation | [JSON-examples.md — Indirect Access](spec/json/JSON-examples.md#indirect-access-example--top-k-gather-operation) |
 
 ### Low-Level MLIR Examples
 
-Lower-level MLIR examples in increasing order of complexity are available in [`examples/`](examples/).
+Lower-level MLIR examples in increasing order of complexity are available in [`guide/`](guide/).
 
 | # | File | Description |
 |---|---|---|
-| 1 | [1-single-no-sym.mlir](examples/1-single-no-sym.mlir) | Single operation, no symbolic values |
-| 2 | [2-softmax-no-sym.mlir](examples/2-softmax-no-sym.mlir) | Softmax kernel, no symbolic values |
-| 3 | [3-single-fake-sym.mlir](examples/3-single-fake-sym.mlir) | Single operation with symbolic addresses |
-| 4 | [4-loop-multi.mlir](examples/4-loop-multi.mlir) | Loop with multiple operations |
+| 1 | [1-single-no-sym.mlir](guide/1-single-no-sym.mlir) | Single operation, no symbolic values |
+| 2 | [2-softmax-no-sym.mlir](guide/2-softmax-no-sym.mlir) | Softmax kernel, no symbolic values |
+| 3 | [3-single-fake-sym.mlir](guide/3-single-fake-sym.mlir) | Single operation with symbolic addresses |
+| 4 | [4-loop-multi.mlir](guide/4-loop-multi.mlir) | Loop with multiple operations |
 
 ## **Metrics**
 
 * Ability to express all torch operators that are mappable to AIU (post-inductor transformations and decompositions)
 * Ability to express desired computation mapping across cores for each operation
+
+---
+
+## Spec Map
+
+Quick reference to every document in this specification, grouped by role.
+
+### Guide
+
+| Document | Description |
+|----------|-------------|
+| [Overview](guide/Overview.md) | Spyre stack overview and the two API components |
+
+### MLIR Dialect — `sdscbundle`
+
+| Document | Description |
+|----------|-------------|
+| [MLIR Bundle API](spec/dialect/MLIR-bundle-API.md) | Dialect operations, bundle container, symbolic values |
+| [MLIR Examples](spec/json/MLIR-examples.md) | Annotated MLIR bundle examples |
+| [MLIR Complete Example](spec/json/MLIR-complete-example.md) | Full end-to-end MLIR bundle |
+
+### JSON Layer
+
+| Document | Description |
+|----------|-------------|
+| [SDSC JSON API](spec/json/SDSC-json-api.md) | File structure and field-filling walkthrough |
+| [Object Hierarchy](spec/json/JSON-object-Hierarchy.md) | Annotated tree of every JSON key |
+| [JSON Schema (normative)](spec/sdscbundle-schema.json) | Machine-readable JSON Schema |
+
+### JSON Object Reference
+
+| Object | File |
+|--------|------|
+| SuperDsc | [superdsc-object.md](spec/json/superdsc-object.md) |
+| FoldProperty | [foldproperty.md](spec/json/foldproperty.md) |
+| FoldManager | [foldmanager.md](spec/json/foldmanager.md) |
+| Padding | [padding.md](spec/json/padding.md) |
+| Stick-Alignment Padding | [stick-padding.md](spec/json/stick-padding.md) |
+| Stick Layout Constraints | [stick-layout-constraints.md](spec/json/stick-layout-constraints.md) |
+| DesignSpaceConfig | [designspaceconfig.md](spec/json/designspaceconfig.md) |
+| LabeledDataStructure | [labeleddatastructure.md](spec/json/labeleddatastructure.md) |
+| MemoryOrganization | [memoryorganization.md](spec/json/memoryorganization.md) |
+| PrimaryDsInfo | [primarydsinfo.md](spec/json/primarydsinfo.md) |
+| DataStructDims | [datastructdims.md](spec/json/datastructdims.md) |
+| DataStageParam | [datastageparam.md](spec/json/datastageparam.md) |
+| ScheduleTreeNode | [scheduletreenode.md](spec/json/scheduletreenode.md) |
+| CoordinateContainer | [coordinatecontainer.md](spec/json/coordinatecontainer.md) |
+| CoordinateInfo | [coordinateinfo.md](spec/json/coordinateinfo.md) |
+| ComputeOperation | [computeoperation.md](spec/json/computeoperation.md) |
+| ConstantInfo | [constantinfo.md](spec/json/constantinfo.md) |
+
+### Worked Examples
+
+| Document | Description |
+|----------|-------------|
+| [JSON Examples](spec/json/JSON-examples.md) | Complete and indirect-access JSON examples |
+
+### References
+
+| Document | Description |
+|----------|-------------|
+| [References](spec/reference.md) | External specs and normative references |
+

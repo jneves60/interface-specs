@@ -102,5 +102,5 @@ core index 0, time-step index 0.
 
 ---
 
-| [← Previous: ComputeOperation](computeoperation.md) | [↑ Table of Contents](README.md) | [Next: Complete Example (JSON) →](complete-example.md) |
+[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
 |:--|:--:|--:|
