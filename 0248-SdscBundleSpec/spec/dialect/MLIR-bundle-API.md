@@ -390,9 +390,9 @@ operand to `sdscbundle.sdsc_execute`.
   Available on all `input_arg` parameters.
 - `granularity` — the step constraint for a symbolic dimension size (i.e. the
   runtime value MUST be a multiple of this). Corresponds to `granularity_` in
-  [`SymbolicDimInfo`](datastructdims.md#symbolicdiminfo) in the accompanying SDSC.
+  [`SymbolicDimInfo`](../json/datastructdims.md#symbolicdiminfo) in the accompanying SDSC.
 - `max_value` — the upper bound for a symbolic dimension size. Corresponds to
-  `maxSize_` in [`SymbolicDimInfo`](datastructdims.md#symbolicdiminfo) in the
+  `maxSize_` in [`SymbolicDimInfo`](../json/datastructdims.md#symbolicdiminfo) in the
   accompanying SDSC.
 
 **Syntax:**
