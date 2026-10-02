@@ -77,7 +77,7 @@ It does **not** cover:
 A user-written PyTorch program is compiled by torch-spyre to generate a set of files known as the **SuperDSC-Bundle**. A PyTorch file may translate into several SuperDSC-Bundles, each one composed of a `bundle.mlir` file and several `sdsc_*.json` files. Each SuperDSC-Bundle is compiled by Deeptools to generate the assembly code and execution plan that runs on the Spyre AI Accelerator Card.
 
 <p align="center">
-  <img src="spec/json/figures/torch_spyre_backend_flow.png" alt="torch_spyre_backend_flow" width="650"/>
+  <img src="guide/figures/torch_spyre_backend_flow.png" alt="torch_spyre_backend_flow" width="650"/>
 </p>
 <p align="center">
   Figure 1. High-level view of SuperDSC-Bundle API within the torch-spyre stack
@@ -86,7 +86,7 @@ A user-written PyTorch program is compiled by torch-spyre to generate a set of f
 `SuperDSC-Bundle` views the Spyre hardware at the data-parallel level of abstraction: multiple cores, each with a compute engine (AIU) and scratchpad memory (LX), connected to each other and to off-chip memory (HBM/DDR) via an on-chip interconnect fabric.
 
 <p align="center">
-  <img src="spec/json/figures/data_parallel_hw_abstraction.png" alt="data_parallel_hw_abstraction" width="450"/>
+  <img src="guide/figures/data_parallel_hw_abstraction.png" alt="data_parallel_hw_abstraction" width="450"/>
 </p>
 <p align="center">
   Figure 2. Hardware abstraction of multi-core accelerator embodied in `SuperDSC-Bundle`
@@ -187,24 +187,24 @@ The table below lists all available examples in recommended reading order.
 
 | # | Description | File |
 |---|---|---|
-| 1 | Single operation (no symbols) | [MLIR-examples.md — Single Operation](spec/json/MLIR-examples.md#single-operation-no-symbols) |
-| 2 | Sequential operations — kernel fusion (softmax) | [MLIR-examples.md — Sequential Operations](spec/json/MLIR-examples.md#sequential-operations-kernel-fusion) |
-| 3 | Symbolic address — runtime-provided base address | [MLIR-examples.md — Symbolic Address](spec/json/MLIR-examples.md#symbolic-address--runtime-provided-base-address) |
-| 4 | Symbolic address — per-core addresses from a runtime base | [MLIR-examples.md — Per-Core Addresses](spec/json/MLIR-examples.md#symbolic-address--per-core-addresses-from-a-runtime-base) |
-| 5 | Symbolic dimension size — single symbolic batch dimension | [MLIR-examples.md — Symbolic Dimension](spec/json/MLIR-examples.md#symbolic-dimension-size--single-symbolic-batch-dimension) |
-| 6 | Symbolic dimension size — split across cores | [MLIR-examples.md — Symbolic Dimension Split](spec/json/MLIR-examples.md#symbolic-dimension-size--symbolic-dimension-split-across-cores) |
-| 7 | Loop with dynamic addresses (`scf.for` + `affine.apply`) | [MLIR-examples.md — Loop](spec/json/MLIR-examples.md#loop-with-dynamic-addresses) |
-| 8 | Multi-core with per-core addresses | [MLIR-examples.md — Multi-Core](spec/json/MLIR-examples.md#multi-core-with-per-core-addresses) |
-| 9 | Device memory allocation — intermediate buffer | [MLIR-examples.md — Intermediate Buffer](spec/json/MLIR-examples.md#simple-intermediate-buffer) |
-| 10 | Device memory allocation — pool sub-allocation | [MLIR-examples.md — Pool Sub-Allocation](spec/json/MLIR-examples.md#pool-sub-allocation) |
-| 11 | Complete MLIR example — softmax with dynamic shapes | [MLIR-complete-example.md](spec/json/MLIR-complete-example.md) |
+| 1 | Single operation (no symbols) | [MLIR-examples.md — Single Operation](guide/MLIR-examples.md#single-operation-no-symbols) |
+| 2 | Sequential operations — kernel fusion (softmax) | [MLIR-examples.md — Sequential Operations](guide/MLIR-examples.md#sequential-operations-kernel-fusion) |
+| 3 | Symbolic address — runtime-provided base address | [MLIR-examples.md — Symbolic Address](guide/MLIR-examples.md#symbolic-address--runtime-provided-base-address) |
+| 4 | Symbolic address — per-core addresses from a runtime base | [MLIR-examples.md — Per-Core Addresses](guide/MLIR-examples.md#symbolic-address--per-core-addresses-from-a-runtime-base) |
+| 5 | Symbolic dimension size — single symbolic batch dimension | [MLIR-examples.md — Symbolic Dimension](guide/MLIR-examples.md#symbolic-dimension-size--single-symbolic-batch-dimension) |
+| 6 | Symbolic dimension size — split across cores | [MLIR-examples.md — Symbolic Dimension Split](guide/MLIR-examples.md#symbolic-dimension-size--symbolic-dimension-split-across-cores) |
+| 7 | Loop with dynamic addresses (`scf.for` + `affine.apply`) | [MLIR-examples.md — Loop](guide/MLIR-examples.md#loop-with-dynamic-addresses) |
+| 8 | Multi-core with per-core addresses | [MLIR-examples.md — Multi-Core](guide/MLIR-examples.md#multi-core-with-per-core-addresses) |
+| 9 | Device memory allocation — intermediate buffer | [MLIR-examples.md — Intermediate Buffer](guide/MLIR-examples.md#simple-intermediate-buffer) |
+| 10 | Device memory allocation — pool sub-allocation | [MLIR-examples.md — Pool Sub-Allocation](guide/MLIR-examples.md#pool-sub-allocation) |
+| 11 | Complete MLIR example — softmax with dynamic shapes | [MLIR-complete-example.md](guide/MLIR-complete-example.md) |
 
 ### JSON Examples
 
 | # | Description | File |
 |---|---|---|
-| 12 | Complete JSON example — simple GELU operation | [JSON-examples.md — Complete Example](spec/json/JSON-examples.md#complete-example--simple-gelu-operation) |
-| 13 | Indirect access — Top-K gather operation | [JSON-examples.md — Indirect Access](spec/json/JSON-examples.md#indirect-access-example--top-k-gather-operation) |
+| 12 | Complete JSON example — simple GELU operation | [JSON-examples.md — Complete Example](guide/JSON-examples.md#complete-example--simple-gelu-operation) |
+| 13 | Indirect access — Top-K gather operation | [JSON-examples.md — Indirect Access](guide/JSON-examples.md#indirect-access-example--top-k-gather-operation) |
 
 ---
 
@@ -223,8 +223,8 @@ Quick reference to every document in this specification, grouped by role.
 | Document | Description |
 |----------|-------------|
 | [MLIR Bundle API](spec/dialect/MLIR-bundle-API.md) | Dialect operations, bundle container, symbolic values |
-| [MLIR Examples](spec/json/MLIR-examples.md) | Annotated MLIR bundle examples |
-| [MLIR Complete Example](spec/json/MLIR-complete-example.md) | Full end-to-end MLIR bundle |
+| [MLIR Examples](guide/MLIR-examples.md) | Annotated MLIR bundle examples |
+| [MLIR Complete Example](guide/MLIR-complete-example.md) | Full end-to-end MLIR bundle |
 
 ### JSON Layer
 
@@ -260,7 +260,7 @@ Quick reference to every document in this specification, grouped by role.
 
 | Document | Description |
 |----------|-------------|
-| [JSON Examples](spec/json/JSON-examples.md) | Complete and indirect-access JSON examples |
+| [JSON Examples](guide/JSON-examples.md) | Complete and indirect-access JSON examples |
 
 ### References
 

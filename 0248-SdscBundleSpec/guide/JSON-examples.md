@@ -628,4 +628,4 @@ The value tensor uses `dsType_: "KERNEL"` in `labeledDs_`; the index tensor uses
 
 ---
 
-[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)
+[↑ Spec Map](../SuperDSC-Bundle.md#spec-map)

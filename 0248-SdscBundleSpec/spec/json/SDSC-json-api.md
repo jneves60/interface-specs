@@ -29,7 +29,7 @@ The schema enforces:
 
 An SDSC JSON file is structured as a single top-level key (the operation name) whose value is a **SuperDSC** object. The SuperDSC object holds a few top-level fields and a `dscs_[]` array of **DesignSpaceConfig** entries. Each `dscs_[]` entry is itself a single-key object wrapping a `DesignSpaceConfig` — some of its fields are leaf values while others are composite objects that drill down further into the object hierarchy.
 
-![SDSC JSON File — Object Hierarchy](figures/sdsc_json_hierarchy.png)
+![SDSC JSON File — Object Hierarchy](../guide/figures/sdsc_json_hierarchy.png)
 
 *Figure: Complete object hierarchy of an SDSC JSON file.*
 

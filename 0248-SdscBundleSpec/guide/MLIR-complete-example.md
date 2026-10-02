@@ -76,4 +76,4 @@ This example demonstrates:
 
 ---
 
-[↑ Spec Map](../../SuperDSC-Bundle.md#spec-map)|
+[↑ Spec Map](../SuperDSC-Bundle.md#spec-map)|
