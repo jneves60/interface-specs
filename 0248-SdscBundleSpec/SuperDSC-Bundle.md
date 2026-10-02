@@ -77,7 +77,7 @@ It does **not** cover:
 A user-written PyTorch program is compiled by torch-spyre to generate a set of files known as the **SuperDSC-Bundle**. A PyTorch file may translate into several SuperDSC-Bundles, each one composed of a `bundle.mlir` file and several `sdsc_*.json` files. Each SuperDSC-Bundle is compiled by Deeptools to generate the assembly code and execution plan that runs on the Spyre AI Accelerator Card.
 
 <p align="center">
-  <img src="guide/figures/torch_spyre_backend_flow.png" alt="torch_spyre_backend_flow" width="650"/>
+  <img src="spec/json/figures/torch_spyre_backend_flow.png" alt="torch_spyre_backend_flow" width="650"/>
 </p>
 <p align="center">
   Figure 1. High-level view of SuperDSC-Bundle API within the torch-spyre stack
@@ -86,7 +86,7 @@ A user-written PyTorch program is compiled by torch-spyre to generate a set of f
 `SuperDSC-Bundle` views the Spyre hardware at the data-parallel level of abstraction: multiple cores, each with a compute engine (AIU) and scratchpad memory (LX), connected to each other and to off-chip memory (HBM/DDR) via an on-chip interconnect fabric.
 
 <p align="center">
-  <img src="guide/figures/data_parallel_hw_abstraction.png" alt="data_parallel_hw_abstraction" width="450"/>
+  <img src="spec/json/figures/data_parallel_hw_abstraction.png" alt="data_parallel_hw_abstraction" width="450"/>
 </p>
 <p align="center">
   Figure 2. Hardware abstraction of multi-core accelerator embodied in `SuperDSC-Bundle`
