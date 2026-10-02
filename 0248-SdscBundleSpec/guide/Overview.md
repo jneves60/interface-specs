@@ -41,7 +41,7 @@ SuperDSC-Bundle views Spyre hardware at the **data-parallel level of hardware ab
 This abstraction enables frontend compilers to express:
 
 - Complex kernels comprised of operation sequences
-- Work division (computation split) across RaPiD cores
+- Work division (computation split) across Spyre cores
 - Tensor placement in DDR memory or LX scratchpad
 - Static or symbolic shapes and start addresses
 

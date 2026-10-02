@@ -31,7 +31,7 @@ Each parameter is one of:
 |---|---|
 | *(none)* | No parameters — all symbol values (addresses and sizes) are embedded as `arith.constant` values inside the function body. |
 | `index` | A resolved symbol value (base address or dimension size) passed directly as a constant index value. |
-| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value (base address or dimension size). May carry optional `granularity=N` and/or `max_value=N` annotations for symbolic dimension parameters. Must be extracted with `sdscbundle.input_arg_extract` before use. |
+| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value (base address or dimension size). MAY carry OPTIONAL `granularity=N` and/or `max_value=N` annotations for symbolic dimension parameters. MUST be extracted with `sdscbundle.input_arg_extract` before use. |
 
 **Attributes:**
 
@@ -42,9 +42,9 @@ Each parameter is one of:
 **Constraints:**
 
 - Exactly one `func.func` per `module`.
-- All `sdscbundle.device_mem_allocate` calls should appear in the entry block of
+- All `sdscbundle.device_mem_allocate` calls SHOULD appear in the entry block of
   `func.func`, outside any `scf.for` loop.
-- Parameters of type `!sdscbundle.input_arg<index>` must be extracted with
+- Parameters of type `!sdscbundle.input_arg<index>` MUST be extracted with
   `sdscbundle.input_arg_extract` before their value is used in any arithmetic or
   passed to `sdscbundle.sdsc_execute`.
 
@@ -211,38 +211,33 @@ sdscbundle.sdsc_execute (%operand1, %operand2, ...) {
 
 **Operands:**
 
-- **%operand1, %operand2, ...** (optional): SSA values for symbolic parameters.
+- **%operand1, %operand2, ...** (OPTIONAL): SSA values for symbolic parameters.
   - Type: `index`
-  - Order must match `symbol_ids` order.
+  - Order MUST match `symbol_ids` order.
   - Can be constants, affine expressions, loop iterators, or addresses returned
     by `sdscbundle.device_mem_allocate`.
   - Each `sdsc_execute` call has its own independent operand list.
 
 **Attributes:**
 
-- **sdsc_filename** (required): `string` — relative path to the SDSC JSON file
+- **sdsc_filename** (REQUIRED): `string` — relative path to the SDSC JSON file
   for this invocation; one file per call. Path is relative to the MLIR file
   location.
 
-- **symbol_ids** (optional): `array<int>` — list of symbol IDs used in the
+- **symbol_ids** (OPTIONAL): `array<int>` — list of symbol IDs used in the
   SDSC. Values are negative integers (e.g., `-1`, `-2`, `-3`). Each ID maps
   positionally to one operand and corresponds to a symbolic start address or
-  size inside the JSON. Symbol IDs must be unique across the entire bundle —
-  the same ID cannot be reused in a different `sdsc_execute` call unless both
-  invocations assign the same value to that symbol. **Exception:** inside an
-  `scf.for` loop, the same symbol IDs may be reused across iterations because
-  the loop iterator provides the per-iteration uniqueness — each iteration
-  resolves to a distinct runtime value via the operand expressions (e.g.
-  `affine.apply`).
+  size inside the JSON. See [Constraints](#constraints) below for uniqueness
+  rules.
 
 **Returns:** None.
 
 **Constraints:**
 
-- The number of operands must equal the length of `symbol_ids`.
-- Symbol IDs must be unique within a bundle (i.e., the same ID cannot be reused
+- The number of operands MUST equal the length of `symbol_ids`.
+- Symbol IDs MUST be unique within a bundle (i.e., the same ID MUST NOT be reused
   across different `sdsc_execute` calls unless both invocations assign the same
-  value to that symbol). Inside an `scf.for` loop body, symbol IDs may be
+  value to that symbol). Inside an `scf.for` loop body, symbol IDs MAY be
   reused across iterations — the loop iterator provides per-iteration
   uniqueness.
 
@@ -325,7 +320,7 @@ as the base for sub-allocation arithmetic via `arith.addi`.
 
 **Attributes:**
 
-- **size** (required): `integer` — size of the requested buffer in bytes. Must
+- **size** (REQUIRED): `integer` — size of the requested buffer in bytes. MUST
   be a positive compile-time constant; symbolic sizes are not supported. The
   maximum single request is approximately 15 GB; the underlying segment is 16 GB,
   of which 1 GB is reserved for backend-generated programs and correction tensors.
@@ -335,14 +330,14 @@ byte of the allocated buffer. Contents are undefined at allocation.
 
 **Constraints:**
 
-- Should appear in the entry block of the bundle function, outside any `scf.for`
+- SHOULD appear in the entry block of the bundle function, outside any `scf.for`
   loop. An allocation written inside a loop still reserves one single buffer,
   not one buffer per iteration.
 - Each call allocates its own non-overlapping range. The total device memory
   required by a bundle is the sum of all its `device_mem_allocate` requests, and
-  that sum must remain within the ~15 GB budget.
+  that sum MUST remain within the ~15 GB budget.
 - A frontend that needs to reuse space across tensors with non-overlapping live
-  ranges should issue a single large `device_mem_allocate` and sub-allocate it
+  ranges SHOULD issue a single large `device_mem_allocate` and sub-allocate it
   manually using `arith.addi` offsets. The frontend is responsible for ensuring
   non-overlapping, correctly aligned sub-ranges.
 
@@ -387,14 +382,14 @@ sdscbundle.sdsc_execute (%addr_32768, %addr_49152, %arg_2) {sdsc_filename="sdsc_
 
 Extracts a named field from a `!sdscbundle.input_arg<index>` bundle parameter.
 The extractable fields are `value`, `granularity`, and `max_value`. Every
-`func.func` parameter of type `!sdscbundle.input_arg<index>` must be unwrapped
+`func.func` parameter of type `!sdscbundle.input_arg<index>` MUST be unwrapped
 with this operation before its content can be used in arithmetic or passed as an
 operand to `sdscbundle.sdsc_execute`.
 
 - `value` — the runtime base address or dimension size provided by the caller.
   Available on all `input_arg` parameters.
 - `granularity` — the step constraint for a symbolic dimension size (i.e. the
-  runtime value must be a multiple of this). Corresponds to `granularity_` in
+  runtime value MUST be a multiple of this). Corresponds to `granularity_` in
   [`SymbolicDimInfo`](datastructdims.md#symbolicdiminfo) in the accompanying SDSC.
 - `max_value` — the upper bound for a symbolic dimension size. Corresponds to
   `maxSize_` in [`SymbolicDimInfo`](datastructdims.md#symbolicdiminfo) in the
@@ -410,8 +405,8 @@ operand to `sdscbundle.sdsc_execute`.
 
 **Operands:**
 
-- **%arg** (required): An SSA value of type `!sdscbundle.input_arg<index>` (or
-  its annotated variant) — must be a `func.func` block argument.
+- **%arg** (REQUIRED): An SSA value of type `!sdscbundle.input_arg<index>` (or
+  its annotated variant) — MUST be a `func.func` block argument.
 
 **Attributes:** None.
 
@@ -419,11 +414,11 @@ operand to `sdscbundle.sdsc_execute`.
 
 **Constraints:**
 
-- The source operand must be a `func.func` block argument of type
+- The source operand MUST be a `func.func` block argument of type
   `!sdscbundle.input_arg<index>`; it cannot be the result of another operation.
-- Must appear in the entry block of the bundle function, before any use of the
+- MUST appear in the entry block of the bundle function, before any use of the
   extracted value.
-- `granularity` and `max_value` may only be extracted when the type annotation
+- `granularity` and `max_value` MAY only be extracted when the type annotation
   on the parameter declares the corresponding attribute; extracting an absent
   field is invalid.
 
@@ -512,13 +507,13 @@ scf.for %iterator = %lower_bound to %upper_bound step %step {
 
 **Constraints:**
 
-- The lower bound, upper bound, and step of every `scf.for` loop must all be
+- The lower bound, upper bound, and step of every `scf.for` loop MUST all be
   resolvable to compile-time constants (via constant folding). No symbolic or
   runtime loop bounds are supported in any loop kind, including parametric loops.
-- Loop-carried variables are not supported. The induction variable may be used
+- Loop-carried variables are not supported. The induction variable MAY be used
   freely inside the loop body (e.g. as an operand to `affine.apply` or
   `arith.addi` to compute per-iteration addresses).
-- `sdscbundle.device_mem_allocate` should not appear inside the loop body; if it does, the backend still reserves only one buffer for the entire kernel, not one per iteration.
+- `sdscbundle.device_mem_allocate` SHOULD NOT appear inside the loop body; if it does, the backend still reserves only one buffer for the entire kernel, not one per iteration.
 
 **Example:**
 
@@ -556,7 +551,7 @@ loop step values, and sub-allocation offsets.
 
 **Attributes:**
 
-- **value** (required): The compile-time constant to be materialised; encoded as
+- **value** (REQUIRED): The compile-time constant to be materialised; encoded as
   an integer literal in the source text. Always `index` type in SDSC Bundle
   usage.
 
@@ -564,7 +559,7 @@ loop step values, and sub-allocation offsets.
 
 **Constraints:**
 
-- Type must be `index` in SDSC Bundle usage.
+- Type MUST be `index` in SDSC Bundle usage.
 
 **Example:**
 
@@ -604,7 +599,7 @@ integer sum.
 
 **Constraints:**
 
-- Both operands must have the same type (`index` in SDSC Bundle usage).
+- Both operands MUST have the same type (`index` in SDSC Bundle usage).
 
 **Examples:**
 
@@ -651,11 +646,11 @@ Affine maps may also be defined as top-level named aliases:
 - **dim_values**: SSA values bound to dimension variables `d0, d1, ...`
   (e.g., loop iterators, core IDs).
 - **symbol_values**: SSA values bound to symbol variables `s0, s1, ...`
-  (e.g., base addresses — must be loop-invariant).
+  (e.g., base addresses — MUST be loop-invariant).
 
 **Attributes:**
 
-- **affine_map** (required): A compile-time affine expression. Supported
+- **affine_map** (REQUIRED): A compile-time affine expression. Supported
   operators:
   - Addition: `+`
   - Multiplication: `*`
@@ -668,9 +663,9 @@ expression with the supplied operands.
 
 **Constraints:**
 
-- The affine map must be expressible as a linear combination of its dimension
+- The affine map MUST be expressible as a linear combination of its dimension
   and symbol variables; non-linear expressions are not permitted.
-- Symbol variables must be loop-invariant (i.e., defined outside any enclosing
+- Symbol variables MUST be loop-invariant (i.e., defined outside any enclosing
   `scf.for`).
 
 **Examples:**
@@ -718,16 +713,16 @@ MLIR parse infrastructure. Violations are reported as parse or verification
 errors before the bundle is processed:
 
 - Only operations from the following dialects are permitted:
-  `sdscbundle`, `affine`, `arith`, `func`, `math`, `scf`. Any other
+  `sdscbundle`, `affine`, `arith`, `func`, `scf`. Any other
   dialect is a parse error.
-- The number of operands to `sdscbundle.sdsc_execute` must equal the
+- The number of operands to `sdscbundle.sdsc_execute` MUST equal the
   length of `symbol_ids`.
-- `sdscbundle.device_mem_allocate`: `size` must be a positive integer.
-- `sdscbundle.input_arg_extract`: the source operand must be a
+- `sdscbundle.device_mem_allocate`: `size` MUST be a positive integer.
+- `sdscbundle.input_arg_extract`: the source operand MUST be a
   `func.func` block argument of type `!sdscbundle.input_arg<index>`.
   Extracting `granularity` or `max_value` is only valid when those
   annotations are declared on the parameter type.
-- `func.func` parameters must be of type `index` or
+- `func.func` parameters MUST be of type `index` or
   `!sdscbundle.input_arg<index>`.
 
 ### 2. Semantic constraints — checked during pipeline processing
@@ -736,15 +731,15 @@ The following are enforced by the backend pipeline after structural
 verification passes. Violations result in a backend error during
 compilation:
 
-- All `scf.for` bounds (lower, upper, and step) must be resolvable to
+- All `scf.for` bounds (lower, upper, and step) MUST be resolvable to
   compile-time constants. No symbolic or runtime loop bounds are
   supported.
-- Symbol IDs must be unique across the entire bundle — the same ID
-  cannot appear in two different `sdscbundle.sdsc_execute` calls unless
+- Symbol IDs MUST be unique across the entire bundle — the same ID
+  MUST NOT appear in two different `sdscbundle.sdsc_execute` calls unless
   both supply the same value. Inside an `scf.for` loop body, the same
-  symbol IDs may be reused across iterations; the loop iterator provides
+  symbol IDs MAY be reused across iterations; the loop iterator provides
   per-iteration uniqueness.
-- `sdsc_filename` paths must resolve relative to the `.mlir` file
+- `sdsc_filename` paths MUST resolve relative to the `.mlir` file
   location.
 
 ---

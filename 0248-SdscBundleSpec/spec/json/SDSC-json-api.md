@@ -14,7 +14,7 @@ The different sections of an SDSC JSON file describe the following:
 - **Data staging** — per-core tile sizes for steady-state and epilogue passes
 - **Compute operations** — execution unit, operation name, and input/output tensor references
 
-All `sdsc_*.json` files in a SuperDSC-Bundle must conform to [`sdscbundle-schema.json`](../sdscbundle-schema.json),
+All `sdsc_*.json` files in a SuperDSC-Bundle MUST conform to [`sdscbundle-schema.json`](../sdscbundle-schema.json),
 the machine-readable contract written against [JSON Schema draft 2020-12](https://json-schema.org/draft/2020-12).
 
 The schema enforces:
@@ -131,7 +131,7 @@ In [`DesignSpaceConfig.N_`](datastructdims.md):
 
 In [`DesignSpaceConfig.dataStageParam_`](datastageparam.md):
 
-- Add exactly one entry with key `"0"`. Optionally set `name_` to `"core"` — the schema does not require it, but it is conventional for all compute operations.
+- Add exactly one entry with key `"0"`. Optionally set `name_` to `"core"` — the schema does not require it, but it is conventional for all compute operations. Valid values are `"core"`, `"corelet"`, or `"row"`; `"core"` is the conventional choice for compute operations.
 - Set `ss_` and `el_` to the per-core tile sizes. When work divides evenly
   `ss_` and `el_` are identical; `el_` carries the smaller final tile
   when it does not.
@@ -142,7 +142,7 @@ In [`DesignSpaceConfig.dataStageParam_`](datastageparam.md):
 - For symbolic dimensions: add `symbolicDimInfo_` inside each
   [`DataStructDims`](datastructdims.md). Set `maxSize_` to the upper bound and
   `granularity_` to the step constraint. When the dimension is split across N
-  cores, `granularity_` must be a multiple of N, and `ss_`/`el_` values must
+  cores, `granularity_` MUST be a multiple of N, and `ss_`/`el_` values MUST
   be scaled to the per-core size.
 
 ### Step 5 — Tensor layout (primaryDsInfo_)
@@ -184,12 +184,13 @@ will be allocated:
 - For indirect access (paged tensors): set `indirectAllocType_` to
   `"value_tensor"` or `"index_tensor"`, set `relatedIndirectAccessAlloc_` to
   the name of the counterpart node, and set `indexTensorType_` (`"index"` or
-  `"address"`) on the index tensor's node.
+  `"address"`) on the index tensor's node. For direct (non-indirect) tensors
+  the field may be omitted or set to `"no_indirection"`.
 - Set `coordinates_` (a [`CoordinateContainer`](coordinatecontainer.md)): for
   each tensor dimension, add a [`CoordinateInfo`](coordinateinfo.md) entry
   whose `folds` [`FoldManager`](foldmanager.md) encodes the affine split
   hierarchy (core → corelet → row → elements). The product of all `factor_`
-  values across all fold levels must equal the total element count for that
+  values across all fold levels MUST equal the total element count for that
   dimension.
 
 ### Step 7 — Tensor descriptors (labeledDs_)
