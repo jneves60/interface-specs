@@ -36,12 +36,13 @@ It does **not** cover:
 
 **Audience:** engineers writing or consuming a SuperDSC-Bundle — either implementing a frontend compiler that emits the bundle or a backend compiler that ingests it.
 
-**Conformance:** a bundle is conformant when every `sdsc_*.json` file validates against [`sdscbundle-schema.json`](spec/sdscbundle-schema.json) and every semantic rule stated in the individual object pages is satisfied. The goal is to be able to express all torch operators that are mappable to Spyre (post-inductor transformations and decompositions) and to express any desired computation mapping across cores for each operation.
+**Conformance:** A bundle is conformant when every `sdsc_*.json` file validates against [`sdscbundle-schema.json`](spec/sdscbundle-schema.json) and every semantic rule stated in the individual object pages is satisfied. The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this specification and its sub-documents are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals.
 
 ## Normative References
 
 | Reference | Role |
 |-----------|------|
+| [RFC 2119 / RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) | Key words for use in RFCs to Indicate Requirement Levels (BCP 14) |
 | [`sdscbundle-schema.json`](spec/sdscbundle-schema.json) | Machine-readable structural contract. Validates required fields, enum values, and type constraints for all `sdsc_*.json` files. Written against **JSON Schema draft 2020-12**. |
 | [MLIR SCF Dialect](https://mlir.llvm.org/docs/Dialects/SCFDialect/) | `scf.for` used in bundle loops |
 | [MLIR Affine Dialect](https://mlir.llvm.org/docs/Dialects/Affine/) | `affine.apply` used for address computation |

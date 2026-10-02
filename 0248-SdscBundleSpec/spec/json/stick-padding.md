@@ -1,6 +1,6 @@
 # Stick-Alignment Padding (layout padding)
 
-Every device tensor's **stick dimension** must be a whole multiple of the stick
+Every device tensor's **stick dimension** MUST be a whole multiple of the stick
 size.  When a logical extent is not, the producer widens it.  This padding is
 **independent of any operation** — it follows from the tensor layout alone — and
 it is therefore *not* the same thing as the window padding described in
