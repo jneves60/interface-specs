@@ -212,19 +212,11 @@ The table below lists all available examples in recommended reading order.
 
 Quick reference to every document in this specification, grouped by role.
 
-### Guide
-
-| Document | Description |
-|----------|-------------|
-| [Overview](guide/Overview.md) | Spyre stack overview and the two API components |
-
 ### MLIR Dialect — `sdscbundle`
 
 | Document | Description |
 |----------|-------------|
 | [MLIR Bundle API](spec/dialect/MLIR-bundle-API.md) | Dialect operations, bundle container, symbolic values |
-| [MLIR Examples](guide/MLIR-examples.md) | Annotated MLIR bundle examples |
-| [MLIR Complete Example](guide/MLIR-complete-example.md) | Full end-to-end MLIR bundle |
 
 ### JSON Layer
 
@@ -256,15 +248,18 @@ Quick reference to every document in this specification, grouped by role.
 | ComputeOperation | [computeoperation.md](spec/json/computeoperation.md) |
 | ConstantInfo | [constantinfo.md](spec/json/constantinfo.md) |
 
-### Worked Examples
-
-| Document | Description |
-|----------|-------------|
-| [JSON Examples](guide/JSON-examples.md) | Complete and indirect-access JSON examples |
-
 ### References
 
 | Document | Description |
 |----------|-------------|
 | [References](spec/reference.md) | External specs and normative references |
+
+### Guide & Examples (non-normative)
+
+| Document | Description |
+|----------|-------------|
+| [Overview](guide/Overview.md) | Spyre stack overview and the two API components |
+| [MLIR Examples](guide/MLIR-examples.md) | Annotated MLIR bundle examples |
+| [MLIR Complete Example](guide/MLIR-complete-example.md) | Full end-to-end MLIR bundle |
+| [JSON Examples](guide/JSON-examples.md) | Complete and indirect-access JSON examples |
 
