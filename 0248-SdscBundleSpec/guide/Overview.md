@@ -45,12 +45,7 @@ This abstraction enables frontend compilers to express:
 - Tensor placement in DDR memory or LX scratchpad
 - Static or symbolic shapes and start addresses
 
-The SuperDSC-Bundle output is used by the Deeptools backend compiler to produce the `SpyreCode`
-consumed by the Spyre Card. The `SpyreCode` contains the job binary, a job plan and other
-compiled artifacts. In the case where either the start-address and/or shapes are symbolic,
-`SpyreCode` allows for the program binary to contain variables that need to be substituted
-or corrected before execution. The mechanism to perform program correction just-in-time before
-the job is launched onto spyre is also produced by the backend compiler as part of `SpyreCode`.
+The SuperDSC-Bundle output is consumed by Deeptools to produce `SpyreCode`. For a full description of `SpyreCode` and its symbolic correction mechanism, see [Execution Model](../SuperDSC-Bundle.md#execution-model).
 
 ## API Components
 
