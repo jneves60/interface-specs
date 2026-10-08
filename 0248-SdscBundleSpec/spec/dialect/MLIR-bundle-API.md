@@ -509,9 +509,9 @@ scf.for %iterator = %lower_bound to %upper_bound step %step {
 - The lower bound, upper bound, and step of every `scf.for` loop MUST all be
   resolvable to compile-time constants (via constant folding). No symbolic or
   runtime loop bounds are supported in any loop kind, including parametric loops.
-- Loop-carried variables are not supported. The induction variable MAY be used
-  freely inside the loop body (e.g. as an operand to `affine.apply` or
-  `arith.addi` to compute per-iteration addresses).
+- Loop-carried variables are not supported. The induction variable is available
+  throughout the loop body and is typically used as an operand to `affine.apply`
+  or `arith.addi` to compute per-iteration addresses.
 - `sdscbundle.device_mem_allocate` SHOULD NOT appear inside the loop body. Only one buffer is reserved for the entire kernel, not one per iteration, regardless of loop placement.
 
 **Example:**
