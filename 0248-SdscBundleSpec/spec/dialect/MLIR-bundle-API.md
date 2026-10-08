@@ -31,7 +31,7 @@ Each parameter is one of:
 |---|---|
 | *(none)* | No parameters — all symbol values (addresses and sizes) are embedded as `arith.constant` values inside the function body. |
 | `index` | A resolved symbol value (base address or dimension size) passed directly as a constant index value. |
-| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value (base address or dimension size). MAY carry OPTIONAL `granularity=N` and/or `max_value=N` annotations for symbolic dimension parameters. MUST be extracted with `sdscbundle.input_arg_extract` before use. |
+| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value (base address or dimension size). MAY carry `granularity=N` and/or `max_value=N` annotations for symbolic dimension parameters. MUST be extracted with `sdscbundle.input_arg_extract` before use. |
 
 **Attributes:**
 

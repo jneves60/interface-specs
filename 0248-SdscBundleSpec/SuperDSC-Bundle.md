@@ -139,7 +139,7 @@ Each parameter is one of:
 |---|---|
 | *(none)* | No parameters — all symbol values are embedded as `arith.constant` values inside the function body. |
 | `index` | A resolved symbol value passed directly as a constant index. |
-| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value. MAY carry OPTIONAL `granularity=N` and/or `max_value=N` annotations. MUST be extracted with `sdscbundle.input_arg_extract` before use. |
+| `!sdscbundle.input_arg<index>` | A runtime-provided symbol value. MAY carry `granularity=N` and/or `max_value=N` annotations. MUST be extracted with `sdscbundle.input_arg_extract` before use. |
 
 #### Symbolic Values and Addresses
 
