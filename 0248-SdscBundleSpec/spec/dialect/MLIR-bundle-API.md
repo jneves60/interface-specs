@@ -721,7 +721,7 @@ errors before the bundle is processed:
 - `sdscbundle.device_mem_allocate`: `size` MUST be a positive integer.
 - `sdscbundle.input_arg_extract`: the source operand MUST be a
   `func.func` block argument of type `!sdscbundle.input_arg<index>`.
-  Extracting `granularity` or `max_value` is only valid when those
+  `granularity` and `max_value` MUST NOT be extracted unless those
   annotations are declared on the parameter type.
 - `func.func` parameters MUST be of type `index` or
   `!sdscbundle.input_arg<index>`.
