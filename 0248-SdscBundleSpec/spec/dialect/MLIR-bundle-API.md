@@ -338,8 +338,10 @@ byte of the allocated buffer. Contents are undefined at allocation.
   that sum MUST remain within the ~15 GB budget.
 - A frontend that needs to reuse space across tensors with non-overlapping live
   ranges SHOULD issue a single large `device_mem_allocate` and sub-allocate it
-  manually using `arith.addi` offsets. The frontend is responsible for ensuring
-  non-overlapping, correctly aligned sub-ranges.
+  manually using `arith.addi` offsets. When doing so, the frontend MUST ensure
+  that sub-ranges whose live ranges overlap are assigned disjoint offset intervals,
+  and MUST satisfy the alignment requirement for each sub-range by its choice of
+  offset.
 
 **Examples:**
 
