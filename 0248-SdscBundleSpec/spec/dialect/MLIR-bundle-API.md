@@ -42,7 +42,7 @@ Each parameter is one of:
 **Constraints:**
 
 - Exactly one `func.func` per `module`.
-- All `sdscbundle.device_mem_allocate` calls SHOULD appear in the entry block of
+- All `sdscbundle.device_mem_allocate` calls MUST appear in the entry block of
   `func.func`, outside any `scf.for` loop.
 - Parameters of type `!sdscbundle.input_arg<index>` MUST be extracted with
   `sdscbundle.input_arg_extract` before their value is used in any arithmetic or
@@ -330,9 +330,9 @@ byte of the allocated buffer. Contents are undefined at allocation.
 
 **Constraints:**
 
-- SHOULD appear in the entry block of the bundle function, outside any `scf.for`
-  loop. An allocation written inside a loop still reserves one single buffer,
-  not one buffer per iteration.
+- MUST appear in the entry block of the bundle function, outside any `scf.for`
+  loop. Placing it inside a loop is a correctness trap: the backend reserves one
+  buffer for the entire kernel regardless of loop placement, not one per iteration.
 - Each call allocates its own non-overlapping range. The total device memory
   required by a bundle is the sum of all its `device_mem_allocate` requests, and
   that sum MUST remain within the ~15 GB budget.
@@ -514,7 +514,7 @@ scf.for %iterator = %lower_bound to %upper_bound step %step {
 - Loop-carried variables are not supported. The induction variable is available
   throughout the loop body and is typically used as an operand to `affine.apply`
   or `arith.addi` to compute per-iteration addresses.
-- `sdscbundle.device_mem_allocate` SHOULD NOT appear inside the loop body. Only one buffer is reserved for the entire kernel, not one per iteration, regardless of loop placement.
+- `sdscbundle.device_mem_allocate` MUST NOT appear inside the loop body. The backend reserves one buffer for the entire kernel regardless of loop placement; placing it inside a loop silently produces one buffer instead of one per iteration.
 
 **Example:**
 
