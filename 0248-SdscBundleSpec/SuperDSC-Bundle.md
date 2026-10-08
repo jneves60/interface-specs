@@ -171,7 +171,7 @@ For the full list of supported `opFuncName` values, see [ComputeOperation — Su
 
 Each operation category imposes constraints on stick composition, restricting which dimensions can be present in the stick. Tensors MUST be padded to meet these constraints. There are no constraints on tensor layout beyond the stick.
 
-**Important:** Stick constraints can cause a ripple effect — a tensor MAY need padding even in its non-stick dimension if that dimension appears in the stick of another tensor feeding the same operation. This ensures dimension span consistency across all tensors.
+**Important:** Stick constraints can cause a ripple effect — a tensor MUST be padded even in its non-stick dimension if that dimension appears in the stick of another tensor feeding the same operation. This ensures dimension span consistency across all tensors.
 
 For per-category stick layouts and padding rules see [Stick Layout Constraints](spec/json/stick-layout-constraints.md).
 
