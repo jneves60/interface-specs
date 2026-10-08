@@ -70,7 +70,7 @@ All other precision formats follow BatchMatmul constraints.
 **Top-K Operations:**
 
 - The reduction dimension and k MUST NOT be in the stick
-- Any number of other dimensions MAY be in the stick
+- Any number of other dimensions can be in the stick
 - The output tensor MUST have the same stick layout as the input tensor for all non-excluded dimensions
 
 ## LayerNorm and EXX2 Operations
@@ -86,7 +86,7 @@ All other precision formats follow BatchMatmul constraints.
 **Constraint:**
 
 - Window dimensions MUST NOT be placed in the stick
-- Any number of other dimensions MAY be in the stick
+- Any number of other dimensions can be in the stick
 
 ## Quantization Operations
 
@@ -154,7 +154,7 @@ introduces into `backGapCore_`, see [Stick-Alignment Padding](stick-padding.md).
 
 - Input stick MUST contain elements from exactly **one** dimension (`d1`).
 - Output stick MUST contain elements from exactly **one** dimension (`d2`).
-- `d1` and `d2` MAY be any primary dimensions — there is no restriction on which dimensions are chosen.
+- `d1` and `d2` can be any primary dimensions — there is no restriction on which dimensions are chosen.
 - Only SEN169_FP16 precision is supported.
 
 ---
