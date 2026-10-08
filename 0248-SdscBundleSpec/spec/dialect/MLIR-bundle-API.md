@@ -418,9 +418,8 @@ operand to `sdscbundle.sdsc_execute`.
   `!sdscbundle.input_arg<index>`; it cannot be the result of another operation.
 - MUST appear in the entry block of the bundle function, before any use of the
   extracted value.
-- `granularity` and `max_value` MAY only be extracted when the type annotation
-  on the parameter declares the corresponding attribute; extracting an absent
-  field is invalid.
+- `granularity` and `max_value` MUST NOT be extracted unless the type annotation
+  on the parameter declares the corresponding attribute.
 
 **Example — value (base address):**
 
