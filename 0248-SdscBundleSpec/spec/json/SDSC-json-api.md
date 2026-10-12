@@ -124,7 +124,7 @@ Root Object (Dynamic operation name key, e.g. "exp", "matmul", "gelu")
 
 ## JSON Object Reference Index
 
-Below is the complete index of all 17 specification documents governing the SDSC JSON format, organized by architectural layer.
+Below is the complete index of all 16 specification documents governing the SDSC JSON format, organized by architectural layer.
 
 ### 1. Bundle & Top-Level Objects
 
@@ -133,7 +133,6 @@ Below is the complete index of all 17 specification documents governing the SDSC
 | **SuperDSC** | [superdsc-object.md](superdsc-object.md) | Top-level object holding core folds, work-slice mappings, per-core schedule tuples, and the `dscs_[]` array. |
 | **FoldProperty** | [foldproperty.md](foldproperty.md) | Pairs a fold factor with a memory hierarchy level label (`"core"`, `"corelet"`, `"time"`, etc.) for compact multi-core representations. |
 | **FoldManager** | [foldmanager.md](foldmanager.md) | Reusable structure mapping multi-dimensional loop index tuples (core, corelet, time) to coordinates and start addresses via affine functions. |
-| **Object Hierarchy** | [JSON-object-Hierarchy.md](JSON-object-Hierarchy.md) | Dedicated structural diagram and annotated key summary of the entire JSON object tree. |
 
 ### 2. Design Space Configuration & Staging
 

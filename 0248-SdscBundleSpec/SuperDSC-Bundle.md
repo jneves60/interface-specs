@@ -192,7 +192,6 @@ Quick reference to every document in this specification, grouped by role.
 | Document | Description |
 |----------|-------------|
 | [SDSC JSON API](spec/json/SDSC-json-api.md) | Structural filling guide, object hierarchy tree, producer conventions, and complete JSON object reference index |
-| [Object Hierarchy](spec/json/JSON-object-Hierarchy.md) | Annotated tree of every JSON key |
 | [JSON Schema (normative)](spec/sdscbundle-schema.json) | Machine-readable JSON Schema (draft 2020-12) |
 
 > **Note:** For individual specifications of every JSON object, allocation node, tensor descriptor, constant encoding, compute operation, and layout constraint, see the complete [JSON Object Reference Index](spec/json/SDSC-json-api.md#json-object-reference-index) in the SDSC JSON API document.

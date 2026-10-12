@@ -68,7 +68,7 @@ For supported operation categories (including data-shuffle operations such as st
 ## Filling a JSON File — Step-by-Step
 
 This section walks through filling an SDSC JSON file in the same order as the
-[`SuperDsc` object hierarchy](../spec/json/JSON-object-Hierarchy.md): SuperDSC top-level container
+[`SuperDsc` object hierarchy](../spec/json/SDSC-json-api.md#structural-hierarchy-tree): SuperDSC top-level container
 first, then the per-operation `DesignSpaceConfig` fields in the order they
 appear in the schema, finishing with the deepest leaf objects.
 
