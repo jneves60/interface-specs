@@ -237,7 +237,7 @@ Any frontend producer emitting SDSC JSON (such as `torch-spyre`) MUST adhere to 
    - `constantInfo_` uses the string `"{}"` when no constants are present.
    - `datadscs_` MUST be an empty array `[]` when emitted by the frontend.
    - `coreletSplit_` in staging parameters is emitted as `{}`.
-5. **Pass-Through Constants**: Because `torch-spyre` partitions work at the core level and leaves corelet splitting to downstream DXP, frontend-emitted artifacts set `coreletFoldProp_` to `{"factor_": 1, "label_": "corelet"}` and `numCoreletsUsed_` to `1`.
+5. **Pass-Through Constants**: Because `torch-spyre` partitions work at the core level and leaves corelet splitting to DeepTools, frontend-emitted artifacts set `coreletFoldProp_` to `{"factor_": 1, "label_": "corelet"}` and `numCoreletsUsed_` to `1`.
 6. **Schedule Step Tuple**: Each core schedule entry in `coreIdToDscSchedule` MUST be an array of exactly 4 integers `[datadsc_idx, dldsc_idx, before_sync, after_sync]`. Common single-DSC default is `[-1, 0, 0, 0]`.
 7. **Strict Schema Conformance**: All objects have `additionalProperties: false`. No extra or undeclared fields may be included.
 

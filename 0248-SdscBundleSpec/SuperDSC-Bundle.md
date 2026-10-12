@@ -64,7 +64,7 @@ It does **not** cover:
 | **SuperDSC-Bundle** | A set of files — one `bundle.mlir` and one or more `sdsc_*.json` files — that collectively describe a complex kernel to be compiled and executed on Spyre. |
 | **DSC (DesignSpaceConfig)** | One entry in the `dscs_[]` array of a SuperDSC object. Holds the tensor descriptors, schedule tree, data staging, and compute operation for one compute configuration. |
 | **core** | A single processing unit on Spyre, comprising one compute engine (AIU) and one scratchpad memory (LX). Spyre currently has 32 cores. |
-| **corelet** | A sub-unit within a core. Each core contains two corelets; `coreletFoldProp_.factor_` is always `2`. |
+| **corelet** | A sub-unit within a core. Each core contains two corelets. Frontend-emitted bundles (torch-spyre) set `coreletFoldProp_.factor_` to `1` and leave corelet splitting to DeepTools. |
 | **fold / folding** | A mechanism by which a single parameterised JSON artifact represents the behaviour of all cores compactly. Fold properties encode affine transformations (`α × index + β`) that compute per-core coordinates and addresses without duplicating the descriptor for each core. See [FoldProperty](spec/json/foldproperty.md) and [FoldManager](spec/json/foldmanager.md). |
 | **work division** | The assignment of portions of the operation's iteration space to individual cores, expressed via `numWkSlicesPerDim_`, `coreIdToWkSlice_`, and `coreFoldProp_`. |
 | **stick** | The innermost contiguous unit of tensor storage on Spyre. Each tensor dimension is either a *stick dimension* (innermost, packed) or a *non-stick dimension* (outer). The stick size and composition are constrained per operation category. See [Stick Layout Constraints](spec/json/stick-layout-constraints.md). |

@@ -93,7 +93,7 @@ every [`FoldManager`](../spec/json/foldmanager.md) used later inherits from thes
 
 - Set `coreFoldProp_.factor_` to a value between 1 and the maximum number of cores
   in use (e.g. `32` for a full-chip bundle, or `2` for a 2-core bundle). Set `label_` to `"core"`.
-- Set `coreletFoldProp_.factor_` to `1` (or `2` if backend split is explicit). Set `label_` to `"corelet"`.
+- Set `coreletFoldProp_.factor_` to `1`; corelet splitting is left to DeepTools. Set `label_` to `"corelet"`.
 - Set `numCoresUsed_` to the total number of cores.
 - (Optional) Set `sdscFoldProps_` and `sdscFolds_` only when bundle-level fold
   dimensions above the core level are required.
