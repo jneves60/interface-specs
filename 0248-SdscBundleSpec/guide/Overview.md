@@ -54,7 +54,7 @@ The API consists of two primary components:
 1. **MLIR Bundle File** (`.mlir`) — Orchestrates execution flow and symbol management
 2. **SDSC JSON Files** (`.json`) — Defines individual operations and their core mappings
 
-All `sdsc_*.json` files MUST conform to the [SDSC Bundle JSON Schema](../spec/sdscbundle-schema.json).
+All `sdsc_*.json` files conform to the [SDSC Bundle JSON Schema](../spec/sdscbundle-schema.json).
 The schema provides machine-readable type constraints, required-field enforcement, and enum
 validation for every object in the hierarchy. It is the normative reference for structural
 correctness.
@@ -150,8 +150,8 @@ In [`DesignSpaceConfig.dataStageParam_`](../spec/json/datastageparam.md):
 - For symbolic dimensions: add `symbolicDimInfo_` inside each
   [`DataStructDims`](../spec/json/datastructdims.md). Set `maxSize_` to the upper bound and
   `granularity_` to the step constraint. When the dimension is split across N
-  cores, `granularity_` MUST be a multiple of N, and `ss_`/`el_` values MUST
-  be scaled to the per-core size.
+  cores, make `granularity_` a multiple of N and scale the `ss_`/`el_` values
+  to the per-core size.
 
 ### Step 5 — Tensor layout (primaryDsInfo_)
 
@@ -193,12 +193,12 @@ will be allocated:
   `"value_tensor"` or `"index_tensor"`, set `relatedIndirectAccessAlloc_` to
   the name of the counterpart node, and set `indexTensorType_` (`"index"` or
   `"address"`) on the index tensor's node. For direct (non-indirect) tensors
-  the field MAY be omitted or set to `"no_indirection"`.
+  the field can be omitted or set to `"no_indirection"`.
 - Set `coordinates_` (a [`CoordinateContainer`](../spec/json/coordinatecontainer.md)): for
   each tensor dimension, add a [`CoordinateInfo`](../spec/json/coordinateinfo.md) entry
   whose `folds` [`FoldManager`](../spec/json/foldmanager.md) encodes the affine split
   hierarchy (core → corelet → row → elements). The product of all `factor_`
-  values across all fold levels MUST equal the total element count for that
+  values across all fold levels equals the total element count for that
   dimension.
 
 ### Step 7 — Tensor descriptors (labeledDs_)
