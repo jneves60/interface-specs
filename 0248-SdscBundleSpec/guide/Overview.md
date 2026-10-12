@@ -9,7 +9,7 @@ Follow the link for a description of the [SuperDSC-Bundle Interface Specificatio
 The figure below illustrates what is called the Spyre Stack where a user-written PyTorch program is compiled by torch-spyre to generate a set of files known as the **SuperDSC-Bundle**. A PyTorch file may translate into several SuperDSC-Bundles, each one being composed of a ***bundle.mlir*** file and several ***sdsc_\*.json*** files, each JSON file describing a torch operation (a full list of supported PyTorch operations can be found in [torch-spyre](https://torch-spyre.readthedocs.io/)).
 Each SuperDSC-Bundle is compiled by **DeepTools** to generate the assembly code that runs on the Spyre AI Accelerator Card. Furthermore, the compiler also generates the execution plan that manages the execution of an operation as well as intra-memory data movement on the Spyre Card.
 
-![High-Level View of SuperDSC-Bundle API within torch-spyre stack](../spec/json/figures/torch_spyre_backend_flow.png)
+![High-Level View of SuperDSC-Bundle API within torch-spyre stack](/0248-SdscBundleSpec/spec/json/figures/torch_spyre_backend_flow.png)
 
 *Figure 1: High-Level View of SuperDSC-Bundle API within torch-spyre stack*
 
@@ -34,7 +34,7 @@ SuperDSC-Bundle views Spyre hardware at the **data-parallel level of hardware ab
 - **On-chip interconnect fabric** connecting cores and off-chip memory banks
 - **Off-chip memory** (HBM/DDR) for large data storage
 
-![Hardware abstraction of multi-core accelerator embodied in SuperDSC-Bundle](../spec/json/figures/data_parallel_hw_abstraction.png)
+![Hardware abstraction of multi-core accelerator embodied in SuperDSC-Bundle](/0248-SdscBundleSpec/spec/json/figures/data_parallel_hw_abstraction.png)
 
 *Figure 2: Hardware abstraction of multi-core accelerator embodied in **SuperDSC-Bundle***
 
@@ -54,21 +54,21 @@ The API consists of two primary components:
 1. **MLIR Bundle File** (`.mlir`) — Orchestrates execution flow and symbol management
 2. **SDSC JSON Files** (`.json`) — Defines individual operations and their core mappings
 
-All `sdsc_*.json` files conform to the [SDSC Bundle JSON Schema](../spec/sdscbundle-schema.json).
+All `sdsc_*.json` files conform to the [SDSC Bundle JSON Schema](/0248-SdscBundleSpec/spec/sdscbundle-schema.json).
 The schema provides machine-readable type constraints, required-field enforcement, and enum
 validation for every object in the hierarchy. It is the normative reference for structural
 correctness.
 
 ## Important Notes
 
-For supported operation categories (including data-shuffle operations such as stick-breaking, gather, and scatter) and tensor allocation rules, see the [API Components note](../SuperDSC-Bundle.md#api-components) in the spec, [ComputeOperation](../spec/json/computeoperation.md), and [Stick Layout Constraints](../spec/json/stick-layout-constraints.md).
+For supported operation categories (including data-shuffle operations such as stick-breaking, gather, and scatter) and tensor allocation rules, see the [API Components note](../SuperDSC-Bundle.md#api-components) in the spec, [ComputeOperation](/0248-SdscBundleSpec/spec/json/computeoperation.md), and [Stick Layout Constraints](/0248-SdscBundleSpec/spec/json/stick-layout-constraints.md).
 
 ---
 
 ## Filling a JSON File — Step-by-Step
 
 This section walks through filling an SDSC JSON file in the same order as the
-[`SuperDsc` object hierarchy](../spec/json/SDSC-json-api.md#structural-hierarchy-tree): SuperDSC top-level container
+[`SuperDsc` object hierarchy](/0248-SdscBundleSpec/spec/json/SDSC-json-api.md#structural-hierarchy-tree): SuperDSC top-level container
 first, then the per-operation `DesignSpaceConfig` fields in the order they
 appear in the schema, finishing with the deepest leaf objects.
 
@@ -88,8 +88,8 @@ appear in the schema, finishing with the deepest leaf objects.
 
 Create the root object with a single key — the operation name string
 (pattern `^[a-zA-Z0-9_/\-][a-zA-Z0-9_/\-]*$`). Its value is the
-[`SuperDsc`](../spec/json/superdsc-object.md) object. Fill the fold properties first, as
-every [`FoldManager`](../spec/json/foldmanager.md) used later inherits from these:
+[`SuperDsc`](/0248-SdscBundleSpec/spec/json/superdsc-object.md) object. Fill the fold properties first, as
+every [`FoldManager`](/0248-SdscBundleSpec/spec/json/foldmanager.md) used later inherits from these:
 
 - Set `coreFoldProp_.factor_` to a value between 1 and the maximum number of cores
   in use (e.g. `32` for a full-chip bundle, or `2` for a 2-core bundle). Set `label_` to `"core"`.
@@ -100,7 +100,7 @@ every [`FoldManager`](../spec/json/foldmanager.md) used later inherits from thes
 
 ### Step 2 — SuperDSC work-division maps
 
-Still in [`SuperDsc`](../spec/json/superdsc-object.md), fill the maps that assign work
+Still in [`SuperDsc`](/0248-SdscBundleSpec/spec/json/superdsc-object.md), fill the maps that assign work
 slices and DSC indices to cores:
 
 - Set `numWkSlicesPerDim_`: for each dimension being split across cores, record
@@ -122,7 +122,7 @@ slices and DSC indices to cores:
 ### Step 3 — DesignSpaceConfig identity (inside dscs_)
 
 Add one entry to `dscs_` — a single-key object `{"<op_name>": <DesignSpaceConfig>}`.
-Inside the [`DesignSpaceConfig`](../spec/json/designspaceconfig.md), set the core identity
+Inside the [`DesignSpaceConfig`](/0248-SdscBundleSpec/spec/json/designspaceconfig.md), set the core identity
 fields first, as they are referenced by the data-staging and tensor steps below:
 
 - Set `numCoresUsed_` and `coreIdsUsed_` to match the cores assigned to this
@@ -130,14 +130,14 @@ fields first, as they are referenced by the data-staging and tensor steps below:
 
 ### Step 4 — Total operation dimensions (N_) and data staging (dataStageParam_)
 
-In [`DesignSpaceConfig.N_`](../spec/json/datastructdims.md):
+In [`DesignSpaceConfig.N_`](/0248-SdscBundleSpec/spec/json/datastructdims.md):
 
 - Set each dimension field that participates in the operation to its total
   (un-tiled) size. Set all others to `-1`.
 - For symbolic dimensions, set the field to `-1` (sentinel) and populate
   `dimToSymbolMapping_` to link each symbolic dimension name to its symbol ID.
 
-In [`DesignSpaceConfig.dataStageParam_`](../spec/json/datastageparam.md):
+In [`DesignSpaceConfig.dataStageParam_`](/0248-SdscBundleSpec/spec/json/datastageparam.md):
 
 - Add exactly one entry with key `"0"`. Optionally set `name_` to `"core"` — the schema does not require it, but it is conventional for all compute operations. Valid values are `"core"`, `"corelet"`, or `"row"`; `"core"` is the conventional choice for compute operations.
 - Set `ss_` and `el_` to the per-core tile sizes. When work divides evenly
@@ -146,16 +146,16 @@ In [`DesignSpaceConfig.dataStageParam_`](../spec/json/datastageparam.md):
 - For window/padded operations (avgpool2d, maxpool2d, conv2d, depthwise conv2d): add `paddingSizes_`
   to both `ss_` and `el_`. If a padded dimension is split across cores, set
   `padFront_` and `padBack_` to `-1` in the per-core data staging entry.
-  See [Padding](../spec/json/padding.md) for the full field set.
+  See [Padding](/0248-SdscBundleSpec/spec/json/padding.md) for the full field set.
 - For symbolic dimensions: add `symbolicDimInfo_` inside each
-  [`DataStructDims`](../spec/json/datastructdims.md). Set `maxSize_` to the upper bound and
+  [`DataStructDims`](/0248-SdscBundleSpec/spec/json/datastructdims.md). Set `maxSize_` to the upper bound and
   `granularity_` to the step constraint. When the dimension is split across N
   cores, make `granularity_` a multiple of N and scale the `ss_`/`el_` values
   to the per-core size.
 
 ### Step 5 — Tensor layout (primaryDsInfo_)
 
-In [`DesignSpaceConfig.primaryDsInfo_`](../spec/json/primarydsinfo.md), add one entry for
+In [`DesignSpaceConfig.primaryDsInfo_`](/0248-SdscBundleSpec/spec/json/primarydsinfo.md), add one entry for
 each distinct tensor role. Multiple tensors that share the same stick layout
 can share one entry:
 
@@ -163,13 +163,13 @@ can share one entry:
   `"KERNEL_IDX"`).
 - Set `layoutDimOrder_` (outermost dimension first).
 - Set `stickDimOrder_` and `stickSize_` as parallel arrays. Consult
-  [Stick Layout Constraints](../spec/json/stick-layout-constraints.md) for the exact
+  [Stick Layout Constraints](/0248-SdscBundleSpec/spec/json/stick-layout-constraints.md) for the exact
   stick rules for each operation category.
 
 ### Step 6 — Memory allocation schedule (scheduleTree_)
 
-In [`DesignSpaceConfig.scheduleTree_`](../spec/json/scheduletreenode.md), add one
-[`ScheduleTreeNode`](../spec/json/scheduletreenode.md) per tensor, in the order tensors
+In [`DesignSpaceConfig.scheduleTree_`](/0248-SdscBundleSpec/spec/json/scheduletreenode.md), add one
+[`ScheduleTreeNode`](/0248-SdscBundleSpec/spec/json/scheduletreenode.md) per tensor, in the order tensors
 will be allocated:
 
 - Set `nodeType_: "allocate"`, a unique `name_`, and `ldsIdx_` matching the
@@ -177,7 +177,7 @@ will be allocated:
 - Set `component_` to `"hbm"` or `"lx"`.
 - Set `layoutDimOrder_` and `maxDimSizes_` (use `-1` for unbound dimensions;
   use the page size for paged value tensors).
-- Set `startAddressCoreCorelet_` as a [`FoldManager`](../spec/json/foldmanager.md):
+- Set `startAddressCoreCorelet_` as a [`FoldManager`](/0248-SdscBundleSpec/spec/json/foldmanager.md):
   - First fold dimension: `Map` function — each core ID maps to its own start
     address in `data_`.
   - Second fold dimension: `Const` function — all corelets on a core share the
@@ -194,17 +194,17 @@ will be allocated:
   the name of the counterpart node, and set `indexTensorType_` (`"index"` or
   `"address"`) on the index tensor's node. For direct (non-indirect) tensors
   the field can be omitted or set to `"no_indirection"`.
-- Set `coordinates_` (a [`CoordinateContainer`](../spec/json/coordinatecontainer.md)): for
-  each tensor dimension, add a [`CoordinateInfo`](../spec/json/coordinateinfo.md) entry
-  whose `folds` [`FoldManager`](../spec/json/foldmanager.md) encodes the affine split
+- Set `coordinates_` (a [`CoordinateContainer`](/0248-SdscBundleSpec/spec/json/coordinatecontainer.md)): for
+  each tensor dimension, add a [`CoordinateInfo`](/0248-SdscBundleSpec/spec/json/coordinateinfo.md) entry
+  whose `folds` [`FoldManager`](/0248-SdscBundleSpec/spec/json/foldmanager.md) encodes the affine split
   hierarchy (core → corelet → row → elements). The product of all `factor_`
   values across all fold levels equals the total element count for that
   dimension.
 
 ### Step 7 — Tensor descriptors (labeledDs_)
 
-In [`DesignSpaceConfig.labeledDs_`](../spec/json/labeleddatastructure.md), add one
-[`LabeledDataStructure`](../spec/json/labeleddatastructure.md) per tensor in the same
+In [`DesignSpaceConfig.labeledDs_`](/0248-SdscBundleSpec/spec/json/labeleddatastructure.md), add one
+[`LabeledDataStructure`](/0248-SdscBundleSpec/spec/json/labeleddatastructure.md) per tensor in the same
 order used for `ldsIdx_` in Step 6:
 
 - Assign sequential `ldsIdx_` values (0, 1, 2, …) and a unique `dsName_`.
@@ -218,14 +218,14 @@ order used for `ldsIdx_` in Step 6:
 
 ### Step 8 — Constants (constantInfo_)
 
-In [`DesignSpaceConfig.constantInfo_`](../spec/json/constantinfo.md):
+In [`DesignSpaceConfig.constantInfo_`](/0248-SdscBundleSpec/spec/json/constantinfo.md):
 
 - If the operation requires no constants, set the field to the string `"{}"`.
 - Otherwise, add one entry per constant, keyed by sequential string integer
   (`"0"`, `"1"`, …). For each:
   - Set `name_` to the agreed constant name for that operation.
   - Set `dataFormat_` to match the tensors it is applied to.
-  - Set `data_` as a [`FoldManager`](../spec/json/foldmanager.md): use `Const` at both the
+  - Set `data_` as a [`FoldManager`](/0248-SdscBundleSpec/spec/json/foldmanager.md): use `Const` at both the
     core and corelet fold levels when the value is the same on all cores (the
     common case). Use `Map` at the core level only when the value differs per
     core. Encode the value in the specified `dataFormat_` without zero-padding
@@ -233,10 +233,10 @@ In [`DesignSpaceConfig.constantInfo_`](../spec/json/constantinfo.md):
 
 ### Step 9 — Compute operation (computeOp_)
 
-In [`DesignSpaceConfig.computeOp_`](../spec/json/computeoperation.md):
+In [`DesignSpaceConfig.computeOp_`](/0248-SdscBundleSpec/spec/json/computeoperation.md):
 
 - Set `opFuncName` to the operation string (e.g. `"gelufwd"`, `"batchmatmul"`).
-  See [Supported Operations](../spec/json/computeoperation.md#supported-operations) for the full table.
+  See [Supported Operations](/0248-SdscBundleSpec/spec/json/computeoperation.md#supported-operations) for the full table.
 - Set `attributes_.dataFormat_` to the execution format (`"SEN169_FP16"`,
   `"IEEE_FP32"`, …).
 - Set `exUnit` to `"sfp"` or `"pt"`.

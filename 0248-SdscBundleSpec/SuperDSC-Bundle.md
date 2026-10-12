@@ -196,26 +196,12 @@ Quick reference to every document in this specification, grouped by role.
 
 > **Note:** For individual specifications of every JSON object, allocation node, tensor descriptor, constant encoding, compute operation, and layout constraint, see the complete [JSON Object Reference Index](spec/json/SDSC-json-api.md#json-object-reference-index) in the SDSC JSON API document.
 
-### Guides & Examples
+### Guides & Examples (non-normative)
 
-| Document | Description |
-|----------|-------------|
-| [Overview Guide](guide/Overview.md) | Architecture overview, hardware abstraction, and step-by-step filling walkthrough |
-| [MLIR Examples](guide/MLIR-examples.md) | Annotated MLIR usage examples |
-| [JSON Examples](guide/JSON-examples.md) | Complete worked JSON examples |
+See the [Overview Guide](guide/Overview.md), which introduces the Spyre stack and the step-by-step filling walkthrough, and links to all MLIR and JSON examples in `guide/`.
 
 ### References
 
 | Document | Description |
 |----------|-------------|
 | [References](spec/reference.md) | External specs and normative references |
-
-### Guide & Examples (non-normative)
-
-| Document | Description |
-|----------|-------------|
-| [Overview](guide/Overview.md) | Spyre stack overview and the two API components |
-| [MLIR Examples](guide/MLIR-examples.md) | Annotated MLIR bundle examples |
-| [MLIR Complete Example](guide/MLIR-complete-example.md) | Full end-to-end MLIR bundle |
-| [JSON Examples](guide/JSON-examples.md) | Complete and indirect-access JSON examples |
-
