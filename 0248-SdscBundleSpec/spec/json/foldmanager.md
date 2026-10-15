@@ -13,11 +13,10 @@ values, keyed by fold-coordinate tuples like `"[0, 1]"`.
 
 ## Where Folding Appears
 
-`FoldManager` is used in five places across the schema:
+`FoldManager` is used in four places across the schema:
 
 | Parent field | Purpose |
 |---|---|
-| `SuperDsc.sdscFolds_` | Bundle-level fold addresses / mappings |
 | `ScheduleTreeNode.startAddressCoreCorelet_` | Per-core tensor start addresses |
 | `CoordinateInfo.folds` | Per-dimension coordinate computation |
 | `ConstantInfo.data_` | Per-core constant values |

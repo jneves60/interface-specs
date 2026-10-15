@@ -18,15 +18,6 @@
       "description": "Bundle-level configuration for multi-core accelerator operation.",
       "required": ["coreFoldProp_", "coreletFoldProp_", "numCoresUsed_", "coreIdToDsc_", "coreIdToDscSchedule", "dscs_"],
       "properties": {
-        "sdscFoldProps_": {
-          "type": "array",
-          "description": "SDSC-level fold properties",
-          "items": {"$ref": "#/$defs/FoldProperty"}
-        },
-        "sdscFolds_": {
-          "$ref": "#/$defs/FoldManager",
-          "description": "SDSC-level fold manager"
-        },
         "coreFoldProp_": {
           "$ref": "#/$defs/FoldProperty",
           "description": "Core fold properties"
@@ -184,7 +175,7 @@
     },
     "FoldProperty": {
       "type": "object",
-      "description": "Pairs a fold factor with a memory hierarchy level label. Used in SuperDsc (coreFoldProp_, coreletFoldProp_, sdscFoldProps_) and FoldManager (dim_prop_attr) to describe how data is partitioned across cores, corelets, and time steps.",
+      "description": "Pairs a fold factor with a memory hierarchy level label. Used in SuperDsc (coreFoldProp_, coreletFoldProp_) and FoldManager (dim_prop_attr) to describe how data is partitioned across cores, corelets, and time steps.",
       "required": ["factor_", "label_"],
       "properties": {
         "factor_": {
@@ -201,7 +192,7 @@
     },
     "FoldManager": {
       "type": "object",
-      "description": "Encodes a multi-dimensional fold expression mapping loop index tuples (core, corelet, time step) to concrete values (addresses, coordinates, constants). Used in SuperDsc.sdscFolds_, ScheduleTreeNode.startAddressCoreCorelet_, CoordinateInfo.folds, and ConstantInfo.data_.",
+      "description": "Encodes a multi-dimensional fold expression mapping loop index tuples (core, corelet, time step) to concrete values (addresses, coordinates, constants). Used in ScheduleTreeNode.startAddressCoreCorelet_, CoordinateInfo.folds, and ConstantInfo.data_.",
       "required": ["dim_prop_func", "dim_prop_attr"],
       "properties": {
         "dim_prop_func": {

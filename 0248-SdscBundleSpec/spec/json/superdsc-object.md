@@ -35,8 +35,6 @@ Each entry in `dscs_` is a single-key object — the key is the operation name
 
 ```json
 {
-  "sdscFoldProps_":                        [<FoldProperty>, ...],
-  "sdscFolds_":                            <FoldManager>,
   "coreFoldProp_":                         <FoldProperty>,
   "coreletFoldProp_":                      <FoldProperty>,
   "numCoresUsed_":                         <int>,
@@ -55,8 +53,6 @@ Six fields are required. No additional properties are allowed.
 
 | Field | Type | Required † | Constraints | Description |
 |---|---|---|---|---|
-| `sdscFoldProps_` | array of [FoldProperty](foldproperty.md) | No | — | SDSC-level fold properties when the bundle spans multiple fold dimensions above the core level. |
-| `sdscFolds_` | [FoldManager](foldmanager.md) | No | — | Fold manager encoding addresses or mappings at the bundle level, above the per-core level. |
 | `coreFoldProp_` | [FoldProperty](foldproperty.md) | Yes | — | Fold factor and label for the core level of the memory hierarchy (e.g. `factor_: 2, label_: "core"`). |
 | `coreletFoldProp_` | [FoldProperty](foldproperty.md) | Yes | — | Fold factor and label for the corelet level of the memory hierarchy (e.g. `factor_: 1, label_: "corelet"`). |
 | `numCoresUsed_` | integer | Yes | >= 1 | Total number of Spyre cores used across all DSCs in this bundle. |

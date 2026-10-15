@@ -40,8 +40,6 @@ Root Object (Dynamic operation name key, e.g. "exp", "matmul", "gelu")
      ├─── coreIdToDscSchedule: Object<coreId → Array<[datadsc_idx, dldsc_idx, before_sync, after_sync]>> (required)
      ├─── numWkSlicesPerDim_: Object<dimension → sliceCount>
      ├─── coreIdToWkSlice_: Object<coreId → Object<dimension → sliceIndex>>
-     ├─── sdscFoldProps_: Array<FoldProperty>
-     ├─── sdscFolds_: FoldManager
      ├─── inputSymbolsAndTags_: Object<symbol → string>
      ├─── debug_handle_: DebugHandle | null
      └─── dscs_: Array<WrappedDesignSpaceConfig> (required)

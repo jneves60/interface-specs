@@ -10,8 +10,8 @@ job is launched.
 `FoldProperty` is the primitive building block of the fold system. It pairs a
 **fold factor** with a **label** that identifies a level of the Spyre memory
 hierarchy. It is used by [`FoldManager`](foldmanager.md) (in `dim_prop_attr`)
-and by [`SuperDsc`](superdsc-object.md) (in `coreFoldProp_`, `coreletFoldProp_`,
-and `sdscFoldProps_`) to describe how data is partitioned across cores, corelets,
+and by [`SuperDsc`](superdsc-object.md) (in `coreFoldProp_` and `coreletFoldProp_`)
+to describe how data is partitioned across cores, corelets,
 and time steps. The `factor_` controls how many equal slices a dimension is
 divided into at that level; the `label_` names the level so the fold engine
 knows which loop index to use.
@@ -24,7 +24,6 @@ knows which loop index to use.
 |---|---|
 | `SuperDsc.coreFoldProp_` | Defines the fold factor at the **core** level for the whole bundle |
 | `SuperDsc.coreletFoldProp_` | Defines the fold factor at the **corelet** level for the whole bundle |
-| `SuperDsc.sdscFoldProps_` | Optional array for additional bundle-level fold dimensions |
 | `FoldManager.dim_prop_attr` | Per-dimension fold attributes inside a [`FoldManager`](foldmanager.md) |
 
 ## Structure

@@ -95,8 +95,6 @@ every [`FoldManager`](/0248-SdscBundleSpec/spec/json/foldmanager.md) used later 
   in use (e.g. `32` for a full-chip bundle, or `2` for a 2-core bundle). Set `label_` to `"core"`.
 - Set `coreletFoldProp_.factor_` to `1`; corelet splitting is left to DeepTools. Set `label_` to `"corelet"`.
 - Set `numCoresUsed_` to the total number of cores.
-- (Optional) Set `sdscFoldProps_` and `sdscFolds_` only when bundle-level fold
-  dimensions above the core level are required.
 
 ### Step 2 — SuperDSC work-division maps
 
