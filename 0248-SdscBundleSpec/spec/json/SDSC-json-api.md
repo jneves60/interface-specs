@@ -34,8 +34,6 @@ Root Object (Dynamic operation name key, e.g. "exp", "matmul", "gelu")
 │
 └─── SuperDSC (Bundle-level configuration)
      ├─── numCoresUsed_: integer (required)
-     ├─── coreIdToDsc_: Object<coreId → dscIndex> (required)
-     ├─── coreIdToDscSchedule: Object<coreId → Array<[datadsc_idx, dldsc_idx, before_sync, after_sync]>> (required)
      ├─── numWkSlicesPerDim_: Object<dimension → sliceCount>
      ├─── coreIdToWkSlice_: Object<coreId → Object<dimension → sliceIndex>>
      ├─── inputSymbolsAndTags_: Object<symbol → string>
@@ -170,7 +168,6 @@ Below is the complete index of all 16 specification documents governing the SDSC
 ### 1. Root Key and Bundle-Level Structure (`SuperDsc`)
 The root of the document is a single-key dictionary where the key is the operation name string (e.g., `"matmul"`, `"conv2d"`), matching regex `^[a-zA-Z0-9_/\-][a-zA-Z0-9_/\-]*$`. Its value is the [`SuperDsc`](superdsc-object.md) object.
 - **Work division**: `numWkSlicesPerDim_` and `coreIdToWkSlice_` map loop dimensions (e.g. `mb`, `out`) across individual cores.
-- **Scheduling**: `coreIdToDsc_` maps each string core ID (`"0"`, `"1"`, …) to a zero-based index in `dscs_`. `coreIdToDscSchedule` assigns a 4-integer step tuple `[datadsc_idx, dldsc_idx, before_sync, after_sync]` per core.
 - **Symbolic registry**: The optional field `inputSymbolsAndTags_` registers dynamic runtime symbols.
 
 ### 2. Wrapped DSC (`WrappedDesignSpaceConfig`)
@@ -220,12 +217,11 @@ An array of [`ComputeOperation`](computeoperation.md) entries specifying executi
 Any frontend producer emitting SDSC JSON (such as `torch-spyre`) MUST adhere to the following structural conventions:
 
 1. **Root Key & Wrapper Key Pattern**: The top-level root key and the `dscs_` wrapper keys MUST match `^[a-zA-Z0-9_/\-][a-zA-Z0-9_/\-]*$`.
-2. **String-Integer Map Keys vs. Integer Arrays**: In map structures (such as `coreIdToDsc_`, `coreIdToWkSlice_`, `coreIdToDscSchedule`, `constantInfo_`, `dataStageParam_`), core IDs and sequence indices MUST be string-encoded integers (e.g. `"0"`, `"1"`). In array structures (such as `coreIdsUsed_`), core IDs MUST be literal integers (`0`, `1`).
-3. **Sentinel Values (`-1`)**: Inactive dimension fields in `N_`, unset staging dimensions, unbound dimensions in `maxDimSizes_`, and the default `datadsc_idx` in `coreIdToDscSchedule` all use `-1` as the sentinel value.
+2. **String-Integer Map Keys vs. Integer Arrays**: In map structures (such as `coreIdToWkSlice_`, `constantInfo_`, `dataStageParam_`), core IDs and sequence indices MUST be string-encoded integers (e.g. `"0"`, `"1"`). In array structures (such as `coreIdsUsed_`), core IDs MUST be literal integers (`0`, `1`).
+3. **Sentinel Values (`-1`)**: Inactive dimension fields in `N_`, unset staging dimensions, and unbound dimensions in `maxDimSizes_` use `-1` as the sentinel value.
 4. **Empty Structures**:
    - `constantInfo_` uses the string `"{}"` when no constants are present.
-5. **Schedule Step Tuple**: Each core schedule entry in `coreIdToDscSchedule` MUST be an array of exactly 4 integers `[datadsc_idx, dldsc_idx, before_sync, after_sync]`. Common single-DSC default is `[-1, 0, 0, 0]`.
-7. **Strict Schema Conformance**: All objects have `additionalProperties: false`. No extra or undeclared fields may be included.
+5. **Strict Schema Conformance**: All objects have `additionalProperties: false`. No extra or undeclared fields may be included.
 
 ---
 

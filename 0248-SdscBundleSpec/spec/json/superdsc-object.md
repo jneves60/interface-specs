@@ -2,9 +2,8 @@
 
 `SuperDsc` is the top-level object of every SDSC JSON file. It orchestrates
 multi-core execution by defining how work is distributed across Spyre cores:
-core maps assign each core to a `DesignSpaceConfig`, and the per-core schedule
-encodes when each DSC runs on each core. The `dscs_` array holds the actual
-per-operation compute configurations.
+work-slice mappings partition the iteration space, and the `dscs_` array holds
+the actual per-operation compute configurations.
 
 ## Context
 
@@ -17,8 +16,6 @@ such key (`minProperties: 1`, `additionalProperties: false`).
 {
   "gelu_forward": {
     "numCoresUsed_": 2,
-    "coreIdToDsc_": { "0": 0, "1": 0 },
-    "coreIdToDscSchedule": { ... },
     "dscs_": [ ... ]
   }
 }
@@ -34,32 +31,24 @@ Each entry in `dscs_` is a single-key object — the key is the operation name
 {
   "numCoresUsed_":                         <int>,
   "inputSymbolsAndTags_":                  <map<string, string>>,
-  "coreIdToDsc_":                          <map<string, int>>,
   "numWkSlicesPerDim_":                    <map<string, int>>,
   "coreIdToWkSlice_":                      <map<string, map<string, int>>>,
-  "coreIdToDscSchedule":                   <map<string, array<array<int>>>>,
   "dscs_":                                 [<WrappedDesignSpaceConfig>, ...]
 }
 ```
 
 ## Fields
 
-Four fields are required. No additional properties are allowed.
+Two fields are required. No additional properties are allowed.
 
 | Field | Type | Required † | Constraints | Description |
 |---|---|---|---|---|
 | `numCoresUsed_` | integer | Yes | >= 1 | Total number of Spyre cores used across all DSCs in this bundle. |
 | `debug_handle_` | DebugHandle or null | No† | — | Source-to-kernel provenance for this SuperDSC. Consumed by tooling that maps a compiled kernel back to its source; it does not affect compilation. Includes the source file/line (`source`), ATen op name (`aten_op`), lowering chain (`ir_chain`), fusion origins (`fused_from`), and rewrite history (`transform_history`). `null` is a normal value (not missing data) when provenance is unavailable. |
 | `inputSymbolsAndTags_` | map&lt;string, string&gt; | No | Keys: symbol names | Input symbols and their associated tags for symbolic dimension resolution. |
-| `coreIdToDsc_` | map&lt;string, integer&gt; | Yes | Keys: `^[0-9]+$`; values >= 0 | Maps each core ID (string integer) to a zero-based index into `dscs_`. Multiple cores with the same index share one `DesignSpaceConfig`. |
 | `numWkSlicesPerDim_` | map&lt;string, integer&gt; | No | Keys: dim names; values >= 1 | Total number of work slices per dimension across all cores. |
 | `coreIdToWkSlice_` | map&lt;string, map&lt;string, integer&gt;&gt; | No | Outer keys: core IDs; inner keys: dim names; values >= 0 | Maps each core ID to a map of dimension name → work slice index assigned to that core. |
-| `coreIdToDscSchedule` | map&lt;string, array&lt;array&lt;int&gt;&gt;&gt; | Yes | Keys: `^[0-9]+$`; inner arrays: exactly 4 integers | Per-core execution schedule. Each inner array is a 4-integer step tuple `[datadsc_idx, dldsc_idx, before_sync, after_sync]`. See [Schedule step tuple](#schedule-step-tuple) below. |
 | `dscs_` | array of object | Yes | >= 1 item | Array of Design Space Configurations. Each entry is a single-key object `{"<op_name>": <DesignSpaceConfig>}` — see [`DesignSpaceConfig`](designspaceconfig.md). |
-
-**Note on field naming:** `coreIdToDscSchedule` lacks the trailing underscore used by most other
-fields. The serialized key in the JSON bundle is `coreIdToDscSchedule` (no underscore) — this
-inconsistency is a known anomaly. Do not add a trailing underscore when writing bundle JSON.
 
 **† `debug_handle_` presence convention:** `debug_handle_` is optional. When
 provenance information is unavailable, producers MAY either omit the field or
@@ -67,27 +56,18 @@ set its value to `null`.
 
 ## Example
 
-A 2-core GELU operation where both cores share one `DesignSpaceConfig` (index `0`), with a
-single schedule step per core.
+A 2-core GELU operation where both cores share one `DesignSpaceConfig`.
 
 ```json
 {
   "gelu_forward": {
     "numCoresUsed_": 2,
-    "coreIdToDsc_": {
-      "0": 0,
-      "1": 0
-    },
     "numWkSlicesPerDim_": {
       "mb": 2
     },
     "coreIdToWkSlice_": {
       "0": {"mb": 0},
       "1": {"mb": 1}
-    },
-    "coreIdToDscSchedule": {
-      "0": [[-1, 0, 0, 0]],
-      "1": [[-1, 0, 0, 0]]
     },
     "dscs_": [
       {
@@ -105,21 +85,7 @@ single schedule step per core.
 }
 ```
 
-Both cores execute DSC index `0` (`"gelu"`). Core `0` processes work slice `mb=0` and core `1`
-processes work slice `mb=1`.
-
-### Schedule step tuple
-
-Each schedule entry in `coreIdToDscSchedule` is an array of 4-element tuples `[datadsc_idx, dldsc_idx, before_sync, after_sync]`:
-
-| Position | Field | Type | Description | Default / Typical |
-|---|---|---|---|---|
-| 0 | `datadsc_idx` | integer | Reserved; always `-1`. No data-operation DSC is attached. | `-1` |
-| 1 | `dldsc_idx` | integer | Zero-based index into `dscs_` identifying the compute/data-load `DesignSpaceConfig` executed at this step. | `0` (for single-DSC bundles) |
-| 2 | `before_sync` | integer | Barrier flag before executing this step. `0` = no synchronization barrier, `1` = barrier synchronization. | `0` |
-| 3 | `after_sync` | integer | Barrier flag after executing this step. `0` = no synchronization barrier, `1` = barrier synchronization. | `0` |
-
-In practice, the standard step tuple for single-operation bundles is `[-1, 0, 0, 0]`, indicating `datadsc_idx = -1` (reserved, always unused), execution of DSC index 0 (`dldsc_idx = 0`), and no synchronization barriers before or after (`before_sync = 0`, `after_sync = 0`).
+Both cores process their respective work slices (`mb=0` and `mb=1`).
 
 ---
 

@@ -16,7 +16,7 @@
     "SuperDsc": {
       "type": "object",
       "description": "Bundle-level configuration for multi-core accelerator operation.",
-      "required": ["numCoresUsed_", "coreIdToDsc_", "coreIdToDscSchedule", "dscs_"],
+      "required": ["numCoresUsed_", "dscs_"],
       "properties": {
         "numCoresUsed_": {
           "type": "integer",
@@ -36,16 +36,6 @@
             {"$ref": "#/$defs/DebugHandle"},
             {"type": "null"}
           ]
-        },
-        "coreIdToDsc_": {
-          "type": "object",
-          "description": "Mapping from core ID to DSC index",
-          "patternProperties": {
-            "^[0-9]+$": {
-              "type": "integer",
-              "minimum": 0
-            }
-          }
         },
         "numWkSlicesPerDim_": {
           "type": "object",
@@ -68,22 +58,6 @@
                   "type": "integer",
                   "minimum": 0
                 }
-              }
-            }
-          }
-        },
-        "coreIdToDscSchedule": {
-          "type": "object",
-          "description": "Per-core execution schedule. Each value is an array of step tuples [datadsc_idx, dldsc_idx, before_sync, after_sync]: data DSC index, data-load DSC index, barrier before step (0=none), barrier after step (0=none).",
-          "patternProperties": {
-            "^[0-9]+$": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "description": "Step tuple: [datadsc_idx, dldsc_idx, before_sync, after_sync]",
-                "minItems": 4,
-                "maxItems": 4,
-                "items": {"type": "integer"}
               }
             }
           }

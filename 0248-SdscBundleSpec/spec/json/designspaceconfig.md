@@ -10,9 +10,7 @@ with multiple entries only when work is unevenly divided across cores.
 ## Context
 
 Each `DesignSpaceConfig` is the value inside a single-key
-`{"<op_name>": <DesignSpaceConfig>}` entry in `SuperDsc.dscs_`. The
-`coreIdToDsc_` map in `SuperDsc` assigns each core a zero-based index into
-that array, determining which DSC each core executes.
+`{"<op_name>": <DesignSpaceConfig>}` entry in `SuperDsc.dscs_`.
 
 ```json
 "dscs_": [

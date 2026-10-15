@@ -75,7 +75,7 @@ appear in the schema, finishing with the deepest leaf objects.
 | Step | Object / Field | Hierarchy level |
 |---|---|---|
 | 1 | Root key · `SuperDsc`: `numCoresUsed_` | Root → SuperDSC |
-| 2 | `SuperDsc`: `numWkSlicesPerDim_`, `coreIdToWkSlice_`, `coreIdToDsc_`, `coreIdToDscSchedule` | SuperDSC |
+| 2 | `SuperDsc`: `numWkSlicesPerDim_`, `coreIdToWkSlice_` | SuperDSC |
 | 3 | `dscs_` entry · `DesignSpaceConfig`: `numCoresUsed_`, `coreIdsUsed_` | SuperDSC → DSC |
 | 4 | `DesignSpaceConfig`: `N_`, `dataStageParam_` | DSC |
 | 5 | `DesignSpaceConfig`: `primaryDsInfo_` | DSC |
@@ -95,21 +95,12 @@ Create the root object with a single key — the operation name string
 ### Step 2 — SuperDSC work-division maps
 
 Still in [`SuperDsc`](/0248-SdscBundleSpec/spec/json/superdsc-object.md), fill the maps that assign work
-slices and DSC indices to cores:
+slices to cores:
 
 - Set `numWkSlicesPerDim_`: for each dimension being split across cores, record
   the total number of slices (e.g. `{"mb": 2}` for a 2-way minibatch split).
 - Set `coreIdToWkSlice_`: for each core ID, map each split dimension to the
   slice index that core handles (e.g. `{"0": {"mb": 0}, "1": {"mb": 1}}`).
-- Set `coreIdToDsc_`: map each core ID (as a string integer) to its zero-based
-  index into `dscs_`. All cores typically map to `0` when work is balanced.
-- Set `coreIdToDscSchedule`: for each core, one schedule tuple `[-1, 0, 0, 0]`
-  covers the common case (single DSC, no barriers). The four integers are
-  `[datadsc_idx, dldsc_idx, before_sync, after_sync]`:
-  - `datadsc_idx` = `-1` (reserved; always `-1`)
-  - `dldsc_idx` = `0` (zero-based index into `dscs_` for the executed `DesignSpaceConfig`)
-  - `before_sync` = `0` (no barrier before step)
-  - `after_sync` = `0` (no barrier after step)
 - (Optional) Populate `inputSymbolsAndTags_` when symbolic dimensions are used.
 
 ### Step 3 — DesignSpaceConfig identity (inside dscs_)
@@ -118,8 +109,7 @@ Add one entry to `dscs_` — a single-key object `{"<op_name>": <DesignSpaceConf
 Inside the [`DesignSpaceConfig`](/0248-SdscBundleSpec/spec/json/designspaceconfig.md), set the core identity
 fields first, as they are referenced by the data-staging and tensor steps below:
 
-- Set `numCoresUsed_` and `coreIdsUsed_` to match the cores assigned to this
-  DSC via `coreIdToDsc_` in Step 2.
+- Set `numCoresUsed_` and `coreIdsUsed_` for this DSC.
 
 ### Step 4 — Total operation dimensions (N_) and data staging (dataStageParam_)
 
