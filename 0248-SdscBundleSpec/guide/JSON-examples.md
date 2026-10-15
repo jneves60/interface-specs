@@ -7,14 +7,6 @@
 ```json
 {
   "gelu_forward": {
-    "coreFoldProp_": {
-      "factor_": 2,
-      "label_": "core"
-    },
-    "coreletFoldProp_": {
-      "factor_": 1,
-      "label_": "corelet"
-    },
     "numCoresUsed_": 2,
     "coreIdToDsc_": {
       "0": 0,
@@ -276,8 +268,6 @@ The value tensor uses `dsType_: "KERNEL"` in `labeledDs_`; the index tensor uses
 ```json
 {
   "topk_gather": {
-    "coreFoldProp_":    {"factor_": 1, "label_": "core"},
-    "coreletFoldProp_": {"factor_": 1, "label_": "corelet"},
     "numCoresUsed_": 1,
     "coreIdToDsc_": {
       "0": 0

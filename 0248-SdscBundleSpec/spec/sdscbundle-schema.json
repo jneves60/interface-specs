@@ -16,16 +16,8 @@
     "SuperDsc": {
       "type": "object",
       "description": "Bundle-level configuration for multi-core accelerator operation.",
-      "required": ["coreFoldProp_", "coreletFoldProp_", "numCoresUsed_", "coreIdToDsc_", "coreIdToDscSchedule", "dscs_"],
+      "required": ["numCoresUsed_", "coreIdToDsc_", "coreIdToDscSchedule", "dscs_"],
       "properties": {
-        "coreFoldProp_": {
-          "$ref": "#/$defs/FoldProperty",
-          "description": "Core fold properties"
-        },
-        "coreletFoldProp_": {
-          "$ref": "#/$defs/FoldProperty",
-          "description": "Corelet fold properties"
-        },
         "numCoresUsed_": {
           "type": "integer",
           "description": "Total number of cores used",
@@ -175,7 +167,7 @@
     },
     "FoldProperty": {
       "type": "object",
-      "description": "Pairs a fold factor with a memory hierarchy level label. Used in SuperDsc (coreFoldProp_, coreletFoldProp_) and FoldManager (dim_prop_attr) to describe how data is partitioned across cores, corelets, and time steps.",
+      "description": "Pairs a fold factor with a memory hierarchy level label. Used in FoldManager (dim_prop_attr) to describe how data is partitioned across cores, corelets, and time steps.",
       "required": ["factor_", "label_"],
       "properties": {
         "factor_": {

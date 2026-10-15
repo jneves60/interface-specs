@@ -2,9 +2,8 @@
 
 `SuperDsc` is the top-level object of every SDSC JSON file. It orchestrates
 multi-core execution by defining how work is distributed across Spyre cores:
-fold properties describe how each core's data address is computed, core maps
-assign each core to a `DesignSpaceConfig`, and the per-core schedule encodes
-when each DSC runs on each core. The `dscs_` array holds the actual
+core maps assign each core to a `DesignSpaceConfig`, and the per-core schedule
+encodes when each DSC runs on each core. The `dscs_` array holds the actual
 per-operation compute configurations.
 
 ## Context
@@ -17,8 +16,6 @@ such key (`minProperties: 1`, `additionalProperties: false`).
 ```json
 {
   "gelu_forward": {
-    "coreFoldProp_": { ... },
-    "coreletFoldProp_": { ... },
     "numCoresUsed_": 2,
     "coreIdToDsc_": { "0": 0, "1": 0 },
     "coreIdToDscSchedule": { ... },
@@ -35,8 +32,6 @@ Each entry in `dscs_` is a single-key object — the key is the operation name
 
 ```json
 {
-  "coreFoldProp_":                         <FoldProperty>,
-  "coreletFoldProp_":                      <FoldProperty>,
   "numCoresUsed_":                         <int>,
   "inputSymbolsAndTags_":                  <map<string, string>>,
   "coreIdToDsc_":                          <map<string, int>>,
@@ -49,12 +44,10 @@ Each entry in `dscs_` is a single-key object — the key is the operation name
 
 ## Fields
 
-Six fields are required. No additional properties are allowed.
+Four fields are required. No additional properties are allowed.
 
 | Field | Type | Required † | Constraints | Description |
 |---|---|---|---|---|
-| `coreFoldProp_` | [FoldProperty](foldproperty.md) | Yes | — | Fold factor and label for the core level of the memory hierarchy (e.g. `factor_: 2, label_: "core"`). |
-| `coreletFoldProp_` | [FoldProperty](foldproperty.md) | Yes | — | Fold factor and label for the corelet level of the memory hierarchy (e.g. `factor_: 1, label_: "corelet"`). |
 | `numCoresUsed_` | integer | Yes | >= 1 | Total number of Spyre cores used across all DSCs in this bundle. |
 | `debug_handle_` | DebugHandle or null | No† | — | Source-to-kernel provenance for this SuperDSC. Consumed by tooling that maps a compiled kernel back to its source; it does not affect compilation. Includes the source file/line (`source`), ATen op name (`aten_op`), lowering chain (`ir_chain`), fusion origins (`fused_from`), and rewrite history (`transform_history`). `null` is a normal value (not missing data) when provenance is unavailable. |
 | `inputSymbolsAndTags_` | map&lt;string, string&gt; | No | Keys: symbol names | Input symbols and their associated tags for symbolic dimension resolution. |
@@ -80,8 +73,6 @@ single schedule step per core.
 ```json
 {
   "gelu_forward": {
-    "coreFoldProp_":    {"factor_": 2, "label_": "core"},
-    "coreletFoldProp_": {"factor_": 1, "label_": "corelet"},
     "numCoresUsed_": 2,
     "coreIdToDsc_": {
       "0": 0,

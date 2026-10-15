@@ -33,8 +33,6 @@ An SDSC JSON file is structured as a single top-level key (the dynamic operation
 Root Object (Dynamic operation name key, e.g. "exp", "matmul", "gelu")
 │
 └─── SuperDSC (Bundle-level configuration)
-     ├─── coreFoldProp_: FoldProperty (required)
-     ├─── coreletFoldProp_: FoldProperty (required)
      ├─── numCoresUsed_: integer (required)
      ├─── coreIdToDsc_: Object<coreId → dscIndex> (required)
      ├─── coreIdToDscSchedule: Object<coreId → Array<[datadsc_idx, dldsc_idx, before_sync, after_sync]>> (required)
@@ -171,7 +169,6 @@ Below is the complete index of all 16 specification documents governing the SDSC
 
 ### 1. Root Key and Bundle-Level Structure (`SuperDsc`)
 The root of the document is a single-key dictionary where the key is the operation name string (e.g., `"matmul"`, `"conv2d"`), matching regex `^[a-zA-Z0-9_/\-][a-zA-Z0-9_/\-]*$`. Its value is the [`SuperDsc`](superdsc-object.md) object.
-- **Fold hierarchy**: `coreFoldProp_` specifies the core-level division factor (up to 32); `coreletFoldProp_` is emitted with factor 1 as a pass-through constant.
 - **Work division**: `numWkSlicesPerDim_` and `coreIdToWkSlice_` map loop dimensions (e.g. `mb`, `out`) across individual cores.
 - **Scheduling**: `coreIdToDsc_` maps each string core ID (`"0"`, `"1"`, …) to a zero-based index in `dscs_`. `coreIdToDscSchedule` assigns a 4-integer step tuple `[datadsc_idx, dldsc_idx, before_sync, after_sync]` per core.
 - **Symbolic registry**: The optional field `inputSymbolsAndTags_` registers dynamic runtime symbols.
@@ -227,8 +224,7 @@ Any frontend producer emitting SDSC JSON (such as `torch-spyre`) MUST adhere to 
 3. **Sentinel Values (`-1`)**: Inactive dimension fields in `N_`, unset staging dimensions, unbound dimensions in `maxDimSizes_`, and the default `datadsc_idx` in `coreIdToDscSchedule` all use `-1` as the sentinel value.
 4. **Empty Structures**:
    - `constantInfo_` uses the string `"{}"` when no constants are present.
-5. **Pass-Through Constants**: Because `torch-spyre` partitions work at the core level and leaves corelet splitting to DeepTools, frontend-emitted artifacts set `coreletFoldProp_` to `{"factor_": 1, "label_": "corelet"}` and `numCoreletsUsed_` to `1`.
-6. **Schedule Step Tuple**: Each core schedule entry in `coreIdToDscSchedule` MUST be an array of exactly 4 integers `[datadsc_idx, dldsc_idx, before_sync, after_sync]`. Common single-DSC default is `[-1, 0, 0, 0]`.
+5. **Schedule Step Tuple**: Each core schedule entry in `coreIdToDscSchedule` MUST be an array of exactly 4 integers `[datadsc_idx, dldsc_idx, before_sync, after_sync]`. Common single-DSC default is `[-1, 0, 0, 0]`.
 7. **Strict Schema Conformance**: All objects have `additionalProperties: false`. No extra or undeclared fields may be included.
 
 ---
