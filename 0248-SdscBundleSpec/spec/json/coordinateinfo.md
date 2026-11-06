@@ -28,7 +28,7 @@ All five fields are required. No additional properties are allowed.
 
 | Field | Type | Required | Constraints | Description |
 |---|---|---|---|---|
-| `spatial` | integer | Yes | `3` | The frontend always emits `3`: the dimension is partitioned across cores. |
+| `spatial` | integer | Yes | >= 0 | Spatial partitioning level for this dimension. |
 | `temporal` | integer | Yes | `0` | Always set to `0` by the frontend. |
 | `elemArr` | integer | Yes | >= 0 | Element array level: `1` for non-stick dimensions, `2` for stick dimensions, or `0` when collapsed. Encodes whether this dimension maps to the innermost leaf elements or multiple sticks per slice. |
 | `padding` | string | Yes | `"nopad"`, `"lowered_padded"`, `"padded_nozeropad"`, `"padded_wzeropad"`, `"padded_fullspan"`, or `"padded_fullspan_wunneeded"` | Padding state for this dimension in the allocated buffer. `"nopad"` = no padding; `"lowered_padded"` = padding collapsed into a lowered layout; `"padded_nozeropad"` = padded but region is not zeroed (used with conv2d when padding is non-zero); `"padded_wzeropad"` = padded and region is zero-filled; `"padded_fullspan"` = full-span padding; `"padded_fullspan_wunneeded"` = full-span padding with unneeded pad elements (used with conv2d when padding is zero). |

@@ -5,8 +5,9 @@ the compute hierarchy (total, per-core, per-corelet, etc.). It appears as the
 `N_` field in [`DesignSpaceConfig`](designspaceconfig.md) (total un-tiled
 dimensions) and as `ss_` / `el_` inside
 [`DataStageParam`](datastageparam.md) (steady-state and epilogue tile sizes).
-All numeric dimension values are doubles; `-1` means the dimension is unset
-for this object.
+All numeric dimension values are doubles. A dimension a given operation does not
+use is omitted rather than set to `-1`. No additional properties beyond those
+listed here are allowed.
 
 ## Context
 
@@ -31,7 +32,6 @@ for this object.
   "ki_":    <number>,
   "kj_":    <number>,
   "x_":     <number>,
-  "x1_":    <number>,
   "y_":     <number>,
   "symbolicDimInfo_":  <map<string, SymbolicDimInfo>>,
   "maxSymbolicVolume_": <map<string, int>>,
@@ -60,14 +60,13 @@ These are always serialized (value `-1` when unset):
 | `ki_` | number | Kernel rows. `-1` = unset. |
 | `kj_` | number | Kernel cols. `-1` = unset. |
 | `x_` | number | Repeat dimension that does not add reuse (e.g. attention heads). `-1` = unset. |
-| `x1_` | number | Additional repeat dimension (e.g. attention heads). `-1` = unset. |
 | `y_` | number | Kernel reuse dimension (e.g. time step). `-1` = unset. |
 
 ### Advanced fields
 
 | Field | Type | Description |
 |---|---|---|
-| `paddingSizes_` | map&lt;string, DimPaddingSizes&gt; | Per-dimension padding information. Keys are dim names (e.g. `"i"`, `"j"`). See [Padding](padding.md). |
+| `paddingSizes_` | map&lt;string, DimPaddingSizes&gt; | Per-dimension padding information. Keys are exactly `"i"` or `"j"` (the padded output spatial dimensions; note no trailing underscore). See [Padding](padding.md). |
 | `symbolicDimInfo_` | map&lt;string, SymbolicDimInfo&gt; | Per-dimension symbolic size constraints. Keys are dimension names (e.g. `"mb_"`). See [SymbolicDimInfo](#symbolicdiminfo) below. |
 | `maxSymbolicVolume_` | map&lt;string, integer&gt; | Maximum combined symbolic volume for a set of dims. Keys are dim-set arrays encoded as strings (e.g. `'["in_","mb_"]'`). |
 
